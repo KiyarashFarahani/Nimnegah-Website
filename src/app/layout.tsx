@@ -27,7 +27,7 @@ const londrinaOutline = Londrina_Outline({
 });
 
 export const metadata: Metadata = {
-  title: "Your Name | Artist Portfolio",
+  title: "Nimnegah | نیم‌نگاه",
   description: "A stunning portfolio showcasing artistic works with beautiful design and smooth animations",
   keywords: "artist, portfolio, gallery, art, creative, design",
   authors: [{ name: "Your Name" }],

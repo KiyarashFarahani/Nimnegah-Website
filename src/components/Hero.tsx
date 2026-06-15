@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useFloatingAnimation } from '@/hooks/useFloatingAnimation';
 import { useEffect } from 'react';
 
-const profileImages = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+const profileImages = [2, 10, 4, 3, 5, 6, 7, 8, 9, 11, 12, 13];
 
 const Hero = () => {
   const img2 = useFloatingAnimation({ duration: 5, intensity: 12, delay: 0 });

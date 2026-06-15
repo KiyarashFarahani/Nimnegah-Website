@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
@@ -103,12 +104,19 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Logo - Replace with your name */}
+          {/* Logo */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className={`text-2xl font-siavash font-bold ${scrolled || isOpen ? 'text-gray-900' : 'text-white'}`}
+            className="flex items-center"
           >
-            نیم‌نگاه
+            <Image
+              src="/images/logo/logo.png"
+              alt="نیم‌نگاه"
+              width={48}
+              height={48}
+              className={`h-10 w-auto ${!scrolled ? 'invert' : ''}`}
+              priority
+            />
           </motion.div>
 
           {/* Mobile menu button */}

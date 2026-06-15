@@ -2,6 +2,7 @@
 
 import { useSplashScreen } from '@/hooks/useSplashScreen';
 import SplashScreen from './SplashScreen';
+import { AnimatePresence } from 'framer-motion';
 import Navigation from './Navigation';
 import Hero from './Hero';
 import ImageGallery from './ImageGallery';
@@ -17,7 +18,9 @@ export default function AppWrapper() {
 
   return (
     <>
-      {isLoading && <SplashScreen onComplete={completeLoading} />}
+      <AnimatePresence>
+        {isLoading && <SplashScreen onComplete={completeLoading} />}
+      </AnimatePresence>
       <main className={`min-h-screen transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
         <Navigation />
         <Hero />

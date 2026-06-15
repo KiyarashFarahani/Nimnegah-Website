@@ -46,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${playfair.variable} ${barriecito.variable} ${londrinaOutline.variable} ${customFont.variable} ${editorialPro.variable} font-sans antialiased bg-white text-gray-900`}
+        className={`${inter.variable} ${playfair.variable} ${barriecito.variable} ${londrinaOutline.variable} ${customFont.variable} ${editorialPro.variable} font-sans antialiased bg-[#060d1f] text-gray-900`}
       >
         <SmoothScrollProvider>
           {children}

@@ -114,7 +114,7 @@ const Navigation = () => {
               alt="نیم‌نگاه"
               width={48}
               height={48}
-              className={`h-10 w-auto ${!scrolled ? 'invert' : ''}`}
+              className={`h-10 w-auto ${!scrolled && !isOpen ? 'invert' : ''}`}
               priority
             />
           </motion.div>

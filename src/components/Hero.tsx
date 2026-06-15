@@ -5,23 +5,23 @@ import Image from 'next/image';
 import { useFloatingAnimation } from '@/hooks/useFloatingAnimation';
 import { useEffect } from 'react';
 
-const profileImages = [2, 10, 4, 3, 5, 6, 7, 8, 9, 11, 12, 13];
+const profileImages = [2, 10, 4, 3, 5, 6, 7, 8, 9];
 
 const Hero = () => {
-  const img2 = useFloatingAnimation({ duration: 5, intensity: 12, delay: 0 });
-  const img3 = useFloatingAnimation({ duration: 5, intensity: 12, delay: 0 });
-  const img4 = useFloatingAnimation({ duration: 6, intensity: 14, delay: 0.2 });
-  const img5 = useFloatingAnimation({ duration: 5.5, intensity: 13, delay: 0.4 });
-  const img6 = useFloatingAnimation({ duration: 6.5, intensity: 11, delay: 0.6 });
-  const img7 = useFloatingAnimation({ duration: 5, intensity: 15, delay: 0.8 });
-  const img8 = useFloatingAnimation({ duration: 6, intensity: 12, delay: 1.0 });
-  const img9 = useFloatingAnimation({ duration: 5.5, intensity: 14, delay: 0.3 });
-  const img10 = useFloatingAnimation({ duration: 6, intensity: 13, delay: 0.5 });
-  const img11 = useFloatingAnimation({ duration: 5, intensity: 11, delay: 0.7 });
-  const img12 = useFloatingAnimation({ duration: 6.5, intensity: 15, delay: 0.9 });
-  const img13 = useFloatingAnimation({ duration: 5.5, intensity: 12, delay: 1.1 });
+  const img2 = useFloatingAnimation({ duration: 5, intensity: 25, delay: 0 });
+  const img3 = useFloatingAnimation({ duration: 5, intensity: 25, delay: 0 });
+  const img4 = useFloatingAnimation({ duration: 6, intensity: 28, delay: 0.2 });
+  const img5 = useFloatingAnimation({ duration: 5.5, intensity: 26, delay: 0.4 });
+  const img6 = useFloatingAnimation({ duration: 6.5, intensity: 22, delay: 0.6 });
+  const img7 = useFloatingAnimation({ duration: 5, intensity: 30, delay: 0.8 });
+  const img8 = useFloatingAnimation({ duration: 6, intensity: 25, delay: 1.0 });
+  const img9 = useFloatingAnimation({ duration: 5.5, intensity: 28, delay: 0.3 });
+  const img10 = useFloatingAnimation({ duration: 6, intensity: 26, delay: 0.5 });
+  //const img11 = useFloatingAnimation({ duration: 5, intensity: 22, delay: 0.7 });
+  //const img12 = useFloatingAnimation({ duration: 6.5, intensity: 30, delay: 0.9 });
+  //const img13 = useFloatingAnimation({ duration: 5.5, intensity: 12, delay: 1.1 });
 
-  const floatingHooks = [img2, img3, img4, img5, img6, img7, img8, img9, img10, img11, img12, img13];
+  const floatingHooks = [img2, img3, img4, img5, img6, img7, img8, img9, img10/*, img11, img12, img13*/];
 
   useEffect(() => {
     floatingHooks.forEach((hook, i) => {

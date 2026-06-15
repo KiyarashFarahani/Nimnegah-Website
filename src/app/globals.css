@@ -98,22 +98,6 @@ body {
   scroll-behavior: smooth;
 }
 
-html {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
-@media (max-width: 768px) {
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: none;
-  }
-}
-
 .scroll-trigger {
   opacity: 0;
   transform: translateY(20px);
@@ -140,9 +124,8 @@ html {
   }
 }
 
-html, body {
+main {
   overflow-x: hidden;
-  max-width: 100vw;
 }
 
 * {

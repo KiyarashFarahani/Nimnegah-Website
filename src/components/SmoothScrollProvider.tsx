@@ -14,6 +14,7 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
     lenisRef.current = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      touchMultiplier: 2,
     });
 
     (window as Window & { lenis?: Lenis }).lenis = lenisRef.current;

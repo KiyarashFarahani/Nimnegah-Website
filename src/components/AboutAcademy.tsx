@@ -50,11 +50,11 @@ const AboutAcademy = () => {
   return (
     <section id="about" className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-950 via-[#0a1628] to-blue-950" />
 
       {/* Decorative elements */}
-      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-blue-200/20 rounded-full blur-3xl -translate-y-1/2" />
-      <div className="absolute top-1/4 right-0 w-[300px] h-[300px] bg-purple-200/20 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2" />
+      <div className="absolute top-1/4 right-0 w-[300px] h-[300px] bg-purple-500/5 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Top section - Two columns */}
@@ -71,17 +71,17 @@ const AboutAcademy = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="inline-block px-4 py-1.5 mb-6 text-sm font-vazir font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-full"
+              className="inline-block px-4 py-1.5 mb-6 text-sm font-vazir font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full"
             >
               درباره ما
             </motion.span>
-            <h2 className="text-4xl sm:text-5xl font-siavash font-bold text-gray-900 mb-6 leading-tight">
+            <h2 className="text-4xl sm:text-5xl font-siavash font-bold text-white mb-6 leading-tight">
               آکادمی نیم‌نگاه
               <br />
-              <span className="text-3xl sm:text-4xl text-gray-500">جایی که هنر شروع میشه</span>
+              <span className="text-3xl sm:text-4xl text-gray-400">جایی که هنر شروع میشه</span>
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mb-8 rounded-full" />
-            <div className="space-y-5 text-gray-600 font-vazir leading-relaxed text-lg">
+            <div className="space-y-5 text-gray-400 font-vazir leading-relaxed text-lg">
               <p>
                 ما باور داریم هر کسی می‌تونه هنرمند بشه. آکادمی نیم‌نگاه با هدف ارائه آموزش‌های
                 تخصصی و کاربردی هنر دیجیتال تأسیس شده تا مسیر یادگیری رو برای همه هموار کنه.
@@ -101,21 +101,21 @@ const AboutAcademy = () => {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            {FEATURES.map((feature) => (
+            {FEATURES.map((feature, index) => (
               <motion.div
                 key={feature.title}
                 variants={itemVariants}
                 whileHover={{ x: -4, transition: { duration: 0.2 } }}
-                className="group flex items-start gap-5 p-6 bg-white border border-gray-200 shadow-sm rounded-2xl hover:border-blue-300 hover:shadow-md transition-all duration-300"
+                className="group flex items-start gap-5 p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
               >
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-100 group-hover:from-blue-100 group-hover:to-purple-100 transition-all duration-300">
-                  <feature.icon size={22} className="text-blue-600" />
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl border border-white/10 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+                  <feature.icon size={22} className="text-blue-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-siavash font-bold text-gray-900 mb-1.5 group-hover:text-blue-600 transition-colors duration-300">
+                  <h3 className="text-lg font-siavash font-bold text-white mb-1.5 group-hover:text-blue-300 transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-500 font-vazir leading-relaxed">
+                  <p className="text-sm text-gray-400 font-vazir leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -132,20 +132,20 @@ const AboutAcademy = () => {
           viewport={{ once: true }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"
         >
-          {STATS.map((stat) => (
+          {STATS.map((stat, index) => (
             <motion.div
               key={stat.label}
               variants={itemVariants}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="group text-center p-6 sm:p-8 bg-white border border-gray-200 shadow-sm rounded-2xl hover:border-blue-300 hover:shadow-md transition-all duration-300"
+              className="group text-center p-6 sm:p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
             >
-              <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl border border-blue-100 mx-auto mb-4 group-hover:from-blue-100 group-hover:to-purple-100 transition-all duration-300">
-                <stat.icon size={22} className="text-blue-600" />
+              <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl border border-white/10 mx-auto mb-4 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+                <stat.icon size={22} className="text-blue-400" />
               </div>
-              <div className="text-3xl sm:text-4xl font-bold text-gray-900 font-vazir mb-2">
+              <div className="text-3xl sm:text-4xl font-bold text-white font-vazir mb-2">
                 {stat.value}
               </div>
-              <div className="text-sm text-gray-500 font-vazir">
+              <div className="text-sm text-gray-400 font-vazir">
                 {stat.label}
               </div>
             </motion.div>

@@ -17,7 +17,8 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
       touchMultiplier: 2,
     });
 
-    (window as Window & { lenis?: Lenis }).lenis = lenisRef.current;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).lenis = lenisRef.current;
 
     function raf(time: number) {
       lenisRef.current?.raf(time);
@@ -28,7 +29,8 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
 
     return () => {
       lenisRef.current?.destroy();
-      (window as Window & { lenis?: Lenis | null }).lenis = null;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).lenis = null;
     };
   }, []);
 

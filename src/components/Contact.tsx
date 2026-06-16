@@ -75,7 +75,7 @@ const Contact = () => {
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-slate-400 to-slate-500 mx-auto mb-4"></div>
           <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto font-editorial-pro">
-            I'm available for collaborations
+            I&apos;m available for collaborations
           </p>
         </motion.div>
 

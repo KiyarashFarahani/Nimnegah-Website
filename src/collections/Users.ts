@@ -1,0 +1,49 @@
+import type { CollectionConfig } from 'payload'
+import crypto from 'crypto'
+
+export const Users: CollectionConfig = {
+  slug: 'users',
+  auth: true,
+  hooks: {
+    beforeValidate: [
+      ({ data, operation }) => {
+        if (operation === 'create' && data && !data.password) {
+          data.password = crypto.randomBytes(32).toString('hex')
+        }
+        return data
+      },
+    ],
+  },
+  admin: {
+    useAsTitle: 'name',
+  },
+  fields: [
+    {
+      name: 'phone',
+      type: 'text',
+      required: true,
+      unique: true,
+      label: 'Phone Number',
+    },
+    {
+      name: 'name',
+      type: 'text',
+      label: 'Full Name',
+    },
+    {
+      name: 'role',
+      type: 'select',
+      defaultValue: 'student',
+      options: [
+        { label: 'Admin', value: 'admin' },
+        { label: 'Student', value: 'student' },
+      ],
+      required: true,
+    },
+    {
+      name: 'avatar',
+      type: 'upload',
+      relationTo: 'media',
+    },
+  ],
+}

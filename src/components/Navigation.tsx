@@ -39,7 +39,8 @@ const Navigation = () => {
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
         const offsetPosition = elementPosition - navHeight;
 
-        const lenisInstance = (window as Window & { lenis?: { scrollTo: (position: number, options?: { duration?: number; easing?: (t: number) => number }) => void } }).lenis;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const lenisInstance = (window as any).lenis as { scrollTo: (position: number, options?: { duration?: number; easing?: (t: number) => number }) => void } | undefined;
         if (lenisInstance) {
           lenisInstance.scrollTo(offsetPosition, {
             duration: 1.2,

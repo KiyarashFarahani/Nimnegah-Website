@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+/* Custom Fonts */
+@font-face {
+  font-family: 'YourCustomFont';
+  src: url('/fonts/your-custom-font.woff2') format('woff2'),
+       url('/fonts/your-custom-font.woff') format('woff'),
+       url('/fonts/your-custom-font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'YourCustomFont';
+  src: url('/fonts/your-custom-font-bold.woff2') format('woff2'),
+       url('/fonts/your-custom-font-bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #060d1f;
+  --foreground: #171717;
+  --font-custom: 'YourCustomFont', sans-serif;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-playfair: var(--font-playfair);
+  --font-barriecito: var(--font-barriecito);
+  --font-londrina-outline: var(--font-londrina-outline);
+  --font-siavash: var(--font-siavash);
+  --font-editorial-pro: var(--font-editorial-pro);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair), serif;
+}
+
+.font-siavash {
+  font-family: var(--font-siavash), sans-serif;
+}
+
+.font-editorial-pro {
+  font-family: var(--font-editorial-pro), sans-serif;
+}
+
+.font-barriecito {
+  font-family: var(--font-barriecito), cursive;
+}
+
+.font-londrina-outline {
+  font-family: var(--font-londrina-outline), cursive;
+}
+
+/* Hide scrollbar for modern, clean look */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+}
+
+body {
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-scroll {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.gallery-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+.scroll-trigger {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-trigger.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}

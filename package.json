@@ -2,18 +2,27 @@
   "name": "nimnegah",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "payload": "payload --disable-transpile",
+    "payload:generate": "payload generate:types --disable-transpile && payload generate:importmap --disable-transpile",
+    "payload:migrate": "payload migrate --disable-transpile"
   },
   "dependencies": {
     "@next/font": "^14.2.15",
+    "@payloadcms/db-postgres": "^3.85.1",
+    "@payloadcms/next": "^3.85.1",
+    "@payloadcms/richtext-lexical": "^3.85.1",
     "framer-motion": "^12.23.12",
+    "ioredis": "^5.11.1",
     "lenis": "^1.3.11",
     "lucide-react": "^0.542.0",
-    "next": "^15.5.6",
+    "next": "^15.4.11",
+    "payload": "^3.85.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },

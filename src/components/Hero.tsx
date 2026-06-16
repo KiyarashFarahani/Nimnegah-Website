@@ -29,12 +29,15 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="home" dir="ltr" className="relative w-full overflow-hidden" style={{ minHeight: '100vh' }}>
+    <section id="home" dir="ltr" className="relative w-full overflow-hidden" style={{ minHeight: '130vh' }}>
       {/* Background with gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950"></div>
 
+      {/* Fade into next section's background */}
+      <div className="absolute bottom-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-transparent via-gray-100 to-gray-50"></div>
+
       {/* Main content - vertical on mobile, horizontal on desktop */}
-      <div className="relative z-20 flex flex-col lg:flex-row w-full min-h-screen">
+      <div className="relative z-20 flex flex-col lg:flex-row w-full" style={{ minHeight: '130vh' }}>
 
         {/* Image stack */}
         <div className="relative w-full lg:w-[55%] h-[60vh] sm:h-[70vh] lg:h-screen lg:sticky lg:top-0 overflow-hidden flex items-center justify-center lg:justify-start lg:pl-24">

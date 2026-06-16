@@ -80,7 +80,8 @@ export const Courses: CollectionConfig = {
         if (data?.title && !data?.slug) {
           data.slug = data.title
             .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_]+/g, '-')
             .replace(/(^-|-$)/g, '')
         }
         return data

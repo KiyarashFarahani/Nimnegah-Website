@@ -7,7 +7,7 @@ export default function FrontendLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="fa" dir="rtl">
       <body className="antialiased">
         <SmoothScrollProvider>
           {children}

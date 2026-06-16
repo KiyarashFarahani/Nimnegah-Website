@@ -5,13 +5,10 @@ import SplashScreen from './SplashScreen';
 import { AnimatePresence } from 'framer-motion';
 import Navigation from './Navigation';
 import Hero from './Hero';
-import ImageGallery from './ImageGallery';
-import Galleries from './Galleries';
-import About from './About';
-import Contact from './Contact';
+import FeaturedCourses from './FeaturedCourses';
+import AboutAcademy from './AboutAcademy';
+import CTA from './CTA';
 import Footer from './Footer';
-import { storyboardSets } from '@/data/storyboards';
-import { gallerySets } from '@/data/galleries';
 
 export default function AppWrapper() {
   const { isLoading, completeLoading } = useSplashScreen();
@@ -24,10 +21,9 @@ export default function AppWrapper() {
       <main className={`min-h-screen transition-opacity duration-1000 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
         <Navigation />
         <Hero />
-        <ImageGallery storyboardSets={storyboardSets} />
-        <Galleries gallerySets={gallerySets} />
-        <About />
-        <Contact />
+        <FeaturedCourses />
+        <AboutAcademy />
+        <CTA />
         <Footer />
       </main>
     </>

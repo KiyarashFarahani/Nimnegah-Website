@@ -17,11 +17,8 @@ const Hero = () => {
   const img8 = useFloatingAnimation({ duration: 6, intensity: 25, delay: 1.0 });
   const img9 = useFloatingAnimation({ duration: 5.5, intensity: 28, delay: 0.3 });
   const img10 = useFloatingAnimation({ duration: 6, intensity: 26, delay: 0.5 });
-  //const img11 = useFloatingAnimation({ duration: 5, intensity: 22, delay: 0.7 });
-  //const img12 = useFloatingAnimation({ duration: 6.5, intensity: 30, delay: 0.9 });
-  //const img13 = useFloatingAnimation({ duration: 5.5, intensity: 12, delay: 1.1 });
 
-  const floatingHooks = [img2, img3, img4, img5, img6, img7, img8, img9, img10/*, img11, img12, img13*/];
+  const floatingHooks = [img2, img3, img4, img5, img6, img7, img8, img9, img10];
 
   useEffect(() => {
     floatingHooks.forEach((hook, i) => {
@@ -32,7 +29,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section id="home" className="relative w-full overflow-hidden" style={{ minHeight: '100vh' }}>
+    <section id="home" dir="ltr" className="relative w-full overflow-hidden" style={{ minHeight: '100vh' }}>
       {/* Background with gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950"></div>
 
@@ -60,7 +57,7 @@ const Hero = () => {
           ))}
         </div>
 
-        {/* Text content - below images on mobile, right side on desktop */}
+        {/* Text content - below images on mobile, left side on desktop (RTL) */}
         <div className="relative w-full lg:w-[45%] flex flex-col items-center lg:items-end justify-center px-6 sm:px-8 lg:px-12 xl:px-20 py-12 sm:py-16 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: 50 }}
@@ -107,12 +104,12 @@ const Hero = () => {
                 درباره نیم‌نگاه
               </motion.a>
               <motion.a
-                href="#galleries"
+                href="#courses"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="px-8 py-4 h-14 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold rounded-full hover:shadow-lg hover:from-slate-500 hover:to-slate-600 transition-all duration-300 font-editorial-pro flex items-center justify-center"
               >
-                مشاهده دوره ها
+                مشاهده دوره‌ها
               </motion.a>
             </motion.div>
           </motion.div>

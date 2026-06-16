@@ -32,6 +32,13 @@ const Navigation = () => {
   }, [isOpen]);
 
   const scrollToSection = (href: string) => {
+    // Handle route links (non-hash)
+    if (!href.startsWith('#')) {
+      window.location.href = href;
+      setIsOpen(false);
+      return;
+    }
+
     setTimeout(() => {
       const element = document.querySelector(href);
       if (element) {
@@ -67,10 +74,9 @@ const Navigation = () => {
   };
 
   const navItems = [
-    { name: 'ورود/ ثبت نام', href: '#contact' },
-    { name: 'ارتباط با ما', href: '#about' },
-    { name: 'درباره ما', href: '#storyboards' },
-    { name: 'دوره ها', href: '#galleries' },
+    { name: 'ورود', href: '/login' },
+    { name: 'درباره ما', href: '#about' },
+    { name: 'دوره‌ها', href: '#courses' },
     { name: 'خانه', href: '#home' },
   ];
 
@@ -88,7 +94,7 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex gap-8">
             {navItems.map((item, index) => (
               <motion.button
                 key={item.name}
@@ -148,10 +154,10 @@ const Navigation = () => {
                 <motion.button
                   key={item.name}
                   onClick={() => scrollToSection(item.href)}
-                  initial={{ opacity: 0, x: -20 }}
+                  initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="block text-gray-700 hover:text-gray-900 font-editorial-pro font-medium py-3 px-4 transition-colors text-right w-full min-h-[44px] flex items-center justify-end rounded-lg hover:bg-gray-50"
+                  className="block text-gray-700 hover:text-gray-900 font-editorial-pro font-medium py-3 px-4 transition-colors text-end w-full min-h-[44px] flex items-center justify-start rounded-lg hover:bg-gray-50"
                 >
                   {item.name}
                 </motion.button>

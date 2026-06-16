@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { customFont, vazirmatn } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,5 +12,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return children;
+  return (
+    <html lang="fa" dir="rtl" className={`${customFont.variable} ${vazirmatn.variable}`}>
+      <body className="antialiased">
+        {children}
+      </body>
+    </html>
+  );
 }

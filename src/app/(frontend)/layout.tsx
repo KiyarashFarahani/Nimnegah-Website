@@ -1,5 +1,5 @@
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
-import { customFont, editorialPro } from "@/lib/fonts";
+import { customFont, vazirmatn } from "@/lib/fonts";
 import "../globals.css";
 
 export default function FrontendLayout({
@@ -8,7 +8,7 @@ export default function FrontendLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fa" dir="rtl" className={`${customFont.variable} ${editorialPro.variable}`}>
+    <html lang="fa" dir="rtl" className={`${customFont.variable} ${vazirmatn.variable}`}>
       <body className="antialiased">
         <SmoothScrollProvider>
           {children}

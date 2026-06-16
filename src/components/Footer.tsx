@@ -43,7 +43,7 @@ const Footer = () => {
             viewport={{ once: true }}
           >
             <h3 className="text-2xl font-siavash font-bold text-white mb-3">نیم‌نگاه</h3>
-            <p className="text-sm text-gray-500 font-editorial-pro leading-relaxed max-w-xs">
+            <p className="text-sm text-gray-500 font-vazir leading-relaxed max-w-xs">
               آکادمی آموزش هنر دیجیتال و نقاشی. یاد بگیر، خلق کن، بدرخش.
             </p>
           </motion.div>
@@ -55,13 +55,13 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-sm font-editorial-pro font-semibold text-gray-400 mb-4 uppercase tracking-wider">لینک‌ها</h4>
+            <h4 className="text-sm font-vazir font-semibold text-gray-400 mb-4 uppercase tracking-wider">لینک‌ها</h4>
             <ul className="space-y-2.5">
               {FOOTER_LINKS.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-gray-500 hover:text-white font-editorial-pro text-sm transition-colors duration-200"
+                    className="text-gray-500 hover:text-white font-vazir text-sm transition-colors duration-200"
                   >
                     {link.label}
                   </a>
@@ -77,7 +77,7 @@ const Footer = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <h4 className="text-sm font-editorial-pro font-semibold text-gray-400 mb-4 uppercase tracking-wider">ما را دنبال کنید</h4>
+            <h4 className="text-sm font-vazir font-semibold text-gray-400 mb-4 uppercase tracking-wider">ما را دنبال کنید</h4>
             <div className="flex gap-3">
               {SOCIAL_LINKS.map((social) => (
                 <motion.a
@@ -104,7 +104,7 @@ const Footer = () => {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-xs text-gray-600 font-editorial-pro flex items-center gap-1.5"
+            className="text-xs text-gray-600 font-vazir flex items-center gap-1.5"
           >
             ساخته شده با
             <Heart size={12} className="text-red-500 fill-red-500" />
@@ -115,7 +115,7 @@ const Footer = () => {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
-            className="text-xs text-gray-600 font-editorial-pro"
+            className="text-xs text-gray-600 font-vazir"
           >
             &copy; {COPYRIGHT_YEAR} آکادمی نیم‌نگاه. تمامی حقوق محفوظ است.
           </motion.p>

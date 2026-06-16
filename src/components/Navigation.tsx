@@ -74,11 +74,12 @@ const Navigation = () => {
   };
 
   const navItems = [
-    { name: 'ورود', href: '/login' },
-    { name: 'درباره ما', href: '#about' },
+    { name: 'صفحه اصلی', href: '#home' },
     { name: 'دوره‌ها', href: '#courses' },
-    { name: 'خانه', href: '#home' },
+    { name: 'درباره ما', href: '#about' },
   ];
+
+  const isTransparent = !scrolled && !isOpen;
 
   return (
     <motion.nav
@@ -91,46 +92,66 @@ const Navigation = () => {
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex gap-8">
-            {navItems.map((item, index) => (
-              <motion.button
-                key={item.name}
-                onClick={() => scrollToSection(item.href)}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 + 0.3 }}
-                whileHover={{ y: -2 }}
-                className={`${scrolled || isOpen ? 'text-gray-900 hover:text-gray-700' : 'text-white/90 hover:text-white'} font-editorial-pro font-medium transition-colors duration-200 relative group`}
-              >
-                {item.name}
-                <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${scrolled || isOpen ? 'bg-gray-900' : 'bg-white'} transition-all duration-300 group-hover:w-full`}></span>
-              </motion.button>
-            ))}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:ps-6 lg:pe-8">
+        <div className="flex items-center h-16">
+          {/* Logo + Nav Links — right side in RTL */}
+          <div className="flex items-center gap-8 shrink-0">
+            <motion.a
+              href="/"
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center"
+            >
+              <Image
+                src="/images/logo/logo.png"
+                alt="نیم‌نگاه"
+                width={48}
+                height={48}
+                className={`h-10 w-auto ${isTransparent ? 'invert' : ''}`}
+                priority
+              />
+            </motion.a>
+
+            {/* Desktop Nav Links */}
+            <div className="hidden md:flex items-center gap-8">
+              {navItems.map((item, index) => (
+                <motion.button
+                  key={item.name}
+                  onClick={() => scrollToSection(item.href)}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 + 0.3 }}
+                  whileHover={{ y: -2 }}
+                  className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-gray-700'} font-vazir font-medium transition-colors duration-200 relative group`}
+                >
+                  {item.name}
+                  <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${isTransparent ? 'bg-white' : 'bg-gray-900'} transition-all duration-300 group-hover:w-full`}></span>
+                </motion.button>
+              ))}
+            </div>
           </div>
 
-          {/* Logo */}
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center"
+          {/* Desktop Login Button — left side in RTL */}
+          <motion.button
+            onClick={() => scrollToSection('/login')}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.97 }}
+            className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full font-vazir font-medium text-sm transition-all duration-200 shrink-0 ms-auto ${
+              isTransparent
+                ? 'border border-white/40 text-white hover:bg-white/10'
+                : 'border border-gray-900/20 text-gray-900 hover:bg-gray-900 hover:text-white'
+            }`}
           >
-            <Image
-              src="/images/logo/logo.png"
-              alt="نیم‌نگاه"
-              width={48}
-              height={48}
-              className={`h-10 w-auto ${!scrolled && !isOpen ? 'invert' : ''}`}
-              priority
-            />
-          </motion.div>
+            ورود / ثبت‌نام
+          </motion.button>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button — left side in RTL */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(!isOpen)}
-            className={`md:hidden p-3 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${scrolled || isOpen ? 'hover:bg-gray-100 text-gray-900' : 'hover:bg-white/10 text-white'}`}
+            className={`md:hidden p-3 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ms-auto ${isTransparent ? 'hover:bg-white/10 text-white' : 'hover:bg-gray-100 text-gray-900'}`}
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
           >
@@ -149,19 +170,31 @@ const Navigation = () => {
             transition={{ duration: 0.3 }}
             className="md:hidden bg-white/95 backdrop-blur-md border-t border-gray-200 fixed top-16 left-0 right-0 z-40 max-h-[calc(100vh-4rem)] overflow-y-auto"
           >
-            <div className="px-4 py-4 space-y-4">
-              {navItems.slice().reverse().map((item, index) => (
+            <div className="px-4 py-4 space-y-2">
+              {navItems.map((item, index) => (
                 <motion.button
                   key={item.name}
                   onClick={() => scrollToSection(item.href)}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="block text-gray-700 hover:text-gray-900 font-editorial-pro font-medium py-3 px-4 transition-colors text-end w-full min-h-[44px] flex items-center justify-start rounded-lg hover:bg-gray-50"
+                  transition={{ delay: index * 0.08 }}
+                  className="block text-gray-700 hover:text-gray-900 font-vazir font-medium py-3 px-4 transition-colors text-end w-full min-h-[44px] flex items-center justify-start rounded-lg hover:bg-gray-50"
                 >
                   {item.name}
                 </motion.button>
               ))}
+
+              <div className="pt-2 border-t border-gray-100 mt-2">
+                <motion.button
+                  onClick={() => scrollToSection('/login')}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: navItems.length * 0.08 }}
+                  className="w-full text-center py-3 px-4 rounded-full font-vazir font-medium text-sm border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-200 min-h-[44px] flex items-center justify-center"
+                >
+                  ورود / ثبت‌نام
+                </motion.button>
+              </div>
             </div>
           </motion.div>
         )}

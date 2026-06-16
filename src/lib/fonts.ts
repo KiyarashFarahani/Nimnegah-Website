@@ -14,20 +14,30 @@ export const customFont = localFont({
   display: 'swap',
 });
 
-// Editorial Pro font for regular text
-export const editorialPro = localFont({
+// Vazirmatn - Modern Persian body font
+export const vazirmatn = localFont({
   src: [
     {
-      path: '../../public/fonts/EditorialPro-Regular.ttf',
+      path: '../../public/fonts/Vazirmatn-Regular.ttf',
       weight: '400',
       style: 'normal',
     },
     {
-      path: '../../public/fonts/EditorialPro-Bold.ttf',
+      path: '../../public/fonts/Vazirmatn-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Vazirmatn-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Vazirmatn-Bold.ttf',
       weight: '700',
       style: 'normal',
     },
   ],
-  variable: '--font-editorial-pro',
+  variable: '--font-vazir',
   display: 'swap',
 });

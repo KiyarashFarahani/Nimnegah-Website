@@ -93,7 +93,7 @@ const FeaturedCourses = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             viewport={{ once: true }}
-            className="inline-block px-4 py-1.5 mb-6 text-sm font-editorial-pro font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full"
+            className="inline-block px-4 py-1.5 mb-6 text-sm font-vazir font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full"
           >
             دوره‌های آموزشی
           </motion.span>
@@ -101,7 +101,7 @@ const FeaturedCourses = () => {
             دوره‌های ویژه
           </h2>
           <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto mb-6 rounded-full" />
-          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto font-editorial-pro leading-relaxed">
+          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto font-vazir leading-relaxed">
             بهترین دوره‌ها رو انتخاب کن و مسیر یادگیریت رو شروع کن
           </p>
         </motion.div>
@@ -129,14 +129,14 @@ const FeaturedCourses = () => {
                   <div className="absolute -bottom-6 -left-6 w-24 h-24 bg-white/5 rounded-full" />
 
                   {/* Level badge */}
-                  <div className="absolute top-4 right-4 px-3 py-1 bg-black/30 backdrop-blur-md rounded-full text-xs font-editorial-pro text-white/90 border border-white/10">
+                  <div className="absolute top-4 right-4 px-3 py-1 bg-black/30 backdrop-blur-md rounded-full text-xs font-vazir text-white/90 border border-white/10">
                     {course.level}
                   </div>
 
                   {/* Rating */}
                   <div className="absolute top-4 left-4 flex items-center gap-1 px-2.5 py-1 bg-black/30 backdrop-blur-md rounded-full border border-white/10">
                     <Star size={12} className="text-amber-400 fill-amber-400" />
-                    <span className="text-xs font-editorial-pro text-white/90">{course.rating}</span>
+                    <span className="text-xs font-vazir text-white/90">{course.rating}</span>
                   </div>
 
                   {/* Course icon placeholder */}
@@ -150,12 +150,12 @@ const FeaturedCourses = () => {
                   <h3 className="text-xl font-siavash font-bold text-white mb-3 group-hover:text-blue-300 transition-colors duration-300">
                     {course.title}
                   </h3>
-                  <p className="text-sm text-gray-400 font-editorial-pro mb-5 leading-relaxed line-clamp-2">
+                  <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2">
                     {course.description}
                   </p>
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 mb-5 text-xs text-gray-500 font-editorial-pro">
+                  <div className="flex items-center gap-4 mb-5 text-xs text-gray-500 font-vazir">
                     <span className="flex items-center gap-1.5">
                       <Clock size={13} className="text-gray-500" />
                       {course.duration}
@@ -173,15 +173,15 @@ const FeaturedCourses = () => {
                   {/* Price + CTA */}
                   <div className="flex items-center justify-between pt-4 border-t border-white/5">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-lg font-bold text-white font-editorial-pro">{course.price}</span>
-                      <span className="text-xs text-gray-500 font-editorial-pro line-through">{course.originalPrice}</span>
-                      <span className="text-xs text-gray-500 font-editorial-pro">تومان</span>
+                      <span className="text-lg font-bold text-white font-vazir">{course.price}</span>
+                      <span className="text-xs text-gray-500 font-vazir line-through">{course.originalPrice}</span>
+                      <span className="text-xs text-gray-500 font-vazir">تومان</span>
                     </div>
                     <motion.a
                       href={`/courses/${course.slug}`}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-editorial-pro text-white transition-all duration-300"
+                      className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300"
                     >
                       مشاهده
                       <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
@@ -205,7 +205,7 @@ const FeaturedCourses = () => {
             href="/courses"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/20 text-white font-editorial-pro font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/20 text-white font-vazir font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
           >
             مشاهده همه دوره‌ها
             <ArrowRight size={18} />

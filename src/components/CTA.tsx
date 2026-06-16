@@ -62,7 +62,7 @@ const CTA = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
-          className="text-lg sm:text-xl text-gray-400 font-editorial-pro max-w-2xl mx-auto mb-10 leading-relaxed"
+          className="text-lg sm:text-xl text-gray-400 font-vazir max-w-2xl mx-auto mb-10 leading-relaxed"
         >
           همین الان اولین قدم رو بردار. با دوره‌های آکادمی نیم‌نگاه، از صفر شروع کن و به هنرمندی تبدیل شو که همیشه رویا داشتی.
         </motion.p>
@@ -79,7 +79,7 @@ const CTA = () => {
             href="/courses"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white font-editorial-pro font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300"
+            className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-400 hover:to-purple-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300"
           >
             شروع یادگیری
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -88,7 +88,7 @@ const CTA = () => {
             href="#courses"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/20 text-white font-editorial-pro font-semibold rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/20 text-white font-vazir font-semibold rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
           >
             مشاهده دوره‌ها
           </motion.a>
@@ -100,7 +100,7 @@ const CTA = () => {
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.6 }}
           viewport={{ once: true }}
-          className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-editorial-pro"
+          className="mt-12 flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-vazir"
         >
           <span className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />

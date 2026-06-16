@@ -9,21 +9,21 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-siavash: var(--font-siavash);
-  --font-editorial-pro: var(--font-editorial-pro);
+  --font-vazir: var(--font-vazir);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-editorial-pro), system-ui, sans-serif;
+  font-family: var(--font-vazir), system-ui, sans-serif;
 }
 
 .font-siavash {
   font-family: var(--font-siavash), sans-serif;
 }
 
-.font-editorial-pro {
-  font-family: var(--font-editorial-pro), sans-serif;
+.font-vazir {
+  font-family: var(--font-vazir), sans-serif;
 }
 
 /* Hide scrollbar for modern, clean look */

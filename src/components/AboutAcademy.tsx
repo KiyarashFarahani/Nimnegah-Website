@@ -71,7 +71,7 @@ const AboutAcademy = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="inline-block px-4 py-1.5 mb-6 text-sm font-editorial-pro font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full"
+              className="inline-block px-4 py-1.5 mb-6 text-sm font-vazir font-medium text-blue-300 bg-blue-500/10 border border-blue-500/20 rounded-full"
             >
               درباره ما
             </motion.span>
@@ -81,7 +81,7 @@ const AboutAcademy = () => {
               <span className="text-3xl sm:text-4xl text-gray-400">جایی که هنر شروع میشه</span>
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mb-8 rounded-full" />
-            <div className="space-y-5 text-gray-400 font-editorial-pro leading-relaxed text-lg">
+            <div className="space-y-5 text-gray-400 font-vazir leading-relaxed text-lg">
               <p>
                 ما باور داریم هر کسی می‌تونه هنرمند بشه. آکادمی نیم‌نگاه با هدف ارائه آموزش‌های
                 تخصصی و کاربردی هنر دیجیتال تأسیس شده تا مسیر یادگیری رو برای همه هموار کنه.
@@ -115,7 +115,7 @@ const AboutAcademy = () => {
                   <h3 className="text-lg font-siavash font-bold text-white mb-1.5 group-hover:text-blue-300 transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-gray-400 font-editorial-pro leading-relaxed">
+                  <p className="text-sm text-gray-400 font-vazir leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -142,10 +142,10 @@ const AboutAcademy = () => {
               <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl border border-white/10 mx-auto mb-4 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
                 <stat.icon size={22} className="text-blue-400" />
               </div>
-              <div className="text-3xl sm:text-4xl font-bold text-white font-editorial-pro mb-2">
+              <div className="text-3xl sm:text-4xl font-bold text-white font-vazir mb-2">
                 {stat.value}
               </div>
-              <div className="text-sm text-gray-400 font-editorial-pro">
+              <div className="text-sm text-gray-400 font-vazir">
                 {stat.label}
               </div>
             </motion.div>

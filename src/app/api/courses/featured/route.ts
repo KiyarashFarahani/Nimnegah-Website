@@ -8,8 +8,8 @@ export async function GET() {
 
     const courses = await payload.find({
       collection: 'courses',
-      limit: 3,
       depth: 2,
+      sort: 'createdAt',
     })
 
     return NextResponse.json({ courses: courses.docs })

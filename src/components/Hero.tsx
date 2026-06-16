@@ -31,7 +31,7 @@ const Hero = () => {
   return (
     <section id="home" dir="ltr" className="relative w-full overflow-hidden" style={{ minHeight: '100vh' }}>
       {/* Background with gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950"></div>
 
       {/* Fade into next section's background */}
       <div className="absolute bottom-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-transparent via-blue-950 to-blue-950"></div>

@@ -41,7 +41,7 @@ export default function LoginPage() {
   return (
     <main className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-indigo-950" />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-950 via-blue-900 to-blue-950" />
 
       {/* Animated gradient orbs */}
       <motion.div
@@ -50,7 +50,7 @@ export default function LoginPage() {
           opacity: [0.3, 0.5, 0.3],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-blue-400/10 rounded-full blur-3xl"
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-cyan-500/10 rounded-full blur-3xl"
       />
       <motion.div
         animate={{
@@ -58,7 +58,7 @@ export default function LoginPage() {
           opacity: [0.2, 0.4, 0.2],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-indigo-500/10 rounded-full blur-3xl"
+        className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-400/10 rounded-full blur-3xl"
       />
 
       {/* Decorative circles */}

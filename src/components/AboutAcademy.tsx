@@ -54,7 +54,7 @@ const AboutAcademy = () => {
 
       {/* Decorative elements */}
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl -translate-y-1/2" />
-      <div className="absolute top-1/4 right-0 w-[300px] h-[300px] bg-purple-500/5 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 right-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Top section - Two columns */}
@@ -80,7 +80,7 @@ const AboutAcademy = () => {
               <br />
               <span className="text-3xl sm:text-4xl text-gray-400">جایی که هنر شروع میشه</span>
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-purple-400 mb-8 rounded-full" />
+            <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 mb-8 rounded-full" />
             <div className="space-y-5 text-gray-400 font-vazir leading-relaxed text-lg">
               <p>
                 ما باور داریم هر کسی می‌تونه هنرمند بشه. آکادمی نیم‌نگاه با هدف ارائه آموزش‌های
@@ -108,7 +108,7 @@ const AboutAcademy = () => {
                 whileHover={{ x: -4, transition: { duration: 0.2 } }}
                 className="group flex items-start gap-5 p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
               >
-                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl border border-white/10 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+                <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-white/10 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-all duration-300">
                   <feature.icon size={22} className="text-blue-400" />
                 </div>
                 <div>
@@ -139,7 +139,7 @@ const AboutAcademy = () => {
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
               className="group text-center p-6 sm:p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
             >
-              <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-xl border border-white/10 mx-auto mb-4 group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
+              <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-white/10 mx-auto mb-4 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-all duration-300">
                 <stat.icon size={22} className="text-blue-400" />
               </div>
               <div className="text-3xl sm:text-4xl font-bold text-white font-vazir mb-2">

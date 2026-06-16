@@ -1,8 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { characterSets } from '@/data/characterSets';
-import { storyboardSets } from '@/data/storyboards';
 
 interface UseSplashScreenReturn {
   isLoading: boolean;
@@ -19,17 +17,7 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
         '/images/landing.png',
       ];
 
-      const characterImages = characterSets.flatMap(set =>
-        set.images.map(img => img.src)
-      );
-
-      const storyboardImages = storyboardSets.flatMap(set =>
-        set.images.map(img => img.src)
-      );
-
-      const allImages = [...criticalImages, ...characterImages, ...storyboardImages];
-
-      const imagePromises = allImages.map((url) => {
+      const imagePromises = criticalImages.map((url) => {
         return new Promise((resolve) => {
           const img = new Image();
           img.onload = resolve;

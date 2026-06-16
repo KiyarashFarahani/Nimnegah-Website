@@ -31,18 +31,8 @@ export const useFloatingAnimation = (options: FloatingAnimationOptions = {}) => 
     });
   };
 
-  const stopFloating = () => {
-    controls.stop();
-    controls.set({
-      y: 0,
-      x: 0,
-      rotate: 0
-    });
-  };
-
   return {
     controls,
-    startFloating,
-    stopFloating
+    startFloating
   };
 };

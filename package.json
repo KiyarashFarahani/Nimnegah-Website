@@ -13,7 +13,6 @@
     "payload:migrate": "payload migrate --disable-transpile"
   },
   "dependencies": {
-    "@next/font": "^14.2.15",
     "@payloadcms/db-postgres": "^3.85.1",
     "@payloadcms/next": "^3.85.1",
     "@payloadcms/richtext-lexical": "^3.85.1",

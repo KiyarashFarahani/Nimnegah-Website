@@ -10,13 +10,13 @@ interface UseSplashScreenReturn {
 }
 
 export const useSplashScreen = (): UseSplashScreenReturn => {
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    return !sessionStorage.getItem(SPLASH_KEY);
-  });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!isLoading) return;
+    if (sessionStorage.getItem(SPLASH_KEY)) {
+      setIsLoading(false);
+      return;
+    }
 
     const preloadImages = async () => {
       const criticalImages = [
@@ -41,7 +41,7 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
     };
 
     const preloadFonts = async () => {
-      if (typeof window !== 'undefined' && 'fonts' in document) {
+      if ('fonts' in document) {
         try {
           await document.fonts.ready;
         } catch (error) {
@@ -56,10 +56,11 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
         preloadFonts(),
         new Promise(resolve => setTimeout(resolve, 3000))
       ]);
+      setIsLoading(false);
     };
 
     initializeApp();
-  }, [isLoading]);
+  }, []);
 
   const completeLoading = () => {
     sessionStorage.setItem(SPLASH_KEY, '1');

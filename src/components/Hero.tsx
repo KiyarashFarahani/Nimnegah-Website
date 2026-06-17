@@ -43,7 +43,7 @@ const Hero = () => {
           {profileImages.map((num, i) => (
             <motion.div
               key={num}
-              className="absolute inset-0 flex items-center justify-center lg:justify-start pl-0 sm:pl-8 lg:pl-24"
+              className="absolute inset-0 flex items-center justify-center lg:justify-start pl-0 sm:pl-8 lg:pl-24 will-change-transform"
               animate={num !== 3 ? floatingHooks[i].controls : undefined}
             >
               <Image
@@ -51,7 +51,7 @@ const Hero = () => {
                 alt={`Profile ${num}`}
                 width={1200}
                 height={1500}
-                className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto"
+                className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto will-change-transform"
                 sizes="(max-width: 1024px) 90vw, 55vw"
                 priority={num <= 4}
               />

@@ -17,7 +17,7 @@ const Navigation = () => {
       setScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -35,36 +35,26 @@ const Navigation = () => {
   }, [isOpen]);
 
   const scrollToHash = useCallback((hash: string) => {
-    setTimeout(() => {
-      const element = document.querySelector(hash);
-      if (element) {
-        const navHeight = 64;
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - navHeight;
+    const element = document.querySelector(hash);
+    if (element) {
+      const navHeight = 64;
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navHeight;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const lenisInstance = (window as any).lenis as { scrollTo: (position: number, options?: { duration?: number; easing?: (t: number) => number }) => void } | undefined;
-        if (lenisInstance) {
-          lenisInstance.scrollTo(offsetPosition, {
-            duration: 1.2,
-            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-          });
-        } else {
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-
-        setTimeout(() => {
-          const currentPosition = window.pageYOffset;
-          const targetPosition = element.getBoundingClientRect().top + window.pageYOffset - navHeight;
-          if (Math.abs(currentPosition - targetPosition) > 50) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
-          }
-        }, 500);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const lenisInstance = (window as any).lenis as { scrollTo: (position: number, options?: { duration?: number; easing?: (t: number) => number }) => void } | undefined;
+      if (lenisInstance) {
+        lenisInstance.scrollTo(offsetPosition, {
+          duration: 1.2,
+          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        });
+      } else {
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
       }
-    }, 100);
+    }
   }, []);
 
   const navItems = [

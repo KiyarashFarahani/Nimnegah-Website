@@ -13,6 +13,9 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
   const pathname = usePathname();
 
   useEffect(() => {
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile) return;
+
     lenisRef.current = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -39,7 +42,9 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
   // Reset scroll on route change
   useEffect(() => {
     window.scrollTo(0, 0);
-    lenisRef.current?.scrollTo(0, { immediate: true });
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true });
+    }
   }, [pathname]);
 
   return <>{children}</>;

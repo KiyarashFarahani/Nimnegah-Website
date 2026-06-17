@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -10,7 +10,12 @@ export default function LoginPage() {
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    setIsMobile(window.matchMedia('(max-width: 768px)').matches)
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -46,7 +51,7 @@ export default function LoginPage() {
 
       {/* Animated gradient orbs */}
       <motion.div
-        animate={{
+        animate={isMobile ? undefined : {
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
         }}
@@ -54,7 +59,7 @@ export default function LoginPage() {
         className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-cyan-500/10 rounded-full blur-3xl"
       />
       <motion.div
-        animate={{
+        animate={isMobile ? undefined : {
           scale: [1.2, 1, 1.2],
           opacity: [0.2, 0.4, 0.2],
         }}

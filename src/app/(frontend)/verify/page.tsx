@@ -215,6 +215,12 @@ function VerifyForm() {
 }
 
 export default function VerifyPage() {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(window.matchMedia('(max-width: 768px)').matches)
+  }, [])
+
   return (
     <main className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
       {/* Background */}
@@ -222,7 +228,7 @@ export default function VerifyPage() {
 
       {/* Animated gradient orbs */}
       <motion.div
-        animate={{
+        animate={isMobile ? undefined : {
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
         }}
@@ -230,7 +236,7 @@ export default function VerifyPage() {
         className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/10 via-blue-400/10 to-cyan-500/10 rounded-full blur-3xl"
       />
       <motion.div
-        animate={{
+        animate={isMobile ? undefined : {
           scale: [1.2, 1, 1.2],
           opacity: [0.2, 0.4, 0.2],
         }}

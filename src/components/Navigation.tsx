@@ -138,7 +138,7 @@ const Navigation = () => {
             transition={{ delay: 0.6 }}
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.97 }}
-            className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full font-vazir font-medium text-sm transition-all duration-200 shrink-0 ms-auto ${
+            className={`hidden md:flex items-center gap-2 px-5 py-2 rounded-full font-vazir font-medium text-sm transition-all duration-200 shrink-0 ms-auto shadow-[0_0_15px_rgba(59,130,246,0.45)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)] ${
               isTransparent
                 ? 'border border-white/40 text-white hover:bg-white/10'
                 : 'border border-gray-900/20 text-gray-900 hover:bg-gray-900 hover:text-white'
@@ -190,7 +190,7 @@ const Navigation = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: navItems.length * 0.08 }}
-                  className="w-full text-center py-3 px-4 rounded-full font-vazir font-medium text-sm border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-200 min-h-[44px] flex items-center justify-center"
+                  className="w-full text-center py-3 px-4 rounded-full font-vazir font-medium text-sm border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-200 min-h-[44px] flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.45)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)]"
                 >
                   ورود / ثبت‌نام
                 </motion.button>

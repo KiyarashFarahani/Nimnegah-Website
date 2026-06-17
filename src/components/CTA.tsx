@@ -79,7 +79,7 @@ const CTA = () => {
             href="/courses"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300"
+            className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 shadow-[0_0_25px_rgba(59,130,246,0.55)] hover:shadow-[0_0_35px_rgba(59,130,246,0.8)]"
           >
             شروع یادگیری
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -88,7 +88,7 @@ const CTA = () => {
             href="#courses"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/20 text-white font-vazir font-semibold rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+            className="inline-flex items-center gap-2 px-8 py-4 border-2 border-white/20 text-white font-vazir font-semibold rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.45)] hover:shadow-[0_0_30px_rgba(59,130,246,0.7)]"
           >
             مشاهده دوره‌ها
           </motion.a>

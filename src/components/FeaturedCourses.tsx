@@ -141,7 +141,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="group relative"
     >
-      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500">
+      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         {/* Thumbnail area */}
         <div className={`relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
@@ -207,7 +207,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
               href={`/courses/${course.slug}`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300"
+              className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
             >
               مشاهده
               <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
@@ -233,7 +233,7 @@ function HeroCourseCard({ course }: { course: Course }) {
       whileHover={{ y: -6, transition: { duration: 0.3 } }}
       className="group relative"
     >
-      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500">
+      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         <div className="flex flex-col lg:flex-row">
           {/* Thumbnail area - larger for hero */}
           <div className={`relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
@@ -300,7 +300,7 @@ function HeroCourseCard({ course }: { course: Course }) {
                 href={`/courses/${course.slug}`}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-base font-vazir text-white transition-all duration-300"
+                className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-base font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
               >
                 مشاهده دوره
                 <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform duration-300" />
@@ -407,7 +407,7 @@ const FeaturedCourses = () => {
               href="/courses"
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/20 text-white font-vazir font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/20 text-white font-vazir font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.45)] hover:shadow-[0_0_30px_rgba(59,130,246,0.7)]"
             >
               مشاهده همه دوره‌ها
               <ArrowRight size={18} />

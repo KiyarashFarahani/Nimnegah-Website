@@ -142,8 +142,8 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
       className="group relative"
     >
       <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
-        {/* Thumbnail area */}
-        <div className={`relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+        {/* Thumbnail area - clickable */}
+        <a href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
             <img
               src={thumbnailUrl}
@@ -167,7 +167,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
               {levelLabel}
             </div>
           )}
-        </div>
+        </a>
 
         {/* Content */}
         <div className="p-6">
@@ -178,9 +178,11 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
             </span>
           )}
 
-          <h3 className="text-xl font-siavash font-bold text-white mb-3 group-hover:text-blue-300 transition-colors duration-300">
-            {course.title}
-          </h3>
+          <a href={`/courses/${course.slug}`} className="block mb-3">
+            <h3 className="text-xl font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
+              {course.title}
+            </h3>
+          </a>
           <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2">
             {description}
           </p>
@@ -235,8 +237,8 @@ function HeroCourseCard({ course }: { course: Course }) {
     >
       <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         <div className="flex flex-col lg:flex-row">
-          {/* Thumbnail area - larger for hero */}
-          <div className={`relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+          {/* Thumbnail area - clickable, larger for hero */}
+          <a href={`/courses/${course.slug}`} className={`block relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
             {thumbnailUrl ? (
               <img
                 src={thumbnailUrl}
@@ -260,7 +262,7 @@ function HeroCourseCard({ course }: { course: Course }) {
                 {levelLabel}
               </div>
             )}
-          </div>
+          </a>
 
           {/* Content - more spacious for hero */}
           <div className="flex-1 p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
@@ -271,9 +273,11 @@ function HeroCourseCard({ course }: { course: Course }) {
               </span>
             )}
 
-            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-siavash font-bold text-white mb-4 group-hover:text-blue-300 transition-colors duration-300">
-              {course.title}
-            </h3>
+            <a href={`/courses/${course.slug}`} className="block mb-4">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
+                {course.title}
+              </h3>
+            </a>
             <p className="text-base text-gray-400 font-vazir mb-6 leading-relaxed line-clamp-3">
               {description}
             </p>

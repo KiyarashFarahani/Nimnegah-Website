@@ -81,8 +81,8 @@ export default function CourseCard({ course, index }: { course: Course; index: n
       className="group relative h-full flex flex-col"
     >
       <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)] h-full flex flex-col">
-        {/* Thumbnail area */}
-        <div className={`relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+        {/* Thumbnail area - clickable */}
+        <a href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
             <img
               src={thumbnailUrl}
@@ -106,7 +106,7 @@ export default function CourseCard({ course, index }: { course: Course; index: n
               {levelLabel}
             </div>
           )}
-        </div>
+        </a>
 
         {/* Content */}
         <div className="p-6 flex flex-col flex-grow">
@@ -117,9 +117,11 @@ export default function CourseCard({ course, index }: { course: Course; index: n
             </span>
           )}
 
-          <h3 className="text-xl font-siavash font-bold text-white mb-3 group-hover:text-blue-300 transition-colors duration-300">
-            {course.title}
-          </h3>
+          <a href={`/courses/${course.slug}`} className="block mb-3">
+            <h3 className="text-xl font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
+              {course.title}
+            </h3>
+          </a>
           <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2 flex-grow">
             {description}
           </p>

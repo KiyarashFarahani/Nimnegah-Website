@@ -141,9 +141,9 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
     <motion.div
       variants={cardVariants}
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
-      className="group relative"
+      className="group relative h-full flex flex-col"
     >
-      <div className="relative bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
+      <div className="relative bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)] h-full flex flex-col">
         {/* Thumbnail area - clickable */}
         <Link href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
@@ -174,7 +174,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
         </Link>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-6 flex flex-col flex-grow">
           {/* Category name */}
           {categoryName && (
             <span className="inline-block text-xs font-vazir text-blue-300 mb-2">
@@ -187,7 +187,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
               {course.title}
             </h3>
           </Link>
-          <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2">
+          <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2 flex-grow">
             {description}
           </p>
 
@@ -399,7 +399,11 @@ const FeaturedCourses = () => {
             <HeroCourseCard course={courses[0]} />
           ) : (
             courses.map((course, index) => (
-              <CourseCard key={course.id} course={course} index={index} />
+              <div key={course.id} className="flex">
+                <div className="w-full">
+                  <CourseCard course={course} index={index} />
+                </div>
+              </div>
             ))
           )}
         </motion.div>

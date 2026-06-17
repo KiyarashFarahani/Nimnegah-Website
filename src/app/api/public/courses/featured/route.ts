@@ -9,6 +9,12 @@ export async function GET() {
     const courses = await payload.find({
       collection: 'courses',
       depth: 2,
+      where: {
+        status: {
+          equals: 'published',
+        },
+      },
+      limit: 3,
       sort: 'createdAt',
     })
 

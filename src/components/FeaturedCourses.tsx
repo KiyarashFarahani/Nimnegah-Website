@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
 import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
 
@@ -142,14 +143,16 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="group relative"
     >
-      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
+      <div className="relative bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         {/* Thumbnail area - clickable */}
         <Link href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
-            <img
+            <Image
               src={thumbnailUrl}
               alt={course.title}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-all duration-500"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           ) : (
@@ -164,7 +167,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
 
           {/* Level badge */}
           {levelLabel && (
-            <div className="absolute top-4 right-4 px-3 py-1 bg-black/30 backdrop-blur-md rounded-full text-xs font-vazir text-white/90 border border-white/10">
+            <div className="absolute top-4 right-4 px-3 py-1 bg-black/40 rounded-full text-xs font-vazir text-white/90 border border-white/10">
               {levelLabel}
             </div>
           )}
@@ -236,17 +239,19 @@ function HeroCourseCard({ course }: { course: Course }) {
       whileHover={{ y: -6, transition: { duration: 0.3 } }}
       className="group relative"
     >
-      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
+      <div className="relative bg-white/[0.08] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         <div className="flex flex-col lg:flex-row">
           {/* Thumbnail area - clickable, larger for hero */}
           <Link href={`/courses/${course.slug}`} className={`block relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
             {thumbnailUrl ? (
-              <img
-                src={thumbnailUrl}
-                alt={course.title}
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-              />
+            <Image
+              src={thumbnailUrl}
+              alt={course.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 50vw"
+              className="object-cover group-hover:scale-105 transition-all duration-500"
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            />
             ) : (
               <>
                 <div className="absolute -top-12 -right-12 w-48 h-48 bg-white/5 rounded-full" />
@@ -259,7 +264,7 @@ function HeroCourseCard({ course }: { course: Course }) {
 
             {/* Level badge */}
             {levelLabel && (
-              <div className="absolute top-5 right-5 px-4 py-1.5 bg-black/30 backdrop-blur-md rounded-full text-sm font-vazir text-white/90 border border-white/10">
+              <div className="absolute top-5 right-5 px-4 py-1.5 bg-black/40 rounded-full text-sm font-vazir text-white/90 border border-white/10">
                 {levelLabel}
               </div>
             )}

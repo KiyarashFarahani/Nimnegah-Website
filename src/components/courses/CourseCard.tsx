@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
 import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
 
@@ -81,14 +82,16 @@ export default function CourseCard({ course, index }: { course: Course; index: n
       whileHover={{ y: -8, transition: { duration: 0.3 } }}
       className="group relative h-full flex flex-col"
     >
-      <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)] h-full flex flex-col">
+      <div className="relative bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)] h-full flex flex-col">
         {/* Thumbnail area - clickable */}
         <Link href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
-            <img
+            <Image
               src={thumbnailUrl}
               alt={course.title}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-all duration-500"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           ) : (
@@ -103,7 +106,7 @@ export default function CourseCard({ course, index }: { course: Course; index: n
 
           {/* Level badge */}
           {levelLabel && (
-            <div className="absolute top-4 right-4 px-3 py-1 bg-black/30 backdrop-blur-md rounded-full text-xs font-vazir text-white/90 border border-white/10">
+            <div className="absolute top-4 right-4 px-3 py-1 bg-black/40 rounded-full text-xs font-vazir text-white/90 border border-white/10">
               {levelLabel}
             </div>
           )}

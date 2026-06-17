@@ -106,7 +106,7 @@ const AboutAcademy = () => {
                 key={feature.title}
                 variants={itemVariants}
                 whileHover={{ x: -4, transition: { duration: 0.2 } }}
-                className="group flex items-start gap-5 p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
+                className="group flex items-start gap-5 p-6 bg-white/[0.08] border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/[0.12] transition-all duration-300"
               >
                 <div className="flex-shrink-0 w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-white/10 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-all duration-300">
                   <feature.icon size={22} className="text-blue-400" />
@@ -137,7 +137,7 @@ const AboutAcademy = () => {
               key={stat.label}
               variants={itemVariants}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="group text-center p-6 sm:p-8 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/8 transition-all duration-300"
+              className="group text-center p-6 sm:p-8 bg-white/[0.08] border border-white/10 rounded-2xl hover:border-white/20 hover:bg-white/[0.12] transition-all duration-300"
             >
               <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-white/10 mx-auto mb-4 group-hover:from-blue-500/30 group-hover:to-cyan-500/30 transition-all duration-300">
                 <stat.icon size={22} className="text-blue-400" />

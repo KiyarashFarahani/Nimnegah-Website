@@ -1,38 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 const CTA = () => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.matchMedia('(max-width: 768px)').matches);
-  }, []);
   return (
     <section className="relative py-24 sm:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-blue-950 via-blue-900/50 to-blue-950" />
 
-      {/* Animated gradient orbs */}
-      <motion.div
-        animate={isMobile ? undefined : {
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-400/10 rounded-full blur-3xl"
-      />
-      <motion.div
-        animate={isMobile ? undefined : {
-          scale: [1.2, 1, 1.2],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-400/10 rounded-full blur-3xl"
-      />
+      {/* Static gradient orbs */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-400/10 rounded-full blur-3xl" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-blue-500/10 via-cyan-500/10 to-blue-400/10 rounded-full blur-3xl" />
 
       <div className="relative z-10 max-w-4xl mx-auto text-center">
         {/* Sparkle icon */}

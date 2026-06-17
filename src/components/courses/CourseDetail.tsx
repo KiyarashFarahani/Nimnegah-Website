@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Clock,
   BookOpen,
@@ -221,10 +222,13 @@ export default function CourseDetail({ slug }: { slug: string }) {
       {/* Hero Banner */}
       <div className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
         {thumbnailUrl ? (
-          <img
+          <Image
             src={thumbnailUrl}
             alt={course.title}
-            className="absolute inset-0 w-full h-full object-cover"
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
           />
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-cyan-600/20" />
@@ -340,7 +344,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
                 transition={{ duration: 0.5, delay: 0.15 }}
                 className="sticky top-24"
               >
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
+                <div className="bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden">
                   {/* Price header */}
                   <div className="p-6 border-b border-white/5">
                     <div className="flex items-baseline gap-2 mb-4">

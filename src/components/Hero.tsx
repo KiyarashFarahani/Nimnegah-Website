@@ -2,31 +2,15 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useFloatingAnimation } from '@/hooks/useFloatingAnimation';
-import { useEffect } from 'react';
 
 const profileImages = [2, 10, 4, 3, 5, 7, 8, 9];
 
+const floatClasses = [
+  'hero-float-1', 'hero-float-2', 'hero-float-3', '',
+  'hero-float-4', 'hero-float-5', 'hero-float-6', 'hero-float-7',
+];
+
 const Hero = () => {
-  const img2 = useFloatingAnimation({ duration: 5, intensity: 25, delay: 0 });
-  const img3 = useFloatingAnimation({ duration: 5, intensity: 25, delay: 0 });
-  const img4 = useFloatingAnimation({ duration: 6, intensity: 28, delay: 0.2 });
-  const img5 = useFloatingAnimation({ duration: 5.5, intensity: 26, delay: 0.4 });
-  const img7 = useFloatingAnimation({ duration: 5, intensity: 30, delay: 0.8 });
-  const img8 = useFloatingAnimation({ duration: 6, intensity: 25, delay: 1.0 });
-  const img9 = useFloatingAnimation({ duration: 5.5, intensity: 28, delay: 0.3 });
-  const img10 = useFloatingAnimation({ duration: 6, intensity: 26, delay: 0.5 });
-
-  const floatingHooks = [img2, img3, img4, img5, img7, img8, img9, img10];
-
-  useEffect(() => {
-    floatingHooks.forEach((hook, i) => {
-      if (profileImages[i] !== 3) {
-        hook.startFloating();
-      }
-    });
-  }, []);
-
   return (
     <section id="home" dir="ltr" className="relative w-full overflow-hidden" style={{ minHeight: '100vh' }}>
       {/* Background with gradient overlay */}
@@ -41,21 +25,20 @@ const Hero = () => {
         {/* Image stack */}
         <div className="relative w-full lg:w-[55%] h-[60vh] sm:h-[70vh] lg:h-screen lg:sticky lg:top-0 overflow-hidden flex items-center justify-center lg:justify-start lg:pl-24">
           {profileImages.map((num, i) => (
-            <motion.div
+            <div
               key={num}
-              className="absolute inset-0 flex items-center justify-center lg:justify-start pl-0 sm:pl-8 lg:pl-24 will-change-transform"
-              animate={num !== 3 ? floatingHooks[i].controls : undefined}
+              className={`absolute inset-0 flex items-center justify-center lg:justify-start pl-0 sm:pl-8 lg:pl-24 ${floatClasses[i]}`}
             >
               <Image
                 src={`/images/profile/${num}.png`}
                 alt={`Profile ${num}`}
                 width={1200}
                 height={1500}
-                className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto will-change-transform"
+                className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto"
                 sizes="(max-width: 1024px) 90vw, 55vw"
-                priority={num <= 4}
+                priority={i < 2}
               />
-            </motion.div>
+            </div>
           ))}
         </div>
 

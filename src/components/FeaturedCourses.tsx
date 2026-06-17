@@ -328,7 +328,7 @@ const FeaturedCourses = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/courses/featured')
+    fetch('/api/public/courses/featured')
       .then((res) => res.json())
       .then((data) => setCourses(data.courses || []))
       .catch(() => setCourses([]))

@@ -119,8 +119,8 @@ export default function CourseCatalog() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/courses').then((res) => res.json()),
-      fetch('/api/categories').then((res) => res.json()),
+      fetch('/api/public/courses').then((res) => res.json()),
+      fetch('/api/public/categories').then((res) => res.json()),
     ])
       .then(([coursesData, categoriesData]) => {
         setCourses(coursesData.courses || []);

@@ -1,3 +1,4 @@
+import { customFont, vazirmatn } from "@/lib/fonts";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -10,12 +11,16 @@ export default function FrontendLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SplashProvider>
-      <SmoothScrollProvider>
-        <Navigation />
-        <PageTransition>{children}</PageTransition>
-        <Footer />
-      </SmoothScrollProvider>
-    </SplashProvider>
+    <html lang="fa" dir="rtl" className={`${customFont.variable} ${vazirmatn.variable}`}>
+      <body className="antialiased">
+        <SplashProvider>
+          <SmoothScrollProvider>
+            <Navigation />
+            <PageTransition>{children}</PageTransition>
+            <Footer />
+          </SmoothScrollProvider>
+        </SplashProvider>
+      </body>
+    </html>
   );
 }

@@ -189,7 +189,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
   const [expanded, setExpanded] = useState(true);
 
   useEffect(() => {
-    fetch(`/api/courses/${slug}`)
+    fetch(`/api/public/courses/${slug}`)
       .then((res) => {
         if (!res.ok) throw new Error('not found');
         return res.json();

@@ -9,11 +9,6 @@ export default function PageTransition({ children }: { children: React.ReactNode
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const lenis = (window as any).lenis as { scrollTo: (pos: number) => void } | undefined;
-    if (lenis) {
-      lenis.scrollTo(0);
-    }
   }, [pathname]);
 
   return (

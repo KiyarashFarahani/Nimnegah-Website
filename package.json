@@ -18,7 +18,6 @@
     "@payloadcms/richtext-lexical": "^3.85.1",
     "framer-motion": "^12.23.12",
     "ioredis": "^5.11.1",
-    "lenis": "^1.3.11",
     "lucide-react": "^0.542.0",
     "next": "^15.4.11",
     "payload": "^3.85.1",

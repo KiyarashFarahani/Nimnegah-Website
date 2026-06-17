@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Clock, ArrowRight } from 'lucide-react';
 import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
 
@@ -143,7 +144,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
     >
       <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         {/* Thumbnail area - clickable */}
-        <a href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+        <Link href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
             <img
               src={thumbnailUrl}
@@ -167,7 +168,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
               {levelLabel}
             </div>
           )}
-        </a>
+        </Link>
 
         {/* Content */}
         <div className="p-6">
@@ -178,11 +179,11 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
             </span>
           )}
 
-          <a href={`/courses/${course.slug}`} className="block mb-3">
+          <Link href={`/courses/${course.slug}`} className="block mb-3">
             <h3 className="text-xl font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
               {course.title}
             </h3>
-          </a>
+          </Link>
           <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2">
             {description}
           </p>
@@ -205,15 +206,15 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
               </span>
               <span className="text-xs text-gray-500 font-vazir">تومان</span>
             </div>
-            <motion.a
-              href={`/courses/${course.slug}`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
-            >
-              مشاهده
-              <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-            </motion.a>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href={`/courses/${course.slug}`}
+                className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
+              >
+                مشاهده
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -238,7 +239,7 @@ function HeroCourseCard({ course }: { course: Course }) {
       <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         <div className="flex flex-col lg:flex-row">
           {/* Thumbnail area - clickable, larger for hero */}
-          <a href={`/courses/${course.slug}`} className={`block relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+          <Link href={`/courses/${course.slug}`} className={`block relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
             {thumbnailUrl ? (
               <img
                 src={thumbnailUrl}
@@ -262,7 +263,7 @@ function HeroCourseCard({ course }: { course: Course }) {
                 {levelLabel}
               </div>
             )}
-          </a>
+          </Link>
 
           {/* Content - more spacious for hero */}
           <div className="flex-1 p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
@@ -273,11 +274,11 @@ function HeroCourseCard({ course }: { course: Course }) {
               </span>
             )}
 
-            <a href={`/courses/${course.slug}`} className="block mb-4">
+            <Link href={`/courses/${course.slug}`} className="block mb-4">
               <h3 className="text-2xl sm:text-3xl lg:text-4xl font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
                 {course.title}
               </h3>
-            </a>
+            </Link>
             <p className="text-base text-gray-400 font-vazir mb-6 leading-relaxed line-clamp-3">
               {description}
             </p>
@@ -300,15 +301,15 @@ function HeroCourseCard({ course }: { course: Course }) {
                 </span>
                 <span className="text-sm text-gray-500 font-vazir">تومان</span>
               </div>
-              <motion.a
-                href={`/courses/${course.slug}`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-base font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
-              >
-                مشاهده دوره
-                <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-              </motion.a>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href={`/courses/${course.slug}`}
+                  className="flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-base font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
+                >
+                  مشاهده دوره
+                  <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+                </Link>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -407,15 +408,15 @@ const FeaturedCourses = () => {
             viewport={{ once: true }}
             className="text-center mt-12"
           >
-            <motion.a
-              href="/courses"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/20 text-white font-vazir font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.45)] hover:shadow-[0_0_30px_rgba(59,130,246,0.7)]"
-            >
-              مشاهده همه دوره‌ها
-              <ArrowRight size={18} />
-            </motion.a>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+              <Link
+                href="/courses"
+                className="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-white/20 text-white font-vazir font-medium rounded-full hover:border-white/40 hover:bg-white/5 transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.45)] hover:shadow-[0_0_30px_rgba(59,130,246,0.7)]"
+              >
+                مشاهده همه دوره‌ها
+                <ArrowRight size={18} />
+              </Link>
+            </motion.div>
           </motion.div>
         )}
       </div>

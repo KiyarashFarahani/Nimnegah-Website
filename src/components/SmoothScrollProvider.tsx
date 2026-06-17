@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 
 interface SmoothScrollProviderProps {
@@ -9,6 +10,7 @@ interface SmoothScrollProviderProps {
 
 export default function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
   const lenisRef = useRef<Lenis | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     lenisRef.current = new Lenis({
@@ -33,6 +35,12 @@ export default function SmoothScrollProvider({ children }: SmoothScrollProviderP
       (window as any).lenis = null;
     };
   }, []);
+
+  // Reset scroll on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    lenisRef.current?.scrollTo(0, { immediate: true });
+  }, [pathname]);
 
   return <>{children}</>;
 }

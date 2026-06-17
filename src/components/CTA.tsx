@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 const CTA = () => {
@@ -75,15 +76,15 @@ const CTA = () => {
           viewport={{ once: true }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <motion.a
-            href="/courses"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 shadow-[0_0_25px_rgba(59,130,246,0.55)] hover:shadow-[0_0_35px_rgba(59,130,246,0.8)]"
-          >
-            شروع یادگیری
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
-          </motion.a>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              href="/courses"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 shadow-[0_0_25px_rgba(59,130,246,0.55)] hover:shadow-[0_0_35px_rgba(59,130,246,0.8)]"
+            >
+              شروع یادگیری
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
+            </Link>
+          </motion.div>
           <motion.a
             href="#courses"
             whileHover={{ scale: 1.05 }}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
   Clock,
   BookOpen,
@@ -13,8 +14,6 @@ import {
   Tag,
   CheckCircle2,
 } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
 
 type Lesson = {
@@ -86,7 +85,6 @@ function totalLessonsDuration(lessons: Lesson[]): number {
 function LoadingSkeleton() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-950">
-      <Navigation />
       <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Hero skeleton */}
@@ -112,7 +110,6 @@ function LoadingSkeleton() {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
@@ -121,7 +118,6 @@ function LoadingSkeleton() {
 function NotFoundState() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-950">
-      <Navigation />
       <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center py-24">
           <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -129,18 +125,17 @@ function NotFoundState() {
           </div>
           <h1 className="text-3xl font-siavash font-bold text-white mb-4">دوره یافت نشد</h1>
           <p className="text-gray-400 font-vazir mb-8">متأسفانه این دوره وجود ندارد یا هنوز منتشر نشده</p>
-          <motion.a
-            href="/courses"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-white font-vazir transition-all duration-300"
-          >
-            بازگشت به دوره‌ها
-            <ArrowRight size={16} />
-          </motion.a>
+          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+            <Link
+              href="/courses"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-white font-vazir transition-all duration-300"
+            >
+              بازگشت به دوره‌ها
+              <ArrowRight size={16} />
+            </Link>
+          </motion.div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }
@@ -222,7 +217,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-950">
-      <Navigation />
 
       {/* Hero Banner */}
       <div className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">
@@ -439,8 +433,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Clock, ArrowRight } from 'lucide-react';
 import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
 
@@ -82,7 +83,7 @@ export default function CourseCard({ course, index }: { course: Course; index: n
     >
       <div className="relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)] h-full flex flex-col">
         {/* Thumbnail area - clickable */}
-        <a href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+        <Link href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
             <img
               src={thumbnailUrl}
@@ -106,7 +107,7 @@ export default function CourseCard({ course, index }: { course: Course; index: n
               {levelLabel}
             </div>
           )}
-        </a>
+        </Link>
 
         {/* Content */}
         <div className="p-6 flex flex-col flex-grow">
@@ -117,11 +118,11 @@ export default function CourseCard({ course, index }: { course: Course; index: n
             </span>
           )}
 
-          <a href={`/courses/${course.slug}`} className="block mb-3">
+          <Link href={`/courses/${course.slug}`} className="block mb-3">
             <h3 className="text-xl font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300">
               {course.title}
             </h3>
-          </a>
+          </Link>
           <p className="text-sm text-gray-400 font-vazir mb-5 leading-relaxed line-clamp-2 flex-grow">
             {description}
           </p>
@@ -150,15 +151,15 @@ export default function CourseCard({ course, index }: { course: Course; index: n
               </span>
               <span className="text-xs text-gray-500 font-vazir">تومان</span>
             </div>
-            <motion.a
-              href={`/courses/${course.slug}`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
-            >
-              مشاهده
-              <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-            </motion.a>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                href={`/courses/${course.slug}`}
+                className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
+              >
+                مشاهده
+                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+              </Link>
+            </motion.div>
           </div>
         </div>
       </div>

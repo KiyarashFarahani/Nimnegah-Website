@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Heart, Instagram, Send } from 'lucide-react';
 
 const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
@@ -59,12 +60,21 @@ const Footer = () => {
             <ul className="space-y-2.5">
               {FOOTER_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
-                    href={link.href}
-                    className="text-gray-500 hover:text-white font-vazir text-sm transition-colors duration-200"
-                  >
-                    {link.label}
-                  </a>
+                  {link.href.startsWith('#') ? (
+                    <a
+                      href={link.href}
+                      className="text-gray-500 hover:text-white font-vazir text-sm transition-colors duration-200"
+                    >
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={link.href}
+                      className="text-gray-500 hover:text-white font-vazir text-sm transition-colors duration-200"
+                    >
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

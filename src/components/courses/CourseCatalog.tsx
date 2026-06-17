@@ -3,8 +3,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter, X, BookOpen, Clock } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
 import CourseCard from './CourseCard';
 import type { Course } from './CourseCard';
 
@@ -162,7 +160,6 @@ export default function CourseCatalog() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-950">
-      <Navigation />
 
       {/* Hero Section - Compact */}
       <div className="pt-20 pb-6 px-4 sm:px-6 lg:px-8">
@@ -353,8 +350,6 @@ export default function CourseCatalog() {
           )}
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

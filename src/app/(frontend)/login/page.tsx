@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Phone, ArrowLeft, Loader2 } from 'lucide-react'
 
@@ -172,13 +173,13 @@ export default function LoginPage() {
           transition={{ duration: 0.5, delay: 0.7 }}
           className="mt-6 text-center"
         >
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-300 font-vazir transition-colors duration-300"
           >
             بازگشت به صفحه اصلی
             <ArrowLeft size={14} />
-          </a>
+          </Link>
         </motion.div>
       </motion.div>
     </main>

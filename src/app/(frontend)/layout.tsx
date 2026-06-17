@@ -2,6 +2,7 @@ import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import { SplashProvider } from "@/contexts/SplashContext";
 
 export default function FrontendLayout({
   children,
@@ -9,10 +10,12 @@ export default function FrontendLayout({
   children: React.ReactNode;
 }) {
   return (
-    <SmoothScrollProvider>
-      <Navigation />
-      <PageTransition>{children}</PageTransition>
-      <Footer />
-    </SmoothScrollProvider>
+    <SplashProvider>
+      <SmoothScrollProvider>
+        <Navigation />
+        <PageTransition>{children}</PageTransition>
+        <Footer />
+      </SmoothScrollProvider>
+    </SplashProvider>
   );
 }

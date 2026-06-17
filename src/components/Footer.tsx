@@ -17,7 +17,7 @@ const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?
 
 const FOOTER_LINKS = [
   { label: 'خانه', href: '#home' },
-  { label: 'دوره‌ها', href: '#courses' },
+  { label: 'دوره‌ها', href: '/courses' },
   { label: 'درباره ما', href: '#about' },
   { label: 'ورود', href: '/login' },
 ];

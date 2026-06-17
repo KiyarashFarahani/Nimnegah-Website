@@ -75,7 +75,7 @@ const Navigation = () => {
 
   const navItems = [
     { name: 'صفحه اصلی', href: '#home' },
-    { name: 'دوره‌ها', href: '#courses' },
+    { name: 'دوره‌ها', href: '/courses' },
     { name: 'درباره ما', href: '#about' },
   ];
 

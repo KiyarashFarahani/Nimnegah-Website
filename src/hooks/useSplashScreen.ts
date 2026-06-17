@@ -2,15 +2,22 @@
 
 import { useState, useEffect } from 'react';
 
+const SPLASH_KEY = 'splash-shown';
+
 interface UseSplashScreenReturn {
   isLoading: boolean;
   completeLoading: () => void;
 }
 
 export const useSplashScreen = (): UseSplashScreenReturn => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return !sessionStorage.getItem(SPLASH_KEY);
+  });
 
   useEffect(() => {
+    if (!isLoading) return;
+
     const preloadImages = async () => {
       const criticalImages = [
         '/images/profile/photo.jpg',
@@ -52,9 +59,10 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
     };
 
     initializeApp();
-  }, []);
+  }, [isLoading]);
 
   const completeLoading = () => {
+    sessionStorage.setItem(SPLASH_KEY, '1');
     setIsLoading(false);
   };
 

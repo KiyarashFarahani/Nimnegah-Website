@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useSplashScreen } from '@/hooks/useSplashScreen';
 import SplashScreen from './SplashScreen';
 import { AnimatePresence } from 'framer-motion';
@@ -11,7 +12,14 @@ import CTA from './CTA';
 
 export default function AppWrapper() {
   const { isLoading, completeLoading } = useSplashScreen();
-  const { completeSplash } = useSplash();
+  const { splashDone, completeSplash } = useSplash();
+
+  // If splash was skipped (already shown this session), complete immediately
+  useEffect(() => {
+    if (!isLoading && !splashDone) {
+      completeSplash();
+    }
+  }, [isLoading, splashDone, completeSplash]);
 
   const handleSplashComplete = () => {
     completeLoading();

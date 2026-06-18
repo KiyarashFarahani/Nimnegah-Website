@@ -15,7 +15,7 @@ import {
   Tag,
   CheckCircle2,
 } from 'lucide-react';
-import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
+import type { SerializedEditorState } from 'lexical';
 
 type Lesson = {
   id: string | number;
@@ -30,7 +30,7 @@ type Course = {
   id: string | number;
   title: string;
   slug: string;
-  description?: SerializedLexicalState;
+  description?: SerializedEditorState;
   price: number;
   duration?: number;
   level?: string;
@@ -63,7 +63,7 @@ function formatLessonDuration(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`;
 }
 
-function getPlainText(richText?: SerializedLexicalState): string {
+function getPlainText(richText?: SerializedEditorState): string {
   if (!richText?.root?.children) return '';
   type LexicalNode = { type?: string; text?: string; children?: LexicalNode[] };
   const extractText = (nodes: LexicalNode[]): string => {

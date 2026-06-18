@@ -4,13 +4,21 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LayoutDashboard } from 'lucide-react';
 import { useSplash } from '@/contexts/SplashContext';
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { splashDone } = useSplash();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then((res) => res.json())
+      .then((data) => setIsLoggedIn(!!data.user))
+      .catch(() => setIsLoggedIn(false));
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -121,7 +129,7 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Desktop Login Button — left side in RTL */}
+          {/* Desktop Login / Dashboard Button — left side in RTL */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -131,14 +139,21 @@ const Navigation = () => {
             className="hidden md:flex ms-auto"
           >
             <Link
-              href="/login"
+              href={isLoggedIn ? '/dashboard' : '/login'}
               className={`flex items-center gap-2 px-5 py-2 rounded-full font-vazir font-medium text-sm transition-all duration-200 shrink-0 shadow-[0_0_15px_rgba(59,130,246,0.45)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)] ${
                 isTransparent
                   ? 'border border-white/40 text-white hover:bg-white/10'
                   : 'border border-gray-900/20 text-gray-900 hover:bg-gray-900 hover:text-white'
               }`}
             >
-              ورود / ثبت‌نام
+              {isLoggedIn ? (
+                <>
+                  <LayoutDashboard size={16} />
+                  داشبورد
+                </>
+              ) : (
+                'ورود / ثبت‌نام'
+              )}
             </Link>
           </motion.div>
 
@@ -202,11 +217,11 @@ const Navigation = () => {
                   transition={{ delay: navItems.length * 0.08 }}
                 >
                   <Link
-                    href="/login"
+                    href={isLoggedIn ? '/dashboard' : '/login'}
                     onClick={() => setIsOpen(false)}
                     className="w-full text-center py-3 px-4 rounded-full font-vazir font-medium text-sm border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-200 min-h-[44px] flex items-center justify-center shadow-[0_0_15px_rgba(59,130,246,0.45)] hover:shadow-[0_0_25px_rgba(59,130,246,0.7)]"
                   >
-                    ورود / ثبت‌نام
+                    {isLoggedIn ? 'داشبورد' : 'ورود / ثبت‌نام'}
                   </Link>
                 </motion.div>
               </div>

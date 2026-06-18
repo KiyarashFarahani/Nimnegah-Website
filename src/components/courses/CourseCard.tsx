@@ -4,13 +4,13 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
-import type { SerializedLexicalState } from '@payloadcms/richtext-lexical';
+import type { SerializedEditorState } from 'lexical';
 
 export type Course = {
   id: string | number;
   title: string;
   slug: string;
-  description?: SerializedLexicalState;
+  description?: SerializedEditorState;
   price: number;
   duration?: number;
   level?: string;
@@ -50,7 +50,7 @@ function formatDuration(minutes: number): string {
   return `${minutes} دقیقه`;
 }
 
-function getPlainText(richText?: SerializedLexicalState): string {
+function getPlainText(richText?: SerializedEditorState): string {
   if (!richText?.root?.children) return '';
   type LexicalNode = { type?: string; text?: string; children?: LexicalNode[] };
   const extractText = (nodes: LexicalNode[]): string => {

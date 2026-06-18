@@ -4,6 +4,20 @@ import crypto from 'crypto'
 export const Users: CollectionConfig = {
   slug: 'users',
   auth: true,
+  access: {
+    read: ({ req: { user } }) => {
+      if (!user) return false
+      if (user.role === 'admin') return true
+      return { id: { equals: user.id } }
+    },
+    update: ({ req: { user } }) => {
+      if (!user) return false
+      if (user.role === 'admin') return true
+      return { id: { equals: user.id } }
+    },
+    create: () => false,
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   hooks: {
     beforeValidate: [
       ({ data, operation }) => {
@@ -24,6 +38,9 @@ export const Users: CollectionConfig = {
       required: true,
       unique: true,
       label: 'Phone Number',
+      access: {
+        update: ({ req: { user } }) => user?.role === 'admin',
+      },
     },
     {
       name: 'name',
@@ -39,6 +56,9 @@ export const Users: CollectionConfig = {
         { label: 'Student', value: 'student' },
       ],
       required: true,
+      access: {
+        update: ({ req: { user } }) => user?.role === 'admin',
+      },
     },
     {
       name: 'avatar',

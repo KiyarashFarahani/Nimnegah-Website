@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getOTP, deleteOTP } from '@/lib/redis'
-import { getPayload, jwtSign, getFieldsToSign, generatePayloadCookie } from 'payload'
+import { getPayload, jwtSign, getFieldsToSign } from 'payload'
 import config from '@payload-config'
 
 export async function POST(request: Request) {
@@ -54,9 +54,11 @@ export async function POST(request: Request) {
 
     const { token } = await jwtSign({
       fieldsToSign,
-      secret: process.env.JWT_SECRET!,
+      secret: process.env.PAYLOAD_SECRET!,
       tokenExpiration: 60 * 60 * 24 * 7,
     })
+
+    const cookieName = `${payload.config.cookiePrefix ?? 'payload'}-token`
 
     const response = NextResponse.json({
       success: true,
@@ -64,13 +66,13 @@ export async function POST(request: Request) {
       token,
     })
 
-    const cookie = generatePayloadCookie({
-      collectionAuthConfig: collectionConfig.auth,
-      cookiePrefix: payload.config.cookiePrefix ?? 'payload',
-      token,
+    response.cookies.set(cookieName, token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     })
-
-    response.headers.set('Set-Cookie', cookie)
 
     return response
   } catch (error: unknown) {

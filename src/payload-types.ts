@@ -271,6 +271,16 @@ export interface Enrollment {
   progress?: number | null;
   enrolledAt?: string | null;
   lastAccessedAt?: string | null;
+  /**
+   * Lessons the user has completed
+   */
+  completedLessons?:
+    | {
+        lessonId: number;
+        completedAt?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -462,6 +472,13 @@ export interface EnrollmentsSelect<T extends boolean = true> {
   progress?: T;
   enrolledAt?: T;
   lastAccessedAt?: T;
+  completedLessons?:
+    | T
+    | {
+        lessonId?: T;
+        completedAt?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

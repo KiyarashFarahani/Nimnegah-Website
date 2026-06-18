@@ -40,5 +40,25 @@ export const Enrollments: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'completedLessons',
+      type: 'array',
+      defaultValue: [],
+      admin: {
+        position: 'sidebar',
+        description: 'Lessons the user has completed',
+      },
+      fields: [
+        {
+          name: 'lessonId',
+          type: 'number',
+          required: true,
+        },
+        {
+          name: 'completedAt',
+          type: 'date',
+        },
+      ],
+    },
   ],
 }

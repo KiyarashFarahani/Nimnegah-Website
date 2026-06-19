@@ -5,6 +5,16 @@ export const Enrollments: CollectionConfig = {
   admin: {
     useAsTitle: 'id',
   },
+  access: {
+    read: ({ req: { user } }) => {
+      if (!user) return false
+      if (user.role === 'admin') return true
+      return { user: { equals: user.id } }
+    },
+    create: () => false,
+    update: () => false,
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   fields: [
     {
       name: 'user',

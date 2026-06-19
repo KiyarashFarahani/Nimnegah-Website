@@ -14,8 +14,8 @@ export async function POST(request: Request) {
     const payload = await getPayload({ config })
     const { courseId } = await request.json()
 
-    if (!courseId) {
-      return NextResponse.json({ error: 'courseId is required' }, { status: 400 })
+    if (!courseId || typeof courseId !== 'number') {
+      return NextResponse.json({ error: 'Invalid courseId' }, { status: 400 })
     }
 
     const course = await payload.findByID({
@@ -29,6 +29,10 @@ export async function POST(request: Request) {
 
     if (course.status !== 'published') {
       return NextResponse.json({ error: 'Course is not available' }, { status: 400 })
+    }
+
+    if (typeof course.price !== 'number' || course.price <= 0) {
+      return NextResponse.json({ error: 'Invalid course price' }, { status: 400 })
     }
 
     const existingEnrollment = await payload.find({
@@ -52,6 +56,7 @@ export async function POST(request: Request) {
     const order = await payload.create({
       collection: 'orders',
       draft: false,
+      overrideAccess: true,
       data: {
         user: auth.user.id,
         course: course.id,
@@ -75,6 +80,7 @@ export async function POST(request: Request) {
         collection: 'orders',
         id: order.id,
         draft: false,
+        overrideAccess: true,
         data: { status: 'failed' },
       })
       return NextResponse.json({ error: payment.error }, { status: 500 })
@@ -84,6 +90,7 @@ export async function POST(request: Request) {
       collection: 'orders',
       id: order.id,
       draft: false,
+      overrideAccess: true,
       data: { authority: payment.authority },
     })
 

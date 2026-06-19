@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { verifyPayment } from '@/lib/zarinpal'
+import { authenticateRequest } from '@/lib/auth'
 
 export async function GET(request: Request) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL!
@@ -43,6 +44,16 @@ export async function GET(request: Request) {
       )
     }
 
+    const auth = await authenticateRequest(request)
+    if (auth.success) {
+      const orderUserId = typeof order.user === 'object' ? order.user.id : order.user
+      if (orderUserId !== auth.user.id) {
+        return NextResponse.redirect(
+          new URL('/payment/failed?reason=unauthorized', appUrl),
+        )
+      }
+    }
+
     const courseId = typeof order.course === 'object' ? order.course.id : order.course
     const userId = typeof order.user === 'object' ? order.user.id : order.user
 
@@ -53,6 +64,7 @@ export async function GET(request: Request) {
         collection: 'orders',
         id: order.id,
         draft: false,
+        overrideAccess: true,
         data: {
           status: 'completed',
           zarinpalRefId: String(result.refId),
@@ -74,6 +86,7 @@ export async function GET(request: Request) {
         await payload.create({
           collection: 'enrollments',
           draft: false,
+          overrideAccess: true,
           data: {
             user: userId,
             course: courseId,
@@ -99,6 +112,7 @@ export async function GET(request: Request) {
         collection: 'orders',
         id: order.id,
         draft: false,
+        overrideAccess: true,
         data: { status: 'failed' },
       })
 

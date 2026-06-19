@@ -61,6 +61,7 @@ export async function POST(request: Request) {
     const updated = await payload.update({
       collection: 'enrollments',
       id: enrollmentId,
+      overrideAccess: true,
       data: {
         completedLessons,
         progress,

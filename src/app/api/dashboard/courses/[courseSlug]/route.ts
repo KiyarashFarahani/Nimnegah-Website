@@ -1,19 +1,20 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { authenticateRequest } from '@/lib/auth'
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ courseSlug: string }> }
 ) {
   try {
+    const auth = await authenticateRequest(request)
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
+    }
+
     const { courseSlug } = await params
     const payload = await getPayload({ config })
-
-    const authResult = await payload.auth({ headers: request.headers })
-    if (!authResult.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
 
     const courses = await payload.find({
       collection: 'courses',
@@ -33,7 +34,7 @@ export async function GET(
     const enrollments = await payload.find({
       collection: 'enrollments',
       where: {
-        user: { equals: authResult.user.id },
+        user: { equals: auth.user.id },
         course: { equals: course.id },
       },
       limit: 1,

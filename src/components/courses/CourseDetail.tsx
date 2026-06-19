@@ -14,6 +14,7 @@ import {
   ArrowRight,
   Tag,
   CheckCircle2,
+  Loader2,
 } from 'lucide-react';
 import type { SerializedEditorState } from 'lexical';
 
@@ -187,24 +188,74 @@ export default function CourseDetail({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [expanded, setExpanded] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/public/courses/${slug}`)
-      .then((res) => {
-        if (!res.ok) throw new Error('not found');
-        return res.json();
-      })
-      .then((data) => {
-        if (!data.course) {
+    Promise.all([
+      fetch(`/api/public/courses/${slug}`),
+      fetch('/api/auth/me'),
+    ])
+      .then(async ([courseRes, authRes]) => {
+        if (!courseRes.ok) throw new Error('not found');
+        const courseData = await courseRes.json();
+        const authData = await authRes.json();
+
+        if (!courseData.course) {
           setNotFound(true);
           return;
         }
-        setCourse(data.course);
-        setLessons(data.lessons || []);
+
+        setCourse(courseData.course);
+        setLessons(courseData.lessons || []);
+        setIsLoggedIn(!!authData.user);
+        setIsEnrolled(courseData.isEnrolled || false);
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [slug]);
+
+  async function handlePurchase() {
+    if (!isLoggedIn) {
+      window.location.href = `/login?redirect=${encodeURIComponent(`/courses/${slug}`)}`;
+      return;
+    }
+
+    if (isEnrolled) {
+      window.location.href = `/dashboard/learn/${slug}`;
+      return;
+    }
+
+    setPurchasing(true);
+    try {
+      const res = await fetch('/api/payment/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ courseId: course?.id }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (res.status === 409) {
+          setIsEnrolled(true);
+          return;
+        }
+        alert(data.error || 'خطا در ایجاد پرداخت');
+        return;
+      }
+
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      }
+    } catch {
+      alert('خطا در ارتباط با سرور');
+    } finally {
+      setPurchasing(false);
+    }
+  }
 
   if (loading) return <LoadingSkeleton />;
   if (notFound || !course) return <NotFoundState />;
@@ -356,10 +407,31 @@ export default function CourseDetail({ slug }: { slug: string }) {
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="w-full py-3.5 bg-gradient-to-l from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 rounded-xl text-white font-vazir font-medium text-sm transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.65)] flex items-center justify-center gap-2"
+                      onClick={handlePurchase}
+                      disabled={purchasing}
+                      className="w-full py-3.5 bg-gradient-to-l from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 rounded-xl text-white font-vazir font-medium text-sm transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.65)] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      خرید دوره
-                      <ArrowRight size={16} />
+                      {purchasing ? (
+                        <>
+                          <Loader2 size={16} className="animate-spin" />
+                          در حال انتقال...
+                        </>
+                      ) : isEnrolled ? (
+                        <>
+                          مشاهده دوره در داشبورد
+                          <ArrowRight size={16} />
+                        </>
+                      ) : !isLoggedIn ? (
+                        <>
+                          ورود برای خرید
+                          <ArrowRight size={16} />
+                        </>
+                      ) : (
+                        <>
+                          خرید دوره
+                          <ArrowRight size={16} />
+                        </>
+                      )}
                     </motion.button>
                   </div>
 

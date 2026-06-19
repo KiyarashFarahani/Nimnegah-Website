@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { authenticateRequest } from '@/lib/auth'
 
 export async function POST(request: Request) {
   try {
-    const payload = await getPayload({ config })
-
-    const authResult = await payload.auth({ headers: request.headers })
-    if (!authResult.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const auth = await authenticateRequest(request)
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
     }
 
+    const payload = await getPayload({ config })
     const { enrollmentId, lessonId, completed } = await request.json()
 
     if (!enrollmentId || !lessonId) {
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     }
 
     const userId = typeof enrollment.user === 'object' ? enrollment.user.id : enrollment.user
-    if (userId !== authResult.user.id) {
+    if (userId !== auth.user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

@@ -1,28 +1,22 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { cookies } from 'next/headers'
 import { initializePayment } from '@/lib/zarinpal'
+import { authenticateRequest } from '@/lib/auth'
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('payload-token')?.value
-
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const auth = await authenticateRequest(request)
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
     }
 
     const payload = await getPayload({ config })
-    const authResult = await payload.auth({
-      headers: new Headers({ authorization: `Bearer ${token}` }),
-    })
-
-    if (!authResult.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
     const { courseId } = await request.json()
+
+    if (!courseId) {
+      return NextResponse.json({ error: 'courseId is required' }, { status: 400 })
+    }
 
     const course = await payload.findByID({
       collection: 'courses',
@@ -33,11 +27,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Course not found' }, { status: 404 })
     }
 
+    if (course.status !== 'published') {
+      return NextResponse.json({ error: 'Course is not available' }, { status: 400 })
+    }
+
+    const existingEnrollment = await payload.find({
+      collection: 'enrollments',
+      where: {
+        and: [
+          { user: { equals: auth.user.id } },
+          { course: { equals: course.id } },
+        ],
+      },
+      limit: 1,
+    })
+
+    if (existingEnrollment.docs.length > 0) {
+      return NextResponse.json(
+        { error: 'You are already enrolled in this course' },
+        { status: 409 },
+      )
+    }
+
     const order = await payload.create({
       collection: 'orders',
       draft: false,
       data: {
-        user: authResult.user.id,
+        user: auth.user.id,
         course: course.id,
         amount: course.price,
         status: 'pending',
@@ -47,9 +63,20 @@ export async function POST(request: Request) {
     const payment = await initializePayment(
       course.price,
       `خرید دوره: ${course.title}`,
+      {
+        mobile: auth.user.phone,
+        email: `${auth.user.phone}@nimnegah.local`,
+        orderId: String(order.id),
+      },
     )
 
     if (!payment.success) {
+      await payload.update({
+        collection: 'orders',
+        id: order.id,
+        draft: false,
+        data: { status: 'failed' },
+      })
       return NextResponse.json({ error: payment.error }, { status: 500 })
     }
 

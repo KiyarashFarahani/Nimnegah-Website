@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Phone, ArrowLeft, Loader2 } from 'lucide-react'
@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirect = searchParams.get('redirect') || '/dashboard'
 
   useEffect(() => {
     setIsMobile(window.matchMedia('(max-width: 768px)').matches)
@@ -36,7 +38,7 @@ export default function LoginPage() {
         return
       }
 
-      router.push(`/verify?phone=${encodeURIComponent(phone)}`)
+      router.push(`/verify?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(redirect)}`)
     } catch {
       setError('Something went wrong')
     } finally {

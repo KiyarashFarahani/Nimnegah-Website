@@ -4,6 +4,8 @@ import config from '@payload-config'
 import { verifyPayment } from '@/lib/zarinpal'
 
 export async function GET(request: Request) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL!
+
   try {
     const { searchParams } = new URL(request.url)
     const authority = searchParams.get('Authority')
@@ -11,7 +13,7 @@ export async function GET(request: Request) {
 
     if (status !== 'OK' || !authority) {
       return NextResponse.redirect(
-        new URL('/courses?error=payment_failed', process.env.NEXT_PUBLIC_APP_URL!),
+        new URL('/payment/failed?reason=cancelled', appUrl),
       )
     }
 
@@ -20,17 +22,30 @@ export async function GET(request: Request) {
     const orders = await payload.find({
       collection: 'orders',
       where: { authority: { equals: authority } },
+      limit: 1,
     })
 
     if (orders.docs.length === 0) {
       return NextResponse.redirect(
-        new URL('/courses?error=order_not_found', process.env.NEXT_PUBLIC_APP_URL!),
+        new URL('/payment/failed?reason=order_not_found', appUrl),
       )
     }
 
     const order = orders.docs[0]
+
+    if (order.status === 'completed') {
+      const course = await payload.findByID({
+        collection: 'courses',
+        id: typeof order.course === 'object' ? order.course.id : order.course,
+      })
+      return NextResponse.redirect(
+        new URL(`/payment/success?course=${course.slug}`, appUrl),
+      )
+    }
+
     const courseId = typeof order.course === 'object' ? order.course.id : order.course
     const userId = typeof order.user === 'object' ? order.user.id : order.user
+
     const result = await verifyPayment(authority, order.amount)
 
     if (result.success) {
@@ -40,20 +55,33 @@ export async function GET(request: Request) {
         draft: false,
         data: {
           status: 'completed',
-          zarinpalRefId: result.refId,
+          zarinpalRefId: String(result.refId),
         },
       })
 
-      await payload.create({
+      const existingEnrollment = await payload.find({
         collection: 'enrollments',
-        draft: false,
-        data: {
-          user: userId,
-          course: courseId,
-          progress: 0,
-          enrolledAt: new Date().toISOString(),
+        where: {
+          and: [
+            { user: { equals: userId } },
+            { course: { equals: courseId } },
+          ],
         },
+        limit: 1,
       })
+
+      if (existingEnrollment.docs.length === 0) {
+        await payload.create({
+          collection: 'enrollments',
+          draft: false,
+          data: {
+            user: userId,
+            course: courseId,
+            progress: 0,
+            enrolledAt: new Date().toISOString(),
+          },
+        })
+      }
 
       const course = await payload.findByID({
         collection: 'courses',
@@ -61,7 +89,10 @@ export async function GET(request: Request) {
       })
 
       return NextResponse.redirect(
-        new URL(`/dashboard/${course.slug}`, process.env.NEXT_PUBLIC_APP_URL!),
+        new URL(
+          `/payment/success?course=${course.slug}&refId=${result.refId}`,
+          appUrl,
+        ),
       )
     } else {
       await payload.update({
@@ -71,14 +102,15 @@ export async function GET(request: Request) {
         data: { status: 'failed' },
       })
 
+      const reason = result.code === -1 ? 'verify_failed' : 'payment_failed'
       return NextResponse.redirect(
-        new URL('/courses?error=payment_failed', process.env.NEXT_PUBLIC_APP_URL!),
+        new URL(`/payment/failed?reason=${reason}`, appUrl),
       )
     }
   } catch (error) {
     console.error('Payment verify error:', error)
     return NextResponse.redirect(
-      new URL('/courses?error=server_error', process.env.NEXT_PUBLIC_APP_URL!),
+      new URL('/payment/failed?reason=server_error', appUrl),
     )
   }
 }

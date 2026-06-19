@@ -9,6 +9,7 @@ import { ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react'
 function VerifyForm() {
   const searchParams = useSearchParams()
   const phone = searchParams.get('phone') || ''
+  const redirect = searchParams.get('redirect') || '/dashboard'
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -45,7 +46,7 @@ function VerifyForm() {
         return
       }
 
-      router.push('/dashboard')
+      router.push(redirect)
     } catch {
       setError('Something went wrong')
     } finally {

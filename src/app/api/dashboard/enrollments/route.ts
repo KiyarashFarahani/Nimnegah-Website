@@ -1,21 +1,22 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
+import { authenticateRequest } from '@/lib/auth'
 
 export async function GET(request: Request) {
   try {
-    const payload = await getPayload({ config })
-
-    const authResult = await payload.auth({ headers: request.headers })
-    if (!authResult.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const auth = await authenticateRequest(request)
+    if (!auth.success) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
     }
+
+    const payload = await getPayload({ config })
 
     const enrollments = await payload.find({
       collection: 'enrollments',
       depth: 2,
       where: {
-        user: { equals: authResult.user.id },
+        user: { equals: auth.user.id },
       },
       sort: '-lastAccessedAt',
     })

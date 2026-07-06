@@ -46,7 +46,20 @@ export default function VideoPlayer({
 
   return (
     <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-white/10">
-      <Plyr
+      <style>{`
+        .video-player-wrap .plyr-react,
+        .video-player-wrap .plyr {
+          width: 100% !important;
+          height: 100% !important;
+        }
+        .video-player-wrap .plyr-react video {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: contain;
+        }
+      `}</style>
+      <div className="video-player-wrap w-full h-full">
+        <Plyr
         source={{
           type: 'video',
           title: title || '',
@@ -83,7 +96,8 @@ export default function VideoPlayer({
           },
           invertTime: false,
         }}
-      />
+        />
+      </div>
     </div>
   )
 }

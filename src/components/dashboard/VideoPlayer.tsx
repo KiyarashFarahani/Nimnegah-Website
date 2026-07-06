@@ -5,14 +5,14 @@ import { Plyr } from 'plyr-react'
 import 'plyr-react/plyr.css'
 
 type VideoPlayerProps = {
-  src: string
+  lessonId: string | number
   title?: string
   onTimeUpdate?: (currentTime: number, duration: number) => void
   onEnded?: () => void
 }
 
 export default function VideoPlayer({
-  src,
+  lessonId,
   title,
   onTimeUpdate,
   onEnded,
@@ -40,7 +40,9 @@ export default function VideoPlayer({
       video.removeEventListener('timeupdate', onTime)
       video.removeEventListener('ended', onVideoEnded)
     }
-  }, [src, onTimeUpdate, onEnded])
+  }, [lessonId, onTimeUpdate, onEnded])
+
+  const videoSrc = `/api/video/${lessonId}`
 
   return (
     <div className="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-white/10">
@@ -50,8 +52,7 @@ export default function VideoPlayer({
           title: title || '',
           sources: [
             {
-              src,
-              type: 'video/mp4',
+              src: videoSrc,
             },
           ],
         }}

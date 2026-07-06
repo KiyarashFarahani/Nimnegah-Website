@@ -232,7 +232,7 @@ export interface Lesson {
   title: string;
   course: number | Course;
   description?: string | null;
-  videoUrl: string;
+  video: number | Media;
   /**
    * Duration in seconds
    */
@@ -429,7 +429,7 @@ export interface LessonsSelect<T extends boolean = true> {
   title?: T;
   course?: T;
   description?: T;
-  videoUrl?: T;
+  video?: T;
   duration?: T;
   order?: T;
   isFree?: T;

@@ -22,8 +22,9 @@ export const Lessons: CollectionConfig = {
       type: 'text',
     },
     {
-      name: 'videoUrl',
-      type: 'text',
+      name: 'video',
+      type: 'relationship',
+      relationTo: 'media',
       required: true,
     },
     {

@@ -20,7 +20,6 @@ type Lesson = {
   id: string | number
   title: string
   description?: string
-  videoUrl: string
   duration: number
   order: number
   isFree: boolean
@@ -166,6 +165,32 @@ export default function LessonViewer() {
     [enrollment, lessons.length]
   )
 
+  const lastProgressSaveRef = useRef(0)
+
+  const handleTimeUpdate = useCallback(
+    (currentTime: number, duration: number) => {
+      if (!enrollment || !activeLesson) return
+      const now = Date.now()
+      if (now - lastProgressSaveRef.current < 10000) return
+      lastProgressSaveRef.current = now
+
+      const progress = Math.round((currentTime / duration) * 100)
+      if (progress < 10) return
+
+      fetch('/api/dashboard/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enrollmentId: enrollment.id,
+          lessonId: Number(activeLesson.id),
+          completed: progress >= 90,
+          progress,
+        }),
+      }).catch(() => {})
+    },
+    [enrollment, activeLesson],
+  )
+
   const handleVideoEnded = useCallback(() => {
     if (activeLesson) {
       handleLessonComplete(Number(activeLesson.id))
@@ -222,8 +247,9 @@ export default function LessonViewer() {
         >
           <VideoPlayer
             key={activeLesson.id}
-            src={activeLesson.videoUrl}
+            lessonId={activeLesson.id}
             title={activeLesson.title}
+            onTimeUpdate={handleTimeUpdate}
             onEnded={handleVideoEnded}
           />
         </motion.div>

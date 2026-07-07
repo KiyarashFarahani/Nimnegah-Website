@@ -66,7 +66,6 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
   const thumbnailUrl = course.thumbnail?.url
   const categoryName = course.category?.name
   const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : ''
-  const completedCount = enrollment.completedLessons?.length || 0
   const isSpotPlayer = course.courseType === 'spotplayer'
 
   return (
@@ -95,18 +94,12 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
             <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
 
             {/* Badge */}
-            <div className="absolute top-3 left-3 px-3 py-1 bg-blue-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
-              {isSpotPlayer ? (
-                <>
-                  <Key size={10} className="text-white" />
-                  <span className="text-xs font-vazir text-white">اسپات‌پلیر</span>
-                </>
-              ) : (
-                <span className="text-xs font-vazir text-white">
-                  {enrollment.progress}٪ تکمیل
-                </span>
-              )}
-            </div>
+            {isSpotPlayer && (
+              <div className="absolute top-3 left-3 px-3 py-1 bg-blue-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
+                <Key size={10} className="text-white" />
+                <span className="text-xs font-vazir text-white">اسپات‌پلیر</span>
+              </div>
+            )}
 
             {levelLabel && (
               <div className="absolute top-3 right-3 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
@@ -128,26 +121,6 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
             <p className="text-sm text-gray-400 font-vazir line-clamp-2 mb-4 flex-1">
               {description}
             </p>
-
-            {/* Progress bar - only for self-hosted */}
-            {!isSpotPlayer && (
-              <div className="mb-4">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-vazir text-gray-500">پیشرفت</span>
-                  <span className="text-xs font-vazir text-blue-400">
-                    {completedCount} درس تکمیل شده
-                  </span>
-                </div>
-                <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${enrollment.progress}%` }}
-                    transition={{ duration: 1, delay: index * 0.1 + 0.3 }}
-                    className="h-full bg-gradient-to-l from-blue-500 to-cyan-500 rounded-full"
-                  />
-                </div>
-              </div>
-            )}
 
             {/* Footer */}
             <div className="flex items-center justify-between pt-3 border-t border-white/5">

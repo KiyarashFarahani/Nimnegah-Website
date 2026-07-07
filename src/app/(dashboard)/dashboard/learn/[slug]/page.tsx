@@ -423,27 +423,6 @@ export default function LessonViewer() {
           )}
         </motion.div>
 
-        {/* Overall progress */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="mt-6 p-4 bg-white/[0.04] border border-white/5 rounded-xl"
-        >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-vazir text-gray-400">پیشرفت دوره</span>
-            <span className="text-sm font-vazir text-blue-400">
-              {enrollment?.progress || 0}٪
-            </span>
-          </div>
-          <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-            <motion.div
-              animate={{ width: `${enrollment?.progress || 0}%` }}
-              transition={{ duration: 0.5 }}
-              className="h-full bg-gradient-to-l from-blue-500 to-cyan-500 rounded-full"
-            />
-          </div>
-        </motion.div>
       </div>
 
       {/* Sidebar: Lesson list */}

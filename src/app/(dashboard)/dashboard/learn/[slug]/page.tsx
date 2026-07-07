@@ -19,6 +19,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import VideoPlayer from '@/components/dashboard/VideoPlayer'
+import { formatLessonDuration } from '@/lib/course-utils'
 
 type Lesson = {
   id: string | number
@@ -43,12 +44,6 @@ type Enrollment = {
   progress: number
   completedLessons?: Array<{ lessonId: number; completedAt: string }>
   spotplayerLicenseKey?: string
-}
-
-function formatLessonDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60)
-  const s = seconds % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
 }
 
 function NotEnrolledState() {

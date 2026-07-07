@@ -1,4 +1,4 @@
-import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import ScrollToTopProvider from "@/components/ScrollToTopProvider";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
@@ -11,11 +11,11 @@ export default function FrontendLayout({
 }) {
   return (
     <SplashProvider>
-      <SmoothScrollProvider>
+      <ScrollToTopProvider>
         <Navigation />
         <PageTransition>{children}</PageTransition>
         <Footer />
-      </SmoothScrollProvider>
+      </ScrollToTopProvider>
     </SplashProvider>
   );
 }

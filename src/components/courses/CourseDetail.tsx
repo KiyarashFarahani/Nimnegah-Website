@@ -17,6 +17,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import type { SerializedEditorState } from 'lexical';
+import { LEVEL_MAP, formatPrice, formatDuration, formatLessonDuration, getPlainText } from '@/lib/course-utils';
 
 type Lesson = {
   id: string | number;
@@ -38,46 +39,6 @@ type Course = {
   thumbnail?: { url: string } | null;
   category?: { name: string } | null;
 };
-
-const LEVEL_MAP: Record<string, string> = {
-  beginner: 'مبتدی',
-  intermediate: 'متوسط',
-  advanced: 'پیشرفته',
-};
-
-function formatPrice(price: number): string {
-  return price.toLocaleString('fa-IR');
-}
-
-function formatDuration(minutes: number): string {
-  if (minutes >= 60) {
-    const hours = Math.floor(minutes / 60);
-    const remaining = minutes % 60;
-    return remaining > 0 ? `${hours} ساعت و ${remaining} دقیقه` : `${hours} ساعت`;
-  }
-  return `${minutes} دقیقه`;
-}
-
-function formatLessonDuration(seconds: number): string {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, '0')}`;
-}
-
-function getPlainText(richText?: SerializedEditorState): string {
-  if (!richText?.root?.children) return '';
-  type LexicalNode = { type?: string; text?: string; children?: LexicalNode[] };
-  const extractText = (nodes: LexicalNode[]): string => {
-    return nodes
-      .map((node) => {
-        if (node.type === 'text') return node.text || '';
-        if (node.children) return extractText(node.children);
-        return '';
-      })
-      .join(' ');
-  };
-  return extractText(richText.root.children as LexicalNode[]).trim();
-}
 
 function totalLessonsDuration(lessons: Lesson[]): number {
   return lessons.reduce((acc, l) => acc + l.duration, 0);

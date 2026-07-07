@@ -40,8 +40,10 @@ export async function POST(request: Request) {
     await setOTP(phone, code)
     await setResendCooldown(phone)
 
+    console.log(`[OTP] ${phone}: ${code}`)
+
     if (process.env.SMSIR_API_KEY === 'your-smsir-api-key' || !process.env.SMSIR_API_KEY) {
-      console.log(`[DEV] OTP for ${phone}: ${code}`)
+      console.log(`[DEV] Skipping SMS send (no API key)`)
     } else {
       await sendOTP(phone, code)
     }

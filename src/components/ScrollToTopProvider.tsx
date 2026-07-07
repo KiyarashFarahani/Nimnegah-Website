@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-interface SmoothScrollProviderProps {
+interface ScrollToTopProviderProps {
   children: React.ReactNode;
 }
 
-export default function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
+export default function ScrollToTopProvider({ children }: ScrollToTopProviderProps) {
   const pathname = usePathname();
 
   useEffect(() => {

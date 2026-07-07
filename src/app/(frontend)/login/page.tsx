@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Phone, ArrowLeft, Loader2 } from 'lucide-react'
+import { isValidIranianPhone } from '@/lib/validations'
 
 export default function LoginPage() {
   const [phone, setPhone] = useState('')
@@ -24,7 +25,7 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    if (!/^09\d{9}$/.test(phone)) {
+    if (!isValidIranianPhone(phone)) {
       setError('شماره موبایل معتبر نیست (مثال: 09123456789)')
       setLoading(false)
       return

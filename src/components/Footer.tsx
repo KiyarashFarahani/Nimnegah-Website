@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Heart, Instagram, Send } from 'lucide-react';
+import { Instagram, Send } from 'lucide-react';
 
 const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
   <svg
@@ -120,9 +120,15 @@ const Footer = () => {
             viewport={{ once: true }}
             className="text-xs text-gray-600 font-vazir flex items-center gap-1.5"
           >
-            ساخته شده با
-            <Heart size={12} className="text-red-500 fill-red-500" />
-            توسط تیم نیم‌نگاه
+            ساخته شده توسط{' '}
+            <a
+              href="https://kiyarashfarahani.github.io"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-400 hover:text-white transition-colors duration-200"
+            >
+              کیارش فراهانی
+            </a>
           </motion.p>
           <motion.p
             initial={{ opacity: 0 }}

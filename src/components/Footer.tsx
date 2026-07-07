@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Heart, Instagram, Send } from 'lucide-react';
 
 const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
@@ -16,13 +17,6 @@ const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?
   </svg>
 );
 
-const FOOTER_LINKS = [
-  { label: 'خانه', href: '#home' },
-  { label: 'دوره‌ها', href: '/courses' },
-  { label: 'درباره ما', href: '#about' },
-  { label: 'ورود', href: '/login' },
-];
-
 const SOCIAL_LINKS = [
   { icon: TelegramIcon, href: 'https://t.me/nimnegah', label: 'تلگرام' },
   { icon: Instagram, href: 'https://instagram.com/nimnegah', label: 'اینستاگرام' },
@@ -32,6 +26,16 @@ const SOCIAL_LINKS = [
 const COPYRIGHT_YEAR = new Date().getFullYear();
 
 const Footer = () => {
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+
+  const footerLinks = [
+    { label: 'خانه', href: isHome ? '#home' : '/#home' },
+    { label: 'دوره‌ها', href: '/courses' },
+    { label: 'درباره ما', href: isHome ? '#about' : '/#about' },
+    { label: 'ورود', href: '/login' },
+  ];
+
   return (
     <footer className="relative bg-[#040a18] border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -58,7 +62,7 @@ const Footer = () => {
           >
             <h4 className="text-sm font-vazir font-semibold text-gray-400 mb-4 uppercase tracking-wider">لینک‌ها</h4>
             <ul className="space-y-2.5">
-              {FOOTER_LINKS.map((link) => (
+              {footerLinks.map((link) => (
                 <li key={link.label}>
                   {link.href.startsWith('#') ? (
                     <a

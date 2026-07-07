@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, LayoutDashboard } from 'lucide-react';
 import { useSplash } from '@/contexts/SplashContext';
@@ -12,6 +13,8 @@ const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
   const { splashDone } = useSplash();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -57,9 +60,9 @@ const Navigation = () => {
   }, []);
 
   const navItems = [
-    { name: 'صفحه اصلی', href: '/', isHash: false },
-    { name: 'دوره‌ها', href: '/courses', isHash: false },
-    { name: 'درباره ما', href: '#about', isHash: true },
+    { name: 'صفحه اصلی', href: '/' },
+    { name: 'دوره‌ها', href: '/courses' },
+    { name: 'درباره ما', href: isHome ? '#about' : '/#about', isHash: true },
   ];
 
   const isTransparent = !scrolled && !isOpen;
@@ -104,7 +107,7 @@ const Navigation = () => {
                   transition={{ delay: index * 0.1 + 0.3 }}
                   whileHover={{ y: -2 }}
                 >
-                  {item.isHash ? (
+                  {item.isHash && isHome ? (
                     <button
                       onClick={() => {
                         scrollToHash(item.href);
@@ -115,9 +118,19 @@ const Navigation = () => {
                       {item.name}
                       <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${isTransparent ? 'bg-white' : 'bg-gray-900'} transition-all duration-300 group-hover:w-full`}></span>
                     </button>
+                  ) : item.isHash ? (
+                    <a
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-gray-700'} font-vazir font-medium transition-colors duration-200 relative group`}
+                    >
+                      {item.name}
+                      <span className={`absolute -bottom-1 left-0 w-0 h-0.5 ${isTransparent ? 'bg-white' : 'bg-gray-900'} transition-all duration-300 group-hover:w-full`}></span>
+                    </a>
                   ) : (
                     <Link
                       href={item.href}
+                      onClick={() => setIsOpen(false)}
                       className={`${isTransparent ? 'text-white/90 hover:text-white' : 'text-gray-900 hover:text-gray-700'} font-vazir font-medium transition-colors duration-200 relative group`}
                     >
                       {item.name}
@@ -188,7 +201,7 @@ const Navigation = () => {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.08 }}
                 >
-                  {item.isHash ? (
+                  {item.isHash && isHome ? (
                     <button
                       onClick={() => {
                         scrollToHash(item.href);
@@ -198,6 +211,14 @@ const Navigation = () => {
                     >
                       {item.name}
                     </button>
+                  ) : item.isHash ? (
+                    <a
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className="block text-gray-700 hover:text-gray-900 font-vazir font-medium py-3 px-4 transition-colors text-end w-full min-h-[44px] flex items-center justify-start rounded-lg hover:bg-gray-50"
+                    >
+                      {item.name}
+                    </a>
                   ) : (
                     <Link
                       href={item.href}

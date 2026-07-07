@@ -13,7 +13,7 @@ export async function sendOTP(phone: string, code: string): Promise<void> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${SMSIR_API_KEY}`,
+      'x-api-key': SMSIR_API_KEY,
     },
     body: JSON.stringify({
       mobile: phone,
@@ -22,8 +22,10 @@ export async function sendOTP(phone: string, code: string): Promise<void> {
     }),
   })
 
+  const body = await response.json()
+  console.log('[sms.ir] Response:', body)
+
   if (!response.ok) {
-    const error = await response.text()
-    throw new Error(`SMS send failed: ${error}`)
+    throw new Error(`SMS send failed: ${JSON.stringify(body)}`)
   }
 }

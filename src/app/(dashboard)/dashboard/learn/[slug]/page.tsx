@@ -13,6 +13,10 @@ import {
   Clock,
   Loader2,
   AlertCircle,
+  Key,
+  Copy,
+  Check,
+  ExternalLink,
 } from 'lucide-react'
 import VideoPlayer from '@/components/dashboard/VideoPlayer'
 
@@ -31,12 +35,14 @@ type Course = {
   slug: string
   duration?: number
   level?: string
+  courseType?: 'self-hosted' | 'spotplayer'
 }
 
 type Enrollment = {
   id: string | number
   progress: number
   completedLessons?: Array<{ lessonId: number; completedAt: string }>
+  spotplayerLicenseKey?: string
 }
 
 function formatLessonDuration(seconds: number): string {
@@ -72,6 +78,137 @@ function LoadingSkeleton() {
   return (
     <div className="flex items-center justify-center py-20">
       <Loader2 size={32} className="text-blue-400 animate-spin" />
+    </div>
+  )
+}
+
+function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: Enrollment }) {
+  const [copied, setCopied] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [licenseKey, setLicenseKey] = useState(enrollment.spotplayerLicenseKey)
+  const [error, setError] = useState('')
+  const [tried, setTried] = useState(false)
+
+  useEffect(() => {
+    if (licenseKey || tried) return
+
+    const generateLicense = async () => {
+      setGenerating(true)
+      setTried(true)
+      try {
+        const res = await fetch('/api/dashboard/generate-license', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enrollmentId: enrollment.id }),
+        })
+        const data = await res.json()
+        if (data.licenseKey) {
+          setLicenseKey(data.licenseKey)
+        } else {
+          setError(data.error || 'خطا در ایجاد لایسنس')
+        }
+      } catch {
+        setError('خطا در ارتباط با سرور')
+      } finally {
+        setGenerating(false)
+      }
+    }
+
+    generateLicense()
+  }, [licenseKey, tried, enrollment.id])
+
+  const handleCopyLicense = async () => {
+    if (licenseKey) {
+      await navigator.clipboard.writeText(licenseKey)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-3rem)] -m-6 lg:-m-8 p-6 lg:p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-lg w-full text-center"
+      >
+        <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Key size={32} className="text-purple-400" />
+        </div>
+
+        <h1 className="text-2xl font-siavash font-bold text-white mb-2">
+          {course.title}
+        </h1>
+        <p className="text-gray-400 font-vazir mb-8">
+          این دوره توسط اسپات‌پلیر پخش می‌شود. برای مشاهده ویدیوها، لایسنس زیر را در نرم‌افزار اسپات‌پلیر وارد کنید.
+        </p>
+
+        {/* License key card */}
+        {licenseKey ? (
+          <div className="bg-white/[0.06] border border-purple-500/20 rounded-2xl p-6 mb-6">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <Key size={16} className="text-purple-400" />
+              <span className="text-sm font-vazir text-gray-300">کلید لایسنس شما</span>
+            </div>
+            <div className="flex items-center gap-2 bg-black/30 rounded-xl p-3">
+              <code className="flex-1 text-sm font-mono text-purple-300 truncate" dir="ltr">
+                {licenseKey}
+              </code>
+              <button
+                onClick={handleCopyLicense}
+                className="shrink-0 p-2 hover:bg-white/10 rounded-lg transition-colors"
+              >
+                {copied ? (
+                  <Check size={16} className="text-green-400" />
+                ) : (
+                  <Copy size={16} className="text-gray-400" />
+                )}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white/[0.06] border border-white/5 rounded-2xl p-6 mb-6">
+            {generating ? (
+              <div className="flex items-center justify-center gap-3">
+                <Loader2 size={16} className="text-purple-400 animate-spin" />
+                <span className="text-sm font-vazir text-gray-300">در حال ایجاد لایسنس...</span>
+              </div>
+            ) : error ? (
+              <p className="text-sm font-vazir text-red-400">{error}</p>
+            ) : null}
+          </div>
+        )}
+
+        {/* Instructions */}
+        <div className="bg-white/[0.04] border border-white/5 rounded-2xl p-6 mb-6 text-right">
+          <h3 className="text-sm font-vazir font-medium text-white mb-4">راهنمای استفاده:</h3>
+          <ol className="space-y-3 text-sm font-vazir text-gray-400">
+            <li className="flex items-start gap-3">
+              <span className="shrink-0 w-5 h-5 bg-purple-500/20 rounded-full flex items-center justify-center text-xs text-purple-400">۱</span>
+              <span>نرم‌افزار اسپات‌پلیر را دانلود و نصب کنید</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="shrink-0 w-5 h-5 bg-purple-500/20 rounded-full flex items-center justify-center text-xs text-purple-400">۲</span>
+              <span>لایسنس بالا را کپی کنید</span>
+            </li>
+            <li className="flex items-center gap-3">
+              <span className="shrink-0 w-5 h-5 bg-purple-500/20 rounded-full flex items-center justify-center text-xs text-purple-400">۳</span>
+              <span>در نرم‌افزار لایسنس را وارد کنید و ویدیوها را تماشا کنید</span>
+            </li>
+          </ol>
+        </div>
+
+        {/* Download link */}
+        <a
+          href="https://app.spotplayer.ir"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 rounded-full text-purple-300 font-vazir font-medium text-sm transition-all duration-300"
+        >
+          دانلود اسپات‌پلیر
+          <ExternalLink size={14} />
+        </a>
+      </motion.div>
     </div>
   )
 }
@@ -218,7 +355,13 @@ export default function LessonViewer() {
       </div>
     )
   }
-  if (!course || !activeLesson) return null
+  if (!course) return null
+
+  if (course.courseType === 'spotplayer' && enrollment) {
+    return <SpotPlayerView course={course} enrollment={enrollment} />
+  }
+
+  if (!activeLesson) return null
 
   return (
     <div className="flex flex-col xl:flex-row gap-6 -m-6 lg:-m-8 p-6 lg:p-8 min-h-[calc(100vh-3rem)]">

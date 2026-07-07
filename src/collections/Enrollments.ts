@@ -70,5 +70,14 @@ export const Enrollments: CollectionConfig = {
         },
       ],
     },
+    {
+      name: 'spotplayerLicenseKey',
+      type: 'text',
+      admin: {
+        position: 'sidebar',
+        description: 'SpotPlayer license key (generated automatically for SpotPlayer courses)',
+        readOnly: true,
+      },
+    },
   ],
 }

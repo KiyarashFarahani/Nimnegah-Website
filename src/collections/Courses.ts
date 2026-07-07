@@ -73,6 +73,34 @@ export const Courses: CollectionConfig = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'courseType',
+      type: 'select',
+      defaultValue: 'self-hosted',
+      options: [
+        { label: 'Self-hosted videos', value: 'self-hosted' },
+        { label: 'SpotPlayer', value: 'spotplayer' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description: 'Where the course videos are hosted',
+      },
+    },
+    {
+      name: 'spotplayerCourseIds',
+      type: 'array',
+      admin: {
+        description: 'SpotPlayer course IDs to include in the license (from SpotPlayer panel)',
+        condition: (_, siblingData) => siblingData?.courseType === 'spotplayer',
+      },
+      fields: [
+        {
+          name: 'courseId',
+          type: 'text',
+          required: true,
+        },
+      ],
+    },
   ],
   hooks: {
     beforeChange: [

@@ -23,6 +23,7 @@ Transform the existing artist portfolio (Next.js 15 SPA) into an online course-s
 | Auth | OTP via sms.ir + Payload JWT sessions | ~219 تومان/SMS |
 | Payments | Zarinpal (Node SDK) | 0.5% per transaction |
 | Video Hosting | VPS disk + Nginx (self-hosted) | Free |
+| External Video Hosting | SpotPlayer (license-based) | Free (per-course pricing) |
 | File Storage | VPS disk (self-hosted) | Free |
 | Caching | Redis (self-hosted on VPS) | Free |
 | Reverse Proxy | Nginx + Let's Encrypt SSL | Free |
@@ -83,7 +84,8 @@ Transform the existing artist portfolio (Next.js 15 SPA) into an online course-s
   status: "draft" | "published";
   level: "beginner" | "intermediate" | "advanced";
   duration: number;       // total minutes
-  lessonsCount: number;   // computed
+  courseType: "self-hosted" | "spotplayer";  // where videos are hosted
+  spotplayerCourseIds: Array<{ courseId: string }>;  // SpotPlayer course IDs (for spotplayer type)
   createdAt: Date;
   updatedAt: Date;
 }
@@ -139,6 +141,7 @@ Transform the existing artist portfolio (Next.js 15 SPA) into an online course-s
   progress: number;       // 0-100 percentage
   enrolledAt: Date;
   lastAccessedAt: Date;
+  spotplayerLicenseKey: string;  // SpotPlayer license key (for spotplayer courses)
 }
 ```
 
@@ -251,6 +254,30 @@ Transform the existing artist portfolio (Next.js 15 SPA) into an online course-s
      → Redirect to /courses with error
 ```
 
+## SpotPlayer Integration (External Video Hosting)
+
+For courses where videos are hosted on SpotPlayer instead of the VPS:
+
+```
+1. Admin creates course with courseType = "spotplayer"
+   → Adds SpotPlayer course IDs from their SpotPlayer panel
+
+2. Student purchases course → Payment verified
+   → System calls SpotPlayer API to create a license
+   → License key saved to enrollment record
+
+3. Student views course in dashboard
+   → Dashboard shows license key with copy button
+   → Links to download SpotPlayer app
+   → Student uses license key in SpotPlayer app to watch videos
+```
+
+**SpotPlayer API:**
+- Endpoint: `POST https://panel.spotplayer.ir/license/edit/`
+- Headers: `$API: <key>`, `$LEVEL: -1`
+- Required: `course` (array of IDs), `name`, `watermark.texts[0].text`
+- Returns: `{ _id, key, url }`
+
 ## Video Serving
 
 Videos are stored on VPS disk at `/var/data/videos/` and served via Nginx.
@@ -319,6 +346,9 @@ SMSIR_TEMPLATE_ID=12345
 # Zarinpal
 ZARINPAL_MERCHANT_ID=your-merchant-id
 ZARINPAL_SANDBOX=true  # set false in production
+
+# SpotPlayer
+SPOTPLAYER_API_KEY=your-spotplayer-api-key  # from panel.spotplayer.ir dashboard
 
 # App
 NEXT_PUBLIC_APP_URL=https://yourdomain.com
@@ -439,6 +469,7 @@ src/
 ├── lib/
 │   ├── payload.ts                      # Payload config
 │   ├── smsir.ts                        # sms.ir helper
+│   ├── spotplayer.ts                   # SpotPlayer API helper
 │   ├── zarinpal.ts                     # Zarinpal helper
 │   ├── auth.ts                         # JWT/session utils
 │   ├── db.ts                           # Drizzle connection

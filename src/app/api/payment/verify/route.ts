@@ -82,6 +82,11 @@ export async function GET(request: Request) {
         limit: 1,
       })
 
+      const course = await payload.findByID({
+        collection: 'courses',
+        id: courseId,
+      })
+
       if (existingEnrollment.docs.length === 0) {
         await payload.create({
           collection: 'enrollments',
@@ -95,11 +100,6 @@ export async function GET(request: Request) {
           },
         })
       }
-
-      const course = await payload.findByID({
-        collection: 'courses',
-        id: courseId,
-      })
 
       return NextResponse.redirect(
         new URL(

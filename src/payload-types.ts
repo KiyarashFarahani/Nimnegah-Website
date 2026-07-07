@@ -207,6 +207,19 @@ export interface Course {
    * Total duration in minutes
    */
   duration?: number | null;
+  /**
+   * Where the course videos are hosted
+   */
+  courseType?: ('self-hosted' | 'spotplayer') | null;
+  /**
+   * SpotPlayer course IDs to include in the license (from SpotPlayer panel)
+   */
+  spotplayerCourseIds?:
+    | {
+        courseId: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -281,6 +294,10 @@ export interface Enrollment {
         id?: string | null;
       }[]
     | null;
+  /**
+   * SpotPlayer license key (generated automatically for SpotPlayer courses)
+   */
+  spotplayerLicenseKey?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -418,6 +435,13 @@ export interface CoursesSelect<T extends boolean = true> {
   status?: T;
   level?: T;
   duration?: T;
+  courseType?: T;
+  spotplayerCourseIds?:
+    | T
+    | {
+        courseId?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -479,6 +503,7 @@ export interface EnrollmentsSelect<T extends boolean = true> {
         completedAt?: T;
         id?: T;
       };
+  spotplayerLicenseKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }

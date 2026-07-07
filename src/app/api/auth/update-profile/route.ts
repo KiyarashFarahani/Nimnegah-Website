@@ -1,25 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { cookies } from 'next/headers'
-import { jwtVerify } from 'jose'
-import { COOKIE_NAME } from '@/lib/cookie'
+import { authenticateRequest } from '@/lib/auth'
 
 export async function PATCH(request: Request) {
   try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get(COOKIE_NAME)?.value
+    const result = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const secretUint8 = new TextEncoder().encode(process.env.PAYLOAD_SECRET!)
-    const { payload: jwtPayload } = await jwtVerify(token, secretUint8)
-    const userId = jwtPayload.id as number
-
-    if (!userId) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    if (!result.success) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: result.status })
     }
 
     const body = await request.json()
@@ -32,7 +21,7 @@ export async function PATCH(request: Request) {
     const payload = await getPayload({ config })
     const updated = await payload.update({
       collection: 'users',
-      id: userId,
+      id: result.user.id,
       data: { name: name.trim() },
     })
 

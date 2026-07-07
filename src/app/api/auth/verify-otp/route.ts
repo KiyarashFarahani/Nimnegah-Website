@@ -1,23 +1,41 @@
 import { NextResponse } from 'next/server'
-import { getOTP, deleteOTP } from '@/lib/redis'
+import { getOTP, deleteOTP, checkRateLimit, resetVerifyFailures } from '@/lib/redis'
 import { getPayload, jwtSign, getFieldsToSign } from 'payload'
 import config from '@payload-config'
+import { COOKIE_NAME } from '@/lib/cookie'
+import { isValidIranianPhone } from '@/lib/validations'
 
 export async function POST(request: Request) {
   try {
     const { phone, code } = await request.json()
 
-    if (!phone || !code) {
-      return NextResponse.json({ error: 'Phone and code are required' }, { status: 400 })
+    if (!phone || !isValidIranianPhone(phone)) {
+      return NextResponse.json({ error: 'شماره موبایل معتبر نیست' }, { status: 400 })
+    }
+
+    if (!code || typeof code !== 'string' || code.length !== 6) {
+      return NextResponse.json({ error: 'کد تأیید باید ۶ رقم باشد' }, { status: 400 })
+    }
+
+    const rateCheck = await checkRateLimit(phone, 'verify')
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        {
+          error: 'تعداد تلاش‌ها بیش از حد مجاز است. لطفاً بعداً تلاش کنید.',
+          retryAfter: rateCheck.retryAfter,
+        },
+        { status: 429 },
+      )
     }
 
     const storedCode = await getOTP(phone)
 
     if (!storedCode || storedCode !== code) {
-      return NextResponse.json({ error: 'Invalid or expired OTP' }, { status: 401 })
+      return NextResponse.json({ error: 'کد تأیید نادرست یا منقضی شده است' }, { status: 401 })
     }
 
     await deleteOTP(phone)
+    await resetVerifyFailures(phone)
 
     const payload = await getPayload({ config })
 
@@ -58,27 +76,22 @@ export async function POST(request: Request) {
       tokenExpiration: 60 * 60 * 24 * 7,
     })
 
-    const cookieName = `${payload.config.cookiePrefix ?? 'payload'}-token`
-
     const response = NextResponse.json({
       success: true,
       user: { id: user.id, phone: user.phone, name: user.name, role: user.role },
       token,
     })
 
-    response.cookies.set(cookieName, token, {
+    response.cookies.set(COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     })
 
     return response
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error)
-    const stack = error instanceof Error ? error.stack : ''
-    console.error('Verify OTP error:', message, stack)
-    return NextResponse.json({ error: 'Failed to verify OTP', details: message }, { status: 500 })
+  } catch {
+    return NextResponse.json({ error: 'تأیید کد با خطا مواجه شد' }, { status: 500 })
   }
 }

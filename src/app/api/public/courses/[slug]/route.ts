@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { cookies } from 'next/headers'
 import { jwtVerify } from 'jose'
+import { COOKIE_NAME } from '@/lib/cookie'
 
 export async function GET(
   _request: Request,
@@ -41,7 +42,7 @@ export async function GET(
 
     try {
       const cookieStore = await cookies()
-      const token = cookieStore.get('payload-token')?.value
+      const token = cookieStore.get(COOKIE_NAME)?.value
       if (token) {
         const secret = new TextEncoder().encode(process.env.PAYLOAD_SECRET!)
         const { payload: jwtPayload } = await jwtVerify(token, secret)

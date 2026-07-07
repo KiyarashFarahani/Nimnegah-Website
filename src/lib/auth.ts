@@ -2,6 +2,7 @@ import { jwtVerify } from 'jose'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { User } from '@/payload-types'
+import { COOKIE_NAME } from '@/lib/cookie'
 
 type AuthResult =
   | { success: true; user: User }
@@ -11,7 +12,7 @@ export async function authenticateRequest(
   request: Request,
 ): Promise<AuthResult> {
   const cookieHeader = request.headers.get('cookie') || ''
-  const tokenMatch = cookieHeader.match(/payload-token=([^;]+)/)
+  const tokenMatch = cookieHeader.match(new RegExp(`${COOKIE_NAME}=([^;]+)`))
   const token = tokenMatch?.[1]
 
   if (!token) {

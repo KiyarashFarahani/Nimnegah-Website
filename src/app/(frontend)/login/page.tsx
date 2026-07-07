@@ -24,6 +24,12 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
+    if (!/^09\d{9}$/.test(phone)) {
+      setError('شماره موبایل معتبر نیست (مثال: 09123456789)')
+      setLoading(false)
+      return
+    }
+
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',

@@ -132,8 +132,8 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
         animate={{ opacity: 1, y: 0 }}
         className="max-w-lg w-full text-center"
       >
-        <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Key size={32} className="text-purple-400" />
+        <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <Key size={32} className="text-blue-400" />
         </div>
 
         <h1 className="text-2xl font-siavash font-bold text-white mb-2">
@@ -145,13 +145,13 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
 
         {/* License key card */}
         {licenseKey ? (
-          <div className="bg-white/[0.06] border border-purple-500/20 rounded-2xl p-6 mb-6">
+          <div className="bg-white/[0.06] border border-blue-500/20 rounded-2xl p-6 mb-6">
             <div className="flex items-center justify-center gap-2 mb-3">
-              <Key size={16} className="text-purple-400" />
+              <Key size={16} className="text-blue-400" />
               <span className="text-sm font-vazir text-gray-300">کلید لایسنس شما</span>
             </div>
             <div className="flex items-center gap-2 bg-black/30 rounded-xl p-3">
-              <code className="flex-1 text-sm font-mono text-purple-300 truncate" dir="ltr">
+              <code className="flex-1 text-sm font-mono text-blue-300 truncate" dir="ltr">
                 {licenseKey}
               </code>
               <button
@@ -170,7 +170,7 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
           <div className="bg-white/[0.06] border border-white/5 rounded-2xl p-6 mb-6">
             {generating ? (
               <div className="flex items-center justify-center gap-3">
-                <Loader2 size={16} className="text-purple-400 animate-spin" />
+                <Loader2 size={16} className="text-blue-400 animate-spin" />
                 <span className="text-sm font-vazir text-gray-300">در حال ایجاد لایسنس...</span>
               </div>
             ) : error ? (
@@ -184,15 +184,15 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
           <h3 className="text-sm font-vazir font-medium text-white mb-4">راهنمای استفاده:</h3>
           <ol className="space-y-3 text-sm font-vazir text-gray-400">
             <li className="flex items-start gap-3">
-              <span className="shrink-0 w-5 h-5 bg-purple-500/20 rounded-full flex items-center justify-center text-xs text-purple-400">۱</span>
+              <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۱</span>
               <span>نرم‌افزار اسپات‌پلیر را دانلود و نصب کنید</span>
             </li>
             <li className="flex items-center gap-3">
-              <span className="shrink-0 w-5 h-5 bg-purple-500/20 rounded-full flex items-center justify-center text-xs text-purple-400">۲</span>
+              <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۲</span>
               <span>لایسنس بالا را کپی کنید</span>
             </li>
             <li className="flex items-center gap-3">
-              <span className="shrink-0 w-5 h-5 bg-purple-500/20 rounded-full flex items-center justify-center text-xs text-purple-400">۳</span>
+              <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۳</span>
               <span>در نرم‌افزار لایسنس را وارد کنید و ویدیوها را تماشا کنید</span>
             </li>
           </ol>
@@ -203,7 +203,7 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
           href="https://app.spotplayer.ir"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 rounded-full text-purple-300 font-vazir font-medium text-sm transition-all duration-300"
+          className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-full text-blue-300 font-vazir font-medium text-sm transition-all duration-300"
         >
           دانلود اسپات‌پلیر
           <ExternalLink size={14} />

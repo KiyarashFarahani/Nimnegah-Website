@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { BookOpen, Clock, ArrowLeft, Key, Copy, Check, ExternalLink } from 'lucide-react'
+import { BookOpen, Clock, ArrowLeft, Key } from 'lucide-react'
 import type { SerializedEditorState } from 'lexical'
 
 type Course = {
@@ -68,17 +68,6 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
   const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : ''
   const completedCount = enrollment.completedLessons?.length || 0
   const isSpotPlayer = course.courseType === 'spotplayer'
-  const [copied, setCopied] = useState(false)
-
-  const handleCopyLicense = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (enrollment.spotplayerLicenseKey) {
-      await navigator.clipboard.writeText(enrollment.spotplayerLicenseKey)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    }
-  }
 
   return (
     <motion.div
@@ -86,149 +75,62 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="group"
+      className="group h-full"
     >
-      {isSpotPlayer ? (
-        <div className="block">
-          <div className="bg-white/[0.06] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300 shadow-[0_0_12px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.25)]">
-            {/* Thumbnail */}
-            <div className="relative h-44 overflow-hidden">
-              {thumbnailUrl ? (
-                <Image
-                  src={thumbnailUrl}
-                  alt={course.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+      <Link href={`/dashboard/learn/${course.slug}`} className="block h-full">
+        <div className="h-full bg-white/[0.06] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300 shadow-[0_0_12px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.25)] flex flex-col">
+          {/* Thumbnail */}
+          <div className="relative h-44 overflow-hidden shrink-0">
+            {thumbnailUrl ? (
+              <Image
+                src={thumbnailUrl}
+                alt={course.title}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-cyan-600/20" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
+
+            {/* Badge */}
+            <div className="absolute top-3 left-3 px-3 py-1 bg-blue-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
+              {isSpotPlayer ? (
+                <>
+                  <Key size={10} className="text-white" />
+                  <span className="text-xs font-vazir text-white">اسپات‌پلیر</span>
+                </>
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-cyan-600/20" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
-
-              {/* SpotPlayer badge */}
-              <div className="absolute top-3 left-3 px-3 py-1 bg-purple-500/80 backdrop-blur-sm rounded-full flex items-center gap-1">
-                <Key size={10} className="text-white" />
-                <span className="text-xs font-vazir text-white">اسپات‌پلیر</span>
-              </div>
-
-              {levelLabel && (
-                <div className="absolute top-3 right-3 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
-                  <span className="text-xs font-vazir text-white/90">{levelLabel}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Content */}
-            <div className="p-5">
-              {categoryName && (
-                <span className="text-xs font-vazir text-blue-300 mb-1 block">
-                  {categoryName}
-                </span>
-              )}
-              <h3 className="text-lg font-siavash font-bold text-white mb-2">
-                {course.title}
-              </h3>
-              <p className="text-sm text-gray-400 font-vazir line-clamp-2 mb-4">
-                {description}
-              </p>
-
-              {/* License key */}
-              {enrollment.spotplayerLicenseKey && (
-                <div className="mb-4 p-3 bg-white/[0.04] border border-white/5 rounded-xl">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <Key size={12} className="text-purple-400" />
-                    <span className="text-xs font-vazir text-gray-400">کلید لایسنس</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-xs font-mono text-purple-300 bg-black/30 px-2 py-1.5 rounded truncate" dir="ltr">
-                      {enrollment.spotplayerLicenseKey}
-                    </code>
-                    <button
-                      onClick={handleCopyLicense}
-                      className="shrink-0 p-1.5 hover:bg-white/10 rounded transition-colors"
-                    >
-                      {copied ? (
-                        <Check size={14} className="text-green-400" />
-                      ) : (
-                        <Copy size={14} className="text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-vazir">
-                  {course.duration != null && course.duration > 0 && (
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} />
-                      {formatDuration(course.duration)}
-                    </span>
-                  )}
-                </div>
-                <a
-                  href="https://app.spotplayer.ir"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1 text-xs text-purple-400 font-vazir hover:text-purple-300 transition-colors"
-                >
-                  دانلود پلیر
-                  <ExternalLink size={10} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <Link href={`/dashboard/learn/${course.slug}`} className="block">
-          <div className="bg-white/[0.06] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-300 shadow-[0_0_12px_rgba(59,130,246,0.1)] hover:shadow-[0_0_20px_rgba(59,130,246,0.25)]">
-            {/* Thumbnail */}
-            <div className="relative h-44 overflow-hidden">
-              {thumbnailUrl ? (
-                <Image
-                  src={thumbnailUrl}
-                  alt={course.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-600/20 via-blue-500/10 to-cyan-600/20" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
-
-              {/* Progress badge */}
-              <div className="absolute top-3 left-3 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
                 <span className="text-xs font-vazir text-white">
                   {enrollment.progress}٪ تکمیل
                 </span>
-              </div>
-
-              {levelLabel && (
-                <div className="absolute top-3 right-3 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
-                  <span className="text-xs font-vazir text-white/90">{levelLabel}</span>
-                </div>
               )}
             </div>
 
-            {/* Content */}
-            <div className="p-5">
-              {categoryName && (
-                <span className="text-xs font-vazir text-blue-300 mb-1 block">
-                  {categoryName}
-                </span>
-              )}
-              <h3 className="text-lg font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300 mb-2">
-                {course.title}
-              </h3>
-              <p className="text-sm text-gray-400 font-vazir line-clamp-2 mb-4">
-                {description}
-              </p>
+            {levelLabel && (
+              <div className="absolute top-3 right-3 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
+                <span className="text-xs font-vazir text-white/90">{levelLabel}</span>
+              </div>
+            )}
+          </div>
 
-              {/* Progress bar */}
+          {/* Content */}
+          <div className="p-5 flex flex-col flex-1">
+            {categoryName && (
+              <span className="text-xs font-vazir text-blue-300 mb-1 block">
+                {categoryName}
+              </span>
+            )}
+            <h3 className="text-lg font-siavash font-bold text-white group-hover:text-blue-300 transition-colors duration-300 mb-2">
+              {course.title}
+            </h3>
+            <p className="text-sm text-gray-400 font-vazir line-clamp-2 mb-4 flex-1">
+              {description}
+            </p>
+
+            {/* Progress bar - only for self-hosted */}
+            {!isSpotPlayer && (
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-xs font-vazir text-gray-500">پیشرفت</span>
@@ -245,26 +147,26 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
                   />
                 </div>
               </div>
+            )}
 
-              {/* Footer */}
-              <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                <div className="flex items-center gap-1.5 text-xs text-gray-500 font-vazir">
-                  {course.duration != null && course.duration > 0 && (
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} />
-                      {formatDuration(course.duration)}
-                    </span>
-                  )}
-                </div>
-                <span className="flex items-center gap-1 text-xs text-blue-400 font-vazir group-hover:text-blue-300 transition-colors">
-                  ادامه
-                  <ArrowLeft size={12} />
-                </span>
+            {/* Footer */}
+            <div className="flex items-center justify-between pt-3 border-t border-white/5">
+              <div className="flex items-center gap-1.5 text-xs text-gray-500 font-vazir">
+                {course.duration != null && course.duration > 0 && (
+                  <span className="flex items-center gap-1">
+                    <Clock size={12} />
+                    {formatDuration(course.duration)}
+                  </span>
+                )}
               </div>
+              <span className="flex items-center gap-1 text-xs text-blue-400 font-vazir group-hover:text-blue-300 transition-colors">
+                {isSpotPlayer ? 'مشاهده لایسنس' : 'ادامه'}
+                <ArrowLeft size={12} />
+              </span>
             </div>
           </div>
-        </Link>
-      )}
+        </div>
+      </Link>
     </motion.div>
   )
 }

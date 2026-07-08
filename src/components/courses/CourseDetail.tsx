@@ -228,8 +228,37 @@ export default function CourseDetail({ slug }: { slug: string }) {
   const freeLessons = lessons.filter((l) => l.isFree);
   const totalDuration = course.duration || Math.round(totalLessonsDuration(lessons) / 60);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: course.title,
+    description,
+    provider: {
+      '@type': 'Organization',
+      name: 'آکادمی نیم‌نگاه',
+      sameAs: process.env.NEXT_PUBLIC_APP_URL,
+    },
+    offers: {
+      '@type': 'Offer',
+      price: course.price,
+      priceCurrency: 'IRR',
+      availability: 'https://schema.org/InStock',
+    },
+    ...(thumbnailUrl && { image: thumbnailUrl }),
+    ...(course.level && {
+      educationalLevel: course.level === 'beginner' ? 'مبتدی' : course.level === 'intermediate' ? 'متوسط' : 'پیشرفته',
+    }),
+    timeRequired: `PT${totalDuration}M`,
+    numberOfLessons: lessons.length,
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-950">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Hero Banner */}
       <div className="relative h-64 sm:h-80 lg:h-96 overflow-hidden">

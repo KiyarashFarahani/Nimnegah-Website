@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+docker
+data
+media
+*.md
+.opencode
+.DS_Store
+tsconfig.tsbuildinfo

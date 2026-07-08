@@ -48,14 +48,15 @@ type Enrollment = {
 
 function NotEnrolledState() {
   return (
-    <div className="text-center py-20">
-      <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-        <AlertCircle size={32} className="text-gray-500" />
+    <div className="text-center py-12 sm:py-20">
+      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+        <AlertCircle size={28} className="text-gray-500 sm:hidden" />
+        <AlertCircle size={32} className="text-gray-500 hidden sm:block" />
       </div>
-      <h2 className="text-2xl font-siavash font-bold text-white mb-3">
+      <h2 className="text-xl sm:text-2xl font-siavash font-bold text-white mb-2 sm:mb-3">
         دسترسی غیرمجاز
       </h2>
-      <p className="text-gray-400 font-vazir mb-8">
+      <p className="text-sm sm:text-base text-gray-400 font-vazir mb-6 sm:mb-8">
         شما در این دوره ثبت‌نام نکرده‌اید
       </p>
       <Link
@@ -121,32 +122,33 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-3rem)] -m-6 lg:-m-8 p-6 lg:p-8">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-3rem)] -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-lg w-full text-center"
       >
-        <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <Key size={32} className="text-blue-400" />
+        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+          <Key size={28} className="text-blue-400 sm:hidden" />
+          <Key size={32} className="text-blue-400 hidden sm:block" />
         </div>
 
-        <h1 className="text-2xl font-siavash font-bold text-white mb-2">
+        <h1 className="text-xl sm:text-2xl font-siavash font-bold text-white mb-2">
           {course.title}
         </h1>
-        <p className="text-gray-400 font-vazir mb-8">
+        <p className="text-sm sm:text-base text-gray-400 font-vazir mb-6 sm:mb-8">
           این دوره توسط اسپات‌پلیر پخش می‌شود. برای مشاهده ویدیوها، لایسنس زیر را در نرم‌افزار اسپات‌پلیر وارد کنید.
         </p>
 
         {/* License key card */}
         {licenseKey ? (
-          <div className="bg-white/[0.06] border border-blue-500/20 rounded-2xl p-6 mb-6">
+          <div className="bg-white/[0.06] border border-blue-500/20 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
             <div className="flex items-center justify-center gap-2 mb-3">
               <Key size={16} className="text-blue-400" />
               <span className="text-sm font-vazir text-gray-300">کلید لایسنس شما</span>
             </div>
             <div className="flex items-center gap-2 bg-black/30 rounded-xl p-3">
-              <code className="flex-1 text-sm font-mono text-blue-300 truncate" dir="ltr">
+              <code className="flex-1 text-xs sm:text-sm font-mono text-blue-300 truncate" dir="ltr">
                 {licenseKey}
               </code>
               <button
@@ -162,7 +164,7 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
             </div>
           </div>
         ) : (
-          <div className="bg-white/[0.06] border border-white/5 rounded-2xl p-6 mb-6">
+          <div className="bg-white/[0.06] border border-white/5 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
             {generating ? (
               <div className="flex items-center justify-center gap-3">
                 <Loader2 size={16} className="text-blue-400 animate-spin" />
@@ -175,18 +177,18 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
         )}
 
         {/* Instructions */}
-        <div className="bg-white/[0.04] border border-white/5 rounded-2xl p-6 mb-6 text-right">
-          <h3 className="text-sm font-vazir font-medium text-white mb-4">راهنمای استفاده:</h3>
-          <ol className="space-y-3 text-sm font-vazir text-gray-400">
-            <li className="flex items-start gap-3">
+        <div className="bg-white/[0.04] border border-white/5 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 text-right">
+          <h3 className="text-sm font-vazir font-medium text-white mb-3 sm:mb-4">راهنمای استفاده:</h3>
+          <ol className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm font-vazir text-gray-400">
+            <li className="flex items-start gap-2.5 sm:gap-3">
               <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۱</span>
               <span>نرم‌افزار اسپات‌پلیر را دانلود و نصب کنید</span>
             </li>
-            <li className="flex items-center gap-3">
+            <li className="flex items-center gap-2.5 sm:gap-3">
               <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۲</span>
               <span>لایسنس بالا را کپی کنید</span>
             </li>
-            <li className="flex items-center gap-3">
+            <li className="flex items-center gap-2.5 sm:gap-3">
               <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۳</span>
               <span>در نرم‌افزار لایسنس را وارد کنید و ویدیوها را تماشا کنید</span>
             </li>
@@ -359,25 +361,26 @@ export default function LessonViewer() {
   if (!activeLesson) return null
 
   return (
-    <div className="flex flex-col xl:flex-row gap-6 -m-6 lg:-m-8 p-6 lg:p-8 min-h-[calc(100vh-3rem)]">
-      {/* Main panel: Video + Info */}
-      <div className="flex-1 min-w-0">
-        {/* Breadcrumb */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4"
+    <div className="-m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8">
+      {/* Breadcrumb */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-3 sm:mb-4"
+      >
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 text-sm font-vazir text-gray-500 hover:text-gray-300 transition-colors"
         >
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1.5 text-sm font-vazir text-gray-500 hover:text-gray-300 transition-colors"
-          >
-            <ArrowRight size={14} />
-            بازگشت به داشبورد
-          </Link>
-        </motion.div>
+          <ArrowRight size={14} />
+          بازگشت به داشبورد
+        </Link>
+      </motion.div>
 
-        {/* Video player */}
+      <div className="flex flex-col xl:flex-row items-start gap-4 sm:gap-6">
+        {/* Main panel: Video + Info */}
+        <div className="flex-1 min-w-0">
+          {/* Video player */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -397,10 +400,10 @@ export default function LessonViewer() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="mt-6"
+          className="mt-4 sm:mt-6"
         >
-          <div className="flex items-start justify-between gap-4 mb-3">
-            <h1 className="text-xl sm:text-2xl font-siavash font-bold text-white">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <h1 className="text-lg sm:text-xl md:text-2xl font-siavash font-bold text-white">
               {activeLesson.title}
             </h1>
             <span
@@ -426,10 +429,10 @@ export default function LessonViewer() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.15 }}
-          className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden sticky top-6"
+          className="bg-white/[0.04] border border-white/10 rounded-2xl overflow-hidden xl:sticky xl:top-6"
         >
           {/* Header */}
-          <div className="px-5 py-4 border-b border-white/5">
+          <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-white/5">
             <div className="flex items-center gap-2 mb-1">
               <BookOpen size={16} className="text-blue-400" />
               <h2 className="text-sm font-vazir font-medium text-white">
@@ -443,7 +446,7 @@ export default function LessonViewer() {
           </div>
 
           {/* Lesson list */}
-          <div className="max-h-[calc(100vh-20rem)] overflow-y-auto scrollbar-none">
+          <div className="max-h-[50vh] sm:max-h-[60vh] xl:max-h-[calc(100vh-20rem)] overflow-y-auto scrollbar-none">
             <AnimatePresence>
               {lessons.map((lesson, index) => {
                 const isActive = activeLesson?.id === lesson.id
@@ -456,7 +459,7 @@ export default function LessonViewer() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.03 }}
                     onClick={() => setActiveLesson(lesson)}
-                    className={`w-full flex items-center gap-3 px-5 py-3.5 text-right transition-all duration-200 border-b border-white/5 last:border-b-0 ${
+                    className={`w-full flex items-center gap-2.5 sm:gap-3 px-4 sm:px-5 py-3 sm:py-3.5 text-right transition-all duration-200 border-b border-white/5 last:border-b-0 ${
                       isActive
                         ? 'bg-blue-500/10 border-r-2 border-r-blue-400'
                         : 'hover:bg-white/[0.04]'
@@ -509,6 +512,7 @@ export default function LessonViewer() {
             </AnimatePresence>
           </div>
         </motion.div>
+      </div>
       </div>
     </div>
   )

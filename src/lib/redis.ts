@@ -1,6 +1,10 @@
 import Redis from 'ioredis'
 
-const redis = new Redis(process.env.REDIS_URL!, {
+const redisUrl = process.env.REDIS_URL!
+const redisPassword = process.env.REDIS_PASSWORD
+
+const redis = new Redis(redisUrl, {
+  password: redisPassword || undefined,
   maxRetriesPerRequest: 3,
   retryStrategy(times) {
     if (times > 3) return null

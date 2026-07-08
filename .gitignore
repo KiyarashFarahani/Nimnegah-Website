@@ -25,6 +25,9 @@
 # docker data
 data/
 
+# uploaded media
+media/
+
 # debug
 npm-debug.log*
 yarn-debug.log*

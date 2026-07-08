@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Phone, ArrowLeft, Loader2 } from 'lucide-react'
-import { isValidIranianPhone } from '@/lib/validations'
+import { isValidIranianPhone, toEnglishDigits } from '@/lib/validations'
 
 export default function LoginPage() {
   const [phone, setPhone] = useState('')
@@ -25,7 +25,8 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    if (!isValidIranianPhone(phone)) {
+    const normalizedPhone = toEnglishDigits(phone);
+    if (!isValidIranianPhone(normalizedPhone)) {
       setError('شماره موبایل معتبر نیست (مثال: 09123456789)')
       setLoading(false)
       return
@@ -35,7 +36,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone: normalizedPhone }),
       })
 
       const data = await res.json()
@@ -45,7 +46,7 @@ export default function LoginPage() {
         return
       }
 
-      router.push(`/verify?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(redirect)}`)
+      router.push(`/verify?phone=${encodeURIComponent(normalizedPhone)}&redirect=${encodeURIComponent(redirect)}`)
     } catch {
       setError('Something went wrong')
     } finally {

@@ -4,7 +4,8 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react'
+import { ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
+import { toEnglishDigits } from '@/lib/validations';
 
 function VerifyForm() {
   const searchParams = useSearchParams()
@@ -36,7 +37,7 @@ function VerifyForm() {
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, code }),
+        body: JSON.stringify({ phone: toEnglishDigits(phone), code }),
       })
 
       const data = await res.json()
@@ -62,7 +63,7 @@ function VerifyForm() {
       await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone: toEnglishDigits(phone) }),
       })
       setResendTimer(60)
     } catch {
@@ -123,7 +124,7 @@ function VerifyForm() {
               inputMode="numeric"
               maxLength={6}
               value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+              onChange={(e) => setCode(toEnglishDigits(e.target.value).replace(/\D/g, ''))}
               placeholder="123456"
               dir="ltr"
               className="w-full px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white text-center text-2xl tracking-[0.5em] placeholder:text-white/30 focus:outline-none focus:border-blue-400/50 focus:bg-white/[0.07] transition-all duration-300 font-vazir"

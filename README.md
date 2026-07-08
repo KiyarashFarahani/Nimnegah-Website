@@ -1,6 +1,6 @@
-# Nimnegah — Artist Portfolio + Course Platform
+# Nimnegah — Course Platform
 
-A Next.js 15 portfolio website integrated with Payload CMS 3.x for selling online courses. Features OTP-based auth, Zarinpal payments, SpotPlayer video hosting, and a self-hostable Docker setup.
+A Next.js 15 website for selling online courses integrated with Payload CMS 3.x. Features OTP-based auth, Zarinpal payments, SpotPlayer video hosting, and a self-hostable Docker setup.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)

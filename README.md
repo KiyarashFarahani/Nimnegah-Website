@@ -1,6 +1,6 @@
 # Nimnegah — Artist Portfolio + Course Platform
 
-A Next.js 15 portfolio website integrated with Payload CMS 3.x for selling online courses. Features OTP-based auth, Zarinpal payments, and a self-hostable Docker setup.
+A Next.js 15 portfolio website integrated with Payload CMS 3.x for selling online courses. Features OTP-based auth, Zarinpal payments, SpotPlayer video hosting, and a self-hostable Docker setup.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -14,14 +14,18 @@ A Next.js 15 portfolio website integrated with Payload CMS 3.x for selling onlin
 |---|---|---|
 | `/` | ✅ Done | Artist portfolio (landing, galleries, storyboards, characters, about, contact) |
 | `/admin` | ✅ Done | Payload CMS admin panel (courses, lessons, users, orders, media) |
+| `/courses` | ✅ Done | Public course catalog |
+| `/courses/[slug] | ✅ Done | Course detail + purchase |
+| `/login` | ✅ Done | Phone number entry for OTP |
+| `/verify` | ✅ Done | OTP code entry |
+| `/dashboard` | ✅ Done | Student enrolled courses + progress |
+| `/dashboard/learn/[slug]` | ✅ Done | Lesson viewer + video player |
+| `/dashboard/profile` | ✅ Done | Student profile |
+| `/payment/success` | ✅ Done | Payment success page |
+| `/payment/failed` | ✅ Done | Payment failure page |
 | `/api/auth/*` | ✅ Done | OTP login endpoints (send-otp, verify-otp, me, logout) |
 | `/api/payment/*` | ✅ Done | Zarinpal payment create + verify |
-| `/courses` | 🔲 Next | Public course catalog |
-| `/courses/[slug]` | 🔲 Next | Course detail + purchase |
-| `/dashboard` | 🔲 Next | Student enrolled courses |
-| `/dashboard/[courseSlug]` | 🔲 Next | Lesson viewer + video player |
-| `/login` | 🔲 Next | Phone number entry |
-| `/verify` | 🔲 Next | OTP code entry |
+| `/api/health` | ✅ Done | Health check endpoint (DB + Redis) |
 
 ## Prerequisites
 
@@ -48,8 +52,9 @@ docker compose -f docker/docker-compose.yml up -d
 Verify:
 ```bash
 docker compose -f docker/docker-compose.yml ps
-# db (PostgreSQL 16) — port 5432
-# redis (Redis 7) — port 6379
+# app    — Next.js app (port 3000)
+# db     — PostgreSQL 16 (port 5432)
+# redis  — Redis 7 (port 6379)
 ```
 
 ### 2. Install dependencies
@@ -99,9 +104,10 @@ Open [http://localhost:3000/admin](http://localhost:3000/admin) for the admin pa
 | Database | PostgreSQL 16 (Docker) |
 | Cache | Redis 7 (Docker) |
 | Styling | Tailwind CSS 4 |
-| Animations | Framer Motion + Lenis |
+| Animations | Framer Motion |
 | Auth | OTP via sms.ir + Payload JWT |
 | Payments | Zarinpal |
+| Video Hosting | SpotPlayer (external) or self-hosted |
 | Icons | Lucide React |
 
 ## Project Structure
@@ -110,18 +116,26 @@ Open [http://localhost:3000/admin](http://localhost:3000/admin) for the admin pa
 src/
 ├── app/
 │   ├── (payload)/              # Payload admin panel
-│   │   ├── admin/[[...segments]]/page.tsx
-│   │   ├── layout.tsx
-│   │   └── importMap.js
-│   ├── (frontend)/             # Portfolio pages
-│   │   ├── layout.tsx
-│   │   └── page.tsx
+│   │   └── admin/[[...segments]]/page.tsx
+│   ├── (frontend)/             # Public pages
+│   │   ├── courses/            # Course catalog + detail
+│   │   ├── login/              # OTP login
+│   │   ├── verify/             # OTP verification
+│   │   ├── payment/            # Success/failure pages
+│   │   └── complete-profile/   # Profile completion
+│   ├── (dashboard)/            # Student dashboard
+│   │   └── dashboard/
+│   │       ├── page.tsx        # Enrolled courses
+│   │       ├── learn/[slug]/   # Lesson viewer
+│   │       └── profile/        # Student profile
 │   ├── api/
 │   │   ├── (payload)/          # Payload REST API
 │   │   ├── auth/               # OTP auth routes
-│   │   └── payment/            # Zarinpal routes
-│   ├── layout.tsx              # Root layout
-│   └── globals.css
+│   │   ├── payment/            # Zarinpal routes
+│   │   └── health/             # Health check endpoint
+│   ├── layout.tsx              # Root layout (SEO metadata)
+│   ├── robots.ts               # Dynamic robots.txt
+│   └── sitemap.ts              # Dynamic sitemap.xml
 ├── collections/                # Payload collections
 │   ├── Users.ts
 │   ├── Courses.ts
@@ -130,17 +144,24 @@ src/
 │   ├── Orders.ts
 │   ├── Enrollments.ts
 │   └── Media.ts
-├── components/                 # React components
+├── components/
+│   ├── courses/                # Course catalog + detail
+│   ├── dashboard/              # Dashboard shell + sidebar
+│   └── ui/                     # Shared UI components
 ├── data/                       # Static content data
 ├── hooks/                      # Custom React hooks
-├── lib/                        # Utilities
+├── lib/
 │   ├── redis.ts                # OTP caching
 │   ├── smsir.ts                # SMS provider
+│   ├── spotplayer.ts           # SpotPlayer API
 │   └── zarinpal.ts             # Payment provider
+├── migrations/                 # Database migrations
 └── docker/
     ├── Dockerfile
     ├── docker-compose.yml
-    └── nginx.conf
+    ├── nginx.conf
+    └── scripts/
+        └── backup-db.sh        # Automated DB backup
 ```
 
 ## Scripts
@@ -164,6 +185,7 @@ See [`.env.example`](.env.example) for the full list.
 | `DATABASE_URL` | PostgreSQL connection string |
 | `DB_PASSWORD` | PostgreSQL password |
 | `REDIS_URL` | Redis connection string |
+| `REDIS_PASSWORD` | Redis password (optional, for production) |
 | `PAYLOAD_SECRET` | Payload CMS secret (32+ chars) |
 | `JWT_SECRET` | JWT signing secret (32+ chars) |
 | `SMSIR_API_KEY` | sms.ir API key |
@@ -171,14 +193,27 @@ See [`.env.example`](.env.example) for the full list.
 | `SMSIR_TEMPLATE_ID` | sms.ir template ID |
 | `ZARINPAL_MERCHANT_ID` | Zarinpal merchant ID |
 | `ZARINPAL_SANDBOX` | `true` for sandbox, `false` for production |
+| `SPOTPLAYER_API_KEY` | SpotPlayer API key (from panel.spotplayer.ir) |
 | `NEXT_PUBLIC_APP_URL` | App base URL |
 
 ## Deployment (VPS)
 
 1. Copy `docker/Dockerfile`, `docker/docker-compose.yml`, and `docker/nginx.conf` to VPS
-2. Update `nginx.conf` with your domain + SSL cert paths
-3. Run `docker compose up -d` on the VPS
-4. Set up Let's Encrypt: `certbot --nginx -d yourdomain.com`
+2. Update `nginx.conf`: replace `YOUR_DOMAIN` with your domain
+3. Set up SSL: `sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com`
+4. Run `docker compose up -d` on the VPS
+5. Health check: `curl https://yourdomain.com/api/health`
+
+### Automated Backups
+
+The backup script runs daily via cron:
+```bash
+chmod +x docker/scripts/backup-db.sh
+# Add to crontab:
+0 3 * * * /path/to/project/docker/scripts/backup-db.sh
+```
+
+Backups are stored in `/var/backups/nimnegah/` with 30-day retention.
 
 ## License
 

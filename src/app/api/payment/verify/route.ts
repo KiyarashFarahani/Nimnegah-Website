@@ -1,5 +1,11 @@
 import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
+import {
+  type Payload,
+  getPayload,
+  createLocalReq,
+  commitTransaction,
+  killTransaction,
+} from 'payload'
 import config from '@payload-config'
 import { verifyPayment } from '@/lib/zarinpal'
 import { authenticateRequest } from '@/lib/auth'
@@ -60,46 +66,12 @@ export async function GET(request: Request) {
     const result = await verifyPayment(authority, order.amount)
 
     if (result.success) {
-      await payload.update({
-        collection: 'orders',
-        id: order.id,
-        draft: false,
-        overrideAccess: true,
-        data: {
-          status: 'completed',
-          zarinpalRefId: String(result.refId),
-        },
-      })
-
-      const existingEnrollment = await payload.find({
-        collection: 'enrollments',
-        where: {
-          and: [
-            { user: { equals: userId } },
-            { course: { equals: courseId } },
-          ],
-        },
-        limit: 1,
-      })
+      await completePayment(payload, userId, courseId, order.id, result.refId)
 
       const course = await payload.findByID({
         collection: 'courses',
         id: courseId,
       })
-
-      if (existingEnrollment.docs.length === 0) {
-        await payload.create({
-          collection: 'enrollments',
-          draft: false,
-          overrideAccess: true,
-          data: {
-            user: userId,
-            course: courseId,
-            progress: 0,
-            enrolledAt: new Date().toISOString(),
-          },
-        })
-      }
 
       return NextResponse.redirect(
         new URL(
@@ -126,5 +98,67 @@ export async function GET(request: Request) {
     return NextResponse.redirect(
       new URL('/payment/failed?reason=server_error', appUrl),
     )
+  }
+}
+
+async function completePayment(
+  payload: Payload,
+  userId: number,
+  courseId: number,
+  orderId: number,
+  refId: number,
+) {
+  const transactionID = await payload.db.beginTransaction()
+
+  if (!transactionID) {
+    throw new Error('Failed to start transaction')
+  }
+
+  const req = await createLocalReq({ req: { transactionID } as never }, payload)
+
+  try {
+    await payload.update({
+      collection: 'orders',
+      id: orderId,
+      draft: false,
+      overrideAccess: true,
+      req,
+      data: {
+        status: 'completed',
+        zarinpalRefId: String(refId),
+      },
+    })
+
+    const existingEnrollment = await payload.find({
+      collection: 'enrollments',
+      where: {
+        and: [
+          { user: { equals: userId } },
+          { course: { equals: courseId } },
+        ],
+      },
+      limit: 1,
+      req,
+    })
+
+    if (existingEnrollment.docs.length === 0) {
+      await payload.create({
+        collection: 'enrollments',
+        draft: false,
+        overrideAccess: true,
+        req,
+        data: {
+          user: userId,
+          course: courseId,
+          progress: 0,
+          enrolledAt: new Date().toISOString(),
+        },
+      })
+    }
+
+    await commitTransaction(req)
+  } catch (error) {
+    await killTransaction(req)
+    throw error
   }
 }

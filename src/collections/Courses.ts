@@ -5,6 +5,15 @@ export const Courses: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
   },
+  access: {
+    read: ({ req: { user } }) => {
+      if (user?.role === 'admin') return true
+      return { status: { equals: 'published' } }
+    },
+    create: ({ req: { user } }) => user?.role === 'admin',
+    update: ({ req: { user } }) => user?.role === 'admin',
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   fields: [
     {
       name: 'title',

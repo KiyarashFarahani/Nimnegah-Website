@@ -5,6 +5,20 @@ export const Lessons: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
   },
+  access: {
+    read: async ({ req: { user, payload } }) => {
+      if (user?.role === 'admin') return true
+      const publishedCourses = await payload.find({
+        collection: 'courses',
+        where: { status: { equals: 'published' } },
+        limit: 1000,
+      })
+      return { course: { in: publishedCourses.docs.map((c) => c.id) } }
+    },
+    create: ({ req: { user } }) => user?.role === 'admin',
+    update: ({ req: { user } }) => user?.role === 'admin',
+    delete: ({ req: { user } }) => user?.role === 'admin',
+  },
   fields: [
     {
       name: 'title',

@@ -23,7 +23,10 @@ export async function sendOTP(phone: string, code: string): Promise<void> {
   })
 
   const body = await response.json()
-  console.log('[sms.ir] Response:', body)
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log('[sms.ir] Response:', body)
+  }
 
   if (!response.ok) {
     throw new Error(`SMS send failed: ${JSON.stringify(body)}`)

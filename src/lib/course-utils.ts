@@ -8,6 +8,7 @@ export type Course = {
   price: number
   duration?: number
   level?: string
+  status?: 'draft' | 'published' | 'coming_soon'
   courseType?: 'self-hosted' | 'spotplayer'
   thumbnail?: { url: string } | null
   category?: { name: string } | null

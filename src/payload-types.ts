@@ -201,7 +201,7 @@ export interface Course {
   price: number;
   thumbnail?: (number | null) | Media;
   category?: (number | null) | Category;
-  status?: ('draft' | 'published') | null;
+  status?: ('draft' | 'published' | 'coming_soon') | null;
   level?: ('beginner' | 'intermediate' | 'advanced') | null;
   /**
    * Total duration in minutes

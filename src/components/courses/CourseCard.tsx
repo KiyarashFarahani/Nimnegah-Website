@@ -91,12 +91,18 @@ export default function CourseCard({ course, index }: { course: Course; index: n
 
           {/* Price + CTA */}
           <div className="flex items-center justify-between pt-4 border-t border-white/5">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-white font-vazir">
-                {formatPrice(course.price)}
+            {course.status === 'coming_soon' ? (
+              <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-vazir text-amber-300">
+                به زودی
               </span>
-              <span className="text-xs text-gray-500 font-vazir">تومان</span>
-            </div>
+            ) : (
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-bold text-white font-vazir">
+                  {formatPrice(course.price)}
+                </span>
+                <span className="text-xs text-gray-500 font-vazir">تومان</span>
+              </div>
+            )}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href={`/courses/${course.slug}`}

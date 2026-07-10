@@ -36,6 +36,7 @@ type Course = {
   price: number;
   duration?: number;
   level?: string;
+  status?: 'draft' | 'published' | 'coming_soon';
   thumbnail?: { url: string } | null;
   category?: { name: string } | null;
 };
@@ -388,20 +389,33 @@ export default function CourseDetail({ slug }: { slug: string }) {
                 <div className="bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden">
                   {/* Price header */}
                   <div className="p-6 border-b border-white/5">
-                    <div className="flex items-baseline gap-2 mb-4">
-                      <span className="text-3xl font-bold text-white font-vazir">
-                        {formatPrice(course.price)}
-                      </span>
-                      <span className="text-sm text-gray-500 font-vazir">تومان</span>
-                    </div>
+                    {course.status === 'coming_soon' ? (
+                      <div className="mb-4">
+                        <span className="inline-block px-4 py-2 bg-amber-500/20 border border-amber-500/30 rounded-xl text-sm font-vazir text-amber-300 font-medium">
+                          به زودی
+                        </span>
+                        <p className="text-xs text-gray-500 font-vazir mt-2">
+                          این دوره هنوز منتشر نشده است
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex items-baseline gap-2 mb-4">
+                        <span className="text-3xl font-bold text-white font-vazir">
+                          {formatPrice(course.price)}
+                        </span>
+                        <span className="text-sm text-gray-500 font-vazir">تومان</span>
+                      </div>
+                    )}
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={handlePurchase}
-                      disabled={purchasing}
-                      className="w-full py-3.5 bg-gradient-to-l from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 rounded-xl text-white font-vazir font-medium text-sm transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.65)] flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                      whileHover={course.status === 'coming_soon' ? undefined : { scale: 1.02 }}
+                      whileTap={course.status === 'coming_soon' ? undefined : { scale: 0.98 }}
+                      onClick={course.status === 'coming_soon' ? undefined : handlePurchase}
+                      disabled={purchasing || course.status === 'coming_soon'}
+                      className="w-full py-3.5 rounded-xl text-white font-vazir font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed bg-gradient-to-l from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.65)]"
                     >
-                      {purchasing ? (
+                      {course.status === 'coming_soon' ? (
+                        'به زودی'
+                      ) : purchasing ? (
                         <>
                           <Loader2 size={16} className="animate-spin" />
                           در حال انتقال...

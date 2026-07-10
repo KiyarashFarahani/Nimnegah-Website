@@ -11,7 +11,7 @@ export async function GET() {
       depth: 2,
       where: {
         status: {
-          equals: 'published',
+          in: ['published', 'coming_soon'],
         },
       },
       sort: '-createdAt',

@@ -18,7 +18,7 @@ export async function GET(
       depth: 2,
       where: {
         slug: { equals: slug },
-        status: { equals: 'published' },
+        status: { in: ['published', 'coming_soon'] },
       },
       limit: 1,
     })

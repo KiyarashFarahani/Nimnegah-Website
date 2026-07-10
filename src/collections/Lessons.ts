@@ -10,7 +10,7 @@ export const Lessons: CollectionConfig = {
       if (user?.role === 'admin') return true
       const publishedCourses = await payload.find({
         collection: 'courses',
-        where: { status: { equals: 'published' } },
+        where: { status: { in: ['published', 'coming_soon'] } },
         limit: 1000,
       })
       return { course: { in: publishedCourses.docs.map((c) => c.id) } }

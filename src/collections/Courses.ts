@@ -8,7 +8,7 @@ export const Courses: CollectionConfig = {
   access: {
     read: ({ req: { user } }) => {
       if (user?.role === 'admin') return true
-      return { status: { equals: 'published' } }
+      return { status: { in: ['published', 'coming_soon'] } }
     },
     create: ({ req: { user } }) => user?.role === 'admin',
     update: ({ req: { user } }) => user?.role === 'admin',
@@ -55,6 +55,7 @@ export const Courses: CollectionConfig = {
       options: [
         { label: 'Draft', value: 'draft' },
         { label: 'Published', value: 'published' },
+        { label: 'Coming Soon', value: 'coming_soon' },
       ],
       admin: {
         position: 'sidebar',

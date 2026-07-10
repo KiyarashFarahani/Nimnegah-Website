@@ -117,8 +117,8 @@ export const Courses: CollectionConfig = {
         if (data?.title && !data?.slug) {
           data.slug = data.title
             .toLowerCase()
-            .replace(/[^\w\s-]/g, '')
             .replace(/[\s_]+/g, '-')
+            .replace(/[/\?#]/g, '')
             .replace(/(^-|-$)/g, '')
         }
         return data

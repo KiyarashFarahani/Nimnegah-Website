@@ -30,7 +30,12 @@ export async function middleware(request: NextRequest) {
 
   try {
     const secret = new TextEncoder().encode(process.env.PAYLOAD_SECRET!)
-    await jwtVerify(token, secret)
+    const { payload } = await jwtVerify(token, secret)
+
+    if (!payload.id) {
+      throw new Error('Invalid token')
+    }
+
     return NextResponse.next()
   } catch {
     if (pathname.startsWith('/api/')) {

@@ -7,25 +7,17 @@ import 'plyr-react/plyr.css'
 type VideoPlayerProps = {
   lessonId: string | number
   title?: string
-  onTimeUpdate?: (currentTime: number, duration: number) => void
   onEnded?: () => void
 }
 
 export default function VideoPlayer({
   lessonId,
   title,
-  onTimeUpdate,
   onEnded,
 }: VideoPlayerProps) {
   useEffect(() => {
     const video = document.querySelector('.plyr-react video') as HTMLVideoElement | null
     if (!video) return
-
-    const onTime = () => {
-      if (onTimeUpdate) {
-        onTimeUpdate(video.currentTime, video.duration)
-      }
-    }
 
     const onVideoEnded = () => {
       if (onEnded) {
@@ -33,14 +25,12 @@ export default function VideoPlayer({
       }
     }
 
-    video.addEventListener('timeupdate', onTime)
     video.addEventListener('ended', onVideoEnded)
 
     return () => {
-      video.removeEventListener('timeupdate', onTime)
       video.removeEventListener('ended', onVideoEnded)
     }
-  }, [lessonId, onTimeUpdate, onEnded])
+  }, [lessonId, onEnded])
 
   const videoSrc = `/api/video/${lessonId}`
 

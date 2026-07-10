@@ -18,6 +18,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+RUN mkdir -p /app/media && chown nextjs:nodejs /app/media
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000

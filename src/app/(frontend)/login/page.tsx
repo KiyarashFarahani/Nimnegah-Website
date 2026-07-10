@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Phone, ArrowLeft, Loader2 } from 'lucide-react'
-import { isValidIranianPhone, toEnglishDigits } from '@/lib/validations'
+import { isValidIranianPhone, toEnglishDigits, safeRedirect } from '@/lib/validations'
 
 export default function LoginPage() {
   const [phone, setPhone] = useState('')
@@ -14,7 +14,7 @@ export default function LoginPage() {
   const [isMobile, setIsMobile] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirect = searchParams.get('redirect') || '/dashboard'
+  const redirect = safeRedirect(searchParams.get('redirect') || '')
 
   useEffect(() => {
     setIsMobile(window.matchMedia('(max-width: 768px)').matches)

@@ -5,12 +5,12 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ShieldCheck, ArrowLeft, Loader2 } from 'lucide-react';
-import { toEnglishDigits } from '@/lib/validations';
+import { toEnglishDigits, safeRedirect } from '@/lib/validations';
 
 function VerifyForm() {
   const searchParams = useSearchParams()
   const phone = searchParams.get('phone') || ''
-  const redirect = searchParams.get('redirect') || '/dashboard'
+  const redirect = safeRedirect(searchParams.get('redirect') || '')
   const [code, setCode] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

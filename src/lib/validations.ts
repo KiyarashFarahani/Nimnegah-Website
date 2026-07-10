@@ -9,3 +9,8 @@ export function toEnglishDigits(str: string): string {
 export function isValidIranianPhone(phone: string): boolean {
   return IRANIAN_PHONE_REGEX.test(toEnglishDigits(phone));
 }
+
+export function safeRedirect(value: string, fallback = '/dashboard'): string {
+  if (value.startsWith('/') && !value.startsWith('//')) return value
+  return fallback
+}

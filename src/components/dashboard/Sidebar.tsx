@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BookOpen, User, LogOut, Menu, X } from 'lucide-react'
+import { BookOpen, User, LogOut, Menu, X, Home, GraduationCap } from 'lucide-react'
 import Image from 'next/image'
 
 type Userinfo = {
@@ -72,6 +72,25 @@ export default function Sidebar({
             </Link>
           )
         })}
+
+        <div className="pt-3 mt-3 border-t border-white/5 space-y-1">
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl font-vazir text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+          >
+            <Home size={18} />
+            صفحه اصلی
+          </Link>
+          <Link
+            href="/courses"
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl font-vazir text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200"
+          >
+            <GraduationCap size={18} />
+            خرید دوره‌ی جدید
+          </Link>
+        </div>
       </nav>
 
       {/* User info + logout */}

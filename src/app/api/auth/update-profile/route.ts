@@ -14,7 +14,7 @@ export async function PATCH(request: Request) {
     const body = await request.json()
     const { name } = body
 
-    if (typeof name !== 'string') {
+    if (typeof name !== 'string' || !name.trim()) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 })
     }
 

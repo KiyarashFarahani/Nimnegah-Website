@@ -1,5 +1,4 @@
 const SMSIR_API_KEY = process.env.SMSIR_API_KEY!
-const SMSIR_LINE_NUMBER = process.env.SMSIR_LINE_NUMBER!
 const SMSIR_TEMPLATE_ID = process.env.SMSIR_TEMPLATE_ID!
 
 import { randomInt } from 'crypto'

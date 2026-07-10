@@ -91,7 +91,8 @@ export async function POST(request: Request) {
     })
 
     return response
-  } catch {
+  } catch (error) {
+    console.error('Verify OTP error:', error)
     return NextResponse.json({ error: 'تأیید کد با خطا مواجه شد' }, { status: 500 })
   }
 }

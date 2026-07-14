@@ -1,6 +1,6 @@
 # Nimnegah — Course Platform
 
-A Next.js 15 website for selling online courses integrated with Payload CMS 3.x. Features OTP-based auth, Zarinpal payments, SpotPlayer video hosting, and a self-hostable Docker setup.
+A Next.js 15 course-selling platform with Payload CMS 3.x, OTP auth (sms.ir), Zarinpal payments, SpotPlayer video hosting, and self-hostable Docker setup.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
@@ -10,22 +10,52 @@ A Next.js 15 website for selling online courses integrated with Payload CMS 3.x.
 
 ## Pages
 
+### Frontend
+
 | Route | Status | Description |
 |---|---|---|
-| `/` | ✅ Done | Artist portfolio (landing, galleries, storyboards, characters, about, contact) |
-| `/admin` | ✅ Done | Payload CMS admin panel (courses, lessons, users, orders, media) |
+| `/` | ✅ Done | landing, featured courses, about |
 | `/courses` | ✅ Done | Public course catalog |
-| `/courses/[slug] | ✅ Done | Course detail + purchase |
+| `/courses/[slug]` | ✅ Done | Course detail + purchase |
 | `/login` | ✅ Done | Phone number entry for OTP |
 | `/verify` | ✅ Done | OTP code entry |
-| `/dashboard` | ✅ Done | Student enrolled courses + progress |
-| `/dashboard/learn/[slug]` | ✅ Done | Lesson viewer + video player |
-| `/dashboard/profile` | ✅ Done | Student profile |
+| `/complete-profile` | ✅ Done | New user profile completion |
 | `/payment/success` | ✅ Done | Payment success page |
 | `/payment/failed` | ✅ Done | Payment failure page |
-| `/api/auth/*` | ✅ Done | OTP login endpoints (send-otp, verify-otp, me, logout) |
-| `/api/payment/*` | ✅ Done | Zarinpal payment create + verify |
-| `/api/health` | ✅ Done | Health check endpoint (DB + Redis) |
+
+### Student Dashboard
+
+| Route | Status | Description |
+|---|---|---|
+| `/dashboard` | ✅ Done | Enrolled courses + progress |
+| `/dashboard/learn/[slug]` | ✅ Done | Lesson viewer + video player |
+| `/dashboard/profile` | ✅ Done | Student profile |
+
+### Admin
+
+| Route | Status | Description |
+|---|---|---|
+| `/admin` | ✅ Done | Payload CMS admin panel (courses, lessons, users, orders, media) |
+
+### API Routes
+
+| Route | Method | Description |
+|---|---|---|
+| `/api/auth/send-otp` | POST | Send OTP via sms.ir |
+| `/api/auth/verify-otp` | POST | Verify OTP + create session |
+| `/api/auth/me` | GET | Get current user |
+| `/api/auth/logout` | POST | Clear session |
+| `/api/auth/update-profile` | POST | Update user profile |
+| `/api/payment/create` | POST | Initialize Zarinpal payment |
+| `/api/payment/verify` | GET | Zarinpal callback verification |
+| `/api/dashboard/courses` | GET | Get enrolled courses |
+| `/api/dashboard/enrollments` | GET | Get enrollment details |
+| `/api/dashboard/progress` | POST | Update lesson progress |
+| `/api/dashboard/generate-license` | POST | Generate SpotPlayer license |
+| `/api/public/courses` | GET | List published courses |
+| `/api/public/categories` | GET | List categories |
+| `/api/video/[...path]` | GET | Video streaming with auth |
+| `/api/health` | GET | Health check (DB + Redis) |
 
 ## Prerequisites
 
@@ -102,12 +132,13 @@ Open [http://localhost:3000/admin](http://localhost:3000/admin) for the admin pa
 | Framework | Next.js 15 (App Router + Turbopack) |
 | CMS | Payload CMS 3.x (embedded) |
 | Database | PostgreSQL 16 (Docker) |
-| Cache | Redis 7 (Docker) |
+| Cache | Redis 7 via ioredis (Docker) |
 | Styling | Tailwind CSS 4 |
 | Animations | Framer Motion |
-| Auth | OTP via sms.ir + Payload JWT |
+| Auth | OTP via sms.ir + jose JWT |
 | Payments | Zarinpal |
 | Video Hosting | SpotPlayer (external) or self-hosted |
+| Video Player | Plyr (plyr-react) |
 | Icons | Lucide React |
 
 ## Project Structure
@@ -121,17 +152,21 @@ src/
 │   │   ├── courses/            # Course catalog + detail
 │   │   ├── login/              # OTP login
 │   │   ├── verify/             # OTP verification
-│   │   ├── payment/            # Success/failure pages
-│   │   └── complete-profile/   # Profile completion
-│   ├── (dashboard)/            # Student dashboard
-│   │   └── dashboard/
-│   │       ├── page.tsx        # Enrolled courses
-│   │       ├── learn/[slug]/   # Lesson viewer
-│   │       └── profile/        # Student profile
+│   │   ├── complete-profile/   # Profile completion
+│   │   └── payment/            # Success/failure pages
+│   ├── (dashboard)/            # Student area
+│   │   ├── dashboard/
+│   │   │   ├── page.tsx        # Enrolled courses
+│   │   │   ├── learn/[slug]/   # Lesson viewer
+│   │   │   └── profile/        # Student profile
+│   │   └── complete-profile/   # Profile completion (dashboard variant)
 │   ├── api/
 │   │   ├── (payload)/          # Payload REST API
-│   │   ├── auth/               # OTP auth routes
-│   │   ├── payment/            # Zarinpal routes
+│   │   ├── auth/               # OTP auth routes (send-otp, verify-otp, me, logout, update-profile)
+│   │   ├── payment/            # Zarinpal routes (create, verify)
+│   │   ├── dashboard/          # Student API (courses, enrollments, progress, generate-license)
+│   │   ├── public/             # Public API (courses, categories)
+│   │   ├── video/              # Video streaming with auth
 │   │   └── health/             # Health check endpoint
 │   ├── layout.tsx              # Root layout (SEO metadata)
 │   ├── robots.ts               # Dynamic robots.txt
@@ -145,23 +180,45 @@ src/
 │   ├── Enrollments.ts
 │   └── Media.ts
 ├── components/
+│   ├── admin/                  # Admin panel components
 │   ├── courses/                # Course catalog + detail
 │   ├── dashboard/              # Dashboard shell + sidebar
-│   └── ui/                     # Shared UI components
+│   ├── ui/                     # Shared UI components
+│   ├── Hero.tsx                # Landing page sections
+│   ├── Navigation.tsx
+│   ├── Footer.tsx
+│   ├── AppWrapper.tsx
+│   ├── FeaturedCourses.tsx
+│   ├── AboutAcademy.tsx
+│   ├── CTA.tsx
+│   ├── PageTransition.tsx
+│   ├── ScrollToTopProvider.tsx
+│   └── SplashScreen.tsx
+├── contexts/
+│   └── SplashContext.tsx       # Splash screen state
 ├── data/                       # Static content data
 ├── hooks/                      # Custom React hooks
 ├── lib/
-│   ├── redis.ts                # OTP caching
+│   ├── auth.ts                 # JWT/session utilities (jose)
+│   ├── cookie.ts               # Cookie helpers
+│   ├── course-utils.ts         # Course utility functions
+│   ├── fonts.ts                # Font configuration
+│   ├── redis.ts                # Redis client (ioredis)
 │   ├── smsir.ts                # SMS provider
 │   ├── spotplayer.ts           # SpotPlayer API
+│   ├── validations.ts          # Input validation schemas
 │   └── zarinpal.ts             # Payment provider
+├── middleware.ts                # Next.js middleware (auth guards)
 ├── migrations/                 # Database migrations
-└── docker/
-    ├── Dockerfile
-    ├── docker-compose.yml
-    ├── nginx.conf
-    └── scripts/
-        └── backup-db.sh        # Automated DB backup
+├── payload-generated-schema.ts # Auto-generated Payload schema
+├── payload-types.ts            # Auto-generated Payload types
+└── payload.config.ts           # Payload CMS configuration
+docker/
+├── Dockerfile
+├── docker-compose.yml
+├── nginx.conf
+└── scripts/
+    └── backup-db.sh            # Automated DB backup
 ```
 
 ## Scripts
@@ -178,7 +235,11 @@ npm run payload:migrate   # Run database migrations
 
 ## Environment Variables
 
-See [`.env.example`](.env.example) for the full list.
+Copy `.env.example` to `.env` and fill in the values:
+
+```bash
+cp .env.example .env
+```
 
 | Variable | Description |
 |---|---|

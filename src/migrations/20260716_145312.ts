@@ -1,11 +1,11 @@
-import type { MigrateUpArgs, MigrateDownArgs } from '@payloadcms/drizzle/postgres'
-import { sql } from '@payloadcms/db-postgres'
+import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    CREATE TYPE "public"."enum_users_role" AS ENUM('admin', 'student');
-  CREATE TYPE "public"."enum_courses_status" AS ENUM('draft', 'published');
+  CREATE TYPE "public"."enum_courses_status" AS ENUM('draft', 'published', 'coming_soon');
   CREATE TYPE "public"."enum_courses_level" AS ENUM('beginner', 'intermediate', 'advanced');
+  CREATE TYPE "public"."enum_courses_course_type" AS ENUM('self-hosted', 'spotplayer');
   CREATE TYPE "public"."enum_orders_status" AS ENUM('pending', 'completed', 'failed');
   CREATE TABLE "users_sessions" (
   	"_order" integer NOT NULL,
@@ -32,6 +32,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"lock_until" timestamp(3) with time zone
   );
   
+  CREATE TABLE "courses_spotplayer_course_ids" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"course_id" varchar
+  );
+  
   CREATE TABLE "courses" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"title" varchar NOT NULL,
@@ -43,6 +50,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"status" "enum_courses_status" DEFAULT 'draft',
   	"level" "enum_courses_level" DEFAULT 'beginner',
   	"duration" numeric DEFAULT 0,
+  	"course_type" "enum_courses_course_type" DEFAULT 'self-hosted',
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -52,7 +60,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"title" varchar NOT NULL,
   	"course_id" integer NOT NULL,
   	"description" varchar,
-  	"video_url" varchar NOT NULL,
+  	"video_id" integer NOT NULL,
   	"duration" numeric DEFAULT 0 NOT NULL,
   	"order" numeric DEFAULT 0,
   	"is_free" boolean DEFAULT false,
@@ -82,6 +90,14 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
   
+  CREATE TABLE "enrollments_completed_lessons" (
+  	"_order" integer NOT NULL,
+  	"_parent_id" integer NOT NULL,
+  	"id" varchar PRIMARY KEY NOT NULL,
+  	"lesson_id" numeric NOT NULL,
+  	"completed_at" timestamp(3) with time zone
+  );
+  
   CREATE TABLE "enrollments" (
   	"id" serial PRIMARY KEY NOT NULL,
   	"user_id" integer NOT NULL,
@@ -89,6 +105,7 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	"progress" numeric DEFAULT 0,
   	"enrolled_at" timestamp(3) with time zone,
   	"last_accessed_at" timestamp(3) with time zone,
+  	"spotplayer_license_key" varchar,
   	"updated_at" timestamp(3) with time zone DEFAULT now() NOT NULL,
   	"created_at" timestamp(3) with time zone DEFAULT now() NOT NULL
   );
@@ -162,12 +179,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   
   ALTER TABLE "users_sessions" ADD CONSTRAINT "users_sessions_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "users" ADD CONSTRAINT "users_avatar_id_media_id_fk" FOREIGN KEY ("avatar_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "courses_spotplayer_course_ids" ADD CONSTRAINT "courses_spotplayer_course_ids_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."courses"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "courses" ADD CONSTRAINT "courses_thumbnail_id_media_id_fk" FOREIGN KEY ("thumbnail_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "courses" ADD CONSTRAINT "courses_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "lessons" ADD CONSTRAINT "lessons_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "lessons" ADD CONSTRAINT "lessons_video_id_media_id_fk" FOREIGN KEY ("video_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "categories" ADD CONSTRAINT "categories_thumbnail_id_media_id_fk" FOREIGN KEY ("thumbnail_id") REFERENCES "public"."media"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "orders" ADD CONSTRAINT "orders_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE set null ON UPDATE no action;
+  ALTER TABLE "enrollments_completed_lessons" ADD CONSTRAINT "enrollments_completed_lessons_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "public"."enrollments"("id") ON DELETE cascade ON UPDATE no action;
   ALTER TABLE "enrollments" ADD CONSTRAINT "enrollments_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "enrollments" ADD CONSTRAINT "enrollments_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE set null ON UPDATE no action;
   ALTER TABLE "payload_locked_documents_rels" ADD CONSTRAINT "payload_locked_documents_rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "public"."payload_locked_documents"("id") ON DELETE cascade ON UPDATE no action;
@@ -187,12 +207,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "users_updated_at_idx" ON "users" USING btree ("updated_at");
   CREATE INDEX "users_created_at_idx" ON "users" USING btree ("created_at");
   CREATE UNIQUE INDEX "users_email_idx" ON "users" USING btree ("email");
+  CREATE INDEX "courses_spotplayer_course_ids_order_idx" ON "courses_spotplayer_course_ids" USING btree ("_order");
+  CREATE INDEX "courses_spotplayer_course_ids_parent_id_idx" ON "courses_spotplayer_course_ids" USING btree ("_parent_id");
   CREATE UNIQUE INDEX "courses_slug_idx" ON "courses" USING btree ("slug");
   CREATE INDEX "courses_thumbnail_idx" ON "courses" USING btree ("thumbnail_id");
   CREATE INDEX "courses_category_idx" ON "courses" USING btree ("category_id");
   CREATE INDEX "courses_updated_at_idx" ON "courses" USING btree ("updated_at");
   CREATE INDEX "courses_created_at_idx" ON "courses" USING btree ("created_at");
   CREATE INDEX "lessons_course_idx" ON "lessons" USING btree ("course_id");
+  CREATE INDEX "lessons_video_idx" ON "lessons" USING btree ("video_id");
   CREATE INDEX "lessons_updated_at_idx" ON "lessons" USING btree ("updated_at");
   CREATE INDEX "lessons_created_at_idx" ON "lessons" USING btree ("created_at");
   CREATE UNIQUE INDEX "categories_slug_idx" ON "categories" USING btree ("slug");
@@ -203,6 +226,8 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   CREATE INDEX "orders_course_idx" ON "orders" USING btree ("course_id");
   CREATE INDEX "orders_updated_at_idx" ON "orders" USING btree ("updated_at");
   CREATE INDEX "orders_created_at_idx" ON "orders" USING btree ("created_at");
+  CREATE INDEX "enrollments_completed_lessons_order_idx" ON "enrollments_completed_lessons" USING btree ("_order");
+  CREATE INDEX "enrollments_completed_lessons_parent_id_idx" ON "enrollments_completed_lessons" USING btree ("_parent_id");
   CREATE INDEX "enrollments_user_idx" ON "enrollments" USING btree ("user_id");
   CREATE INDEX "enrollments_course_idx" ON "enrollments" USING btree ("course_id");
   CREATE INDEX "enrollments_updated_at_idx" ON "enrollments" USING btree ("updated_at");
@@ -239,10 +264,12 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   await db.execute(sql`
    DROP TABLE "users_sessions" CASCADE;
   DROP TABLE "users" CASCADE;
+  DROP TABLE "courses_spotplayer_course_ids" CASCADE;
   DROP TABLE "courses" CASCADE;
   DROP TABLE "lessons" CASCADE;
   DROP TABLE "categories" CASCADE;
   DROP TABLE "orders" CASCADE;
+  DROP TABLE "enrollments_completed_lessons" CASCADE;
   DROP TABLE "enrollments" CASCADE;
   DROP TABLE "media" CASCADE;
   DROP TABLE "payload_kv" CASCADE;
@@ -254,5 +281,6 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TYPE "public"."enum_users_role";
   DROP TYPE "public"."enum_courses_status";
   DROP TYPE "public"."enum_courses_level";
+  DROP TYPE "public"."enum_courses_course_type";
   DROP TYPE "public"."enum_orders_status";`)
 }

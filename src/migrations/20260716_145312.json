@@ -282,6 +282,88 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.courses_spotplayer_course_ids": {
+      "name": "courses_spotplayer_course_ids",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "course_id": {
+          "name": "course_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "courses_spotplayer_course_ids_order_idx": {
+          "name": "courses_spotplayer_course_ids_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "courses_spotplayer_course_ids_parent_id_idx": {
+          "name": "courses_spotplayer_course_ids_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "courses_spotplayer_course_ids_parent_id_fk": {
+          "name": "courses_spotplayer_course_ids_parent_id_fk",
+          "tableFrom": "courses_spotplayer_course_ids",
+          "tableTo": "courses",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.courses": {
       "name": "courses",
       "schema": "",
@@ -350,6 +432,14 @@
           "primaryKey": false,
           "notNull": false,
           "default": 0
+        },
+        "course_type": {
+          "name": "course_type",
+          "type": "enum_courses_course_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'self-hosted'"
         },
         "updated_at": {
           "name": "updated_at",
@@ -505,9 +595,9 @@
           "primaryKey": false,
           "notNull": false
         },
-        "video_url": {
-          "name": "video_url",
-          "type": "varchar",
+        "video_id": {
+          "name": "video_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -563,6 +653,21 @@
           "method": "btree",
           "with": {}
         },
+        "lessons_video_idx": {
+          "name": "lessons_video_idx",
+          "columns": [
+            {
+              "expression": "video_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "lessons_updated_at_idx": {
           "name": "lessons_updated_at_idx",
           "columns": [
@@ -601,6 +706,19 @@
           "tableTo": "courses",
           "columnsFrom": [
             "course_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "lessons_video_id_media_id_fk": {
+          "name": "lessons_video_id_media_id_fk",
+          "tableFrom": "lessons",
+          "tableTo": "media",
+          "columnsFrom": [
+            "video_id"
           ],
           "columnsTo": [
             "id"
@@ -906,6 +1024,94 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.enrollments_completed_lessons": {
+      "name": "enrollments_completed_lessons",
+      "schema": "",
+      "columns": {
+        "_order": {
+          "name": "_order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_parent_id": {
+          "name": "_parent_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "lesson_id": {
+          "name": "lesson_id",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "completed_at": {
+          "name": "completed_at",
+          "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "enrollments_completed_lessons_order_idx": {
+          "name": "enrollments_completed_lessons_order_idx",
+          "columns": [
+            {
+              "expression": "_order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "enrollments_completed_lessons_parent_id_idx": {
+          "name": "enrollments_completed_lessons_parent_id_idx",
+          "columns": [
+            {
+              "expression": "_parent_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "enrollments_completed_lessons_parent_id_fk": {
+          "name": "enrollments_completed_lessons_parent_id_fk",
+          "tableFrom": "enrollments_completed_lessons",
+          "tableTo": "enrollments",
+          "columnsFrom": [
+            "_parent_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.enrollments": {
       "name": "enrollments",
       "schema": "",
@@ -944,6 +1150,12 @@
         "last_accessed_at": {
           "name": "last_accessed_at",
           "type": "timestamp(3) with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "spotplayer_license_key": {
+          "name": "spotplayer_license_key",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": false
         },
@@ -1977,7 +2189,8 @@
       "schema": "public",
       "values": [
         "draft",
-        "published"
+        "published",
+        "coming_soon"
       ]
     },
     "public.enum_courses_level": {
@@ -1987,6 +2200,14 @@
         "beginner",
         "intermediate",
         "advanced"
+      ]
+    },
+    "public.enum_courses_course_type": {
+      "name": "enum_courses_course_type",
+      "schema": "public",
+      "values": [
+        "self-hosted",
+        "spotplayer"
       ]
     },
     "public.enum_orders_status": {
@@ -2009,6 +2230,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "37a23140-a5fa-4baa-99ab-721d71afd5a2",
+  "id": "aad68dfe-6608-4454-9d5f-75d9ca42a20f",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }

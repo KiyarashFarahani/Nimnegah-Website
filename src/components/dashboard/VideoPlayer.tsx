@@ -1,8 +1,17 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Plyr } from 'plyr-react'
+import dynamic from 'next/dynamic'
 import 'plyr-react/plyr.css'
+
+const Plyr = dynamic(() => import('plyr-react').then((mod) => mod.Plyr), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-black">
+      <div className="w-8 h-8 border-2 border-blue-400/30 border-t-blue-400 rounded-full animate-spin" />
+    </div>
+  ),
+})
 
 type VideoPlayerProps = {
   lessonId: string | number

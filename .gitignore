@@ -43,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# deployment (contains secrets)
+DEPLOYMENT.md
+nimnegah-amd64.tar

@@ -12,3 +12,4 @@ media
 .opencode
 .DS_Store
 tsconfig.tsbuildinfo
+*.tar

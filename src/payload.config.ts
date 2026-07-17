@@ -17,6 +17,13 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: 'users',
+    components: {
+      afterDashboard: [
+        {
+          path: './src/components/admin/SystemStats.tsx#SystemStats',
+        },
+      ],
+    },
   },
   collections: [
     Users,

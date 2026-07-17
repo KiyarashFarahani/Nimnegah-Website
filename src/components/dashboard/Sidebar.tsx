@@ -38,7 +38,7 @@ export default function Sidebar({
       <div className="px-6 py-5 border-b border-white/5">
         <Link href="/dashboard" className="flex items-center gap-3">
           <Image
-            src="/images/logo/logo.png"
+            src="/images/logo/logo.webp"
             alt="نیم‌نگاه"
             width={36}
             height={36}

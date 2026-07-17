@@ -87,7 +87,7 @@ const Navigation = () => {
             <motion.div whileHover={{ scale: 1.05 }}>
               <Link href="/" className="flex items-center">
                 <Image
-                  src="/images/logo/logo.png"
+                  src="/images/logo/logo.webp"
                   alt="نیم‌نگاه"
                   width={48}
                   height={48}

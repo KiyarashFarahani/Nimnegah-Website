@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col items-center justify-center px-6">
       <Image
-        src="/images/logo/logo.png"
+        src="/images/logo/logo.webp"
         alt="نیم‌نگاه"
         width={160}
         height={160}

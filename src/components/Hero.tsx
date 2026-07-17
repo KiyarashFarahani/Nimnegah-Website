@@ -30,7 +30,7 @@ const Hero = () => {
               className={`absolute inset-0 flex items-center justify-center lg:justify-start pl-0 sm:pl-8 lg:pl-24 ${floatClasses[i]}`}
             >
               <Image
-                src={`/images/profile/${num}.png`}
+                src={`/images/profile/${num}.webp`}
                 alt={`Profile ${num}`}
                 width={1200}
                 height={1500}

@@ -29,7 +29,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <Image
-          src="/images/logo/logo.png"
+          src="/images/logo/logo.webp"
           alt="Logo"
           width={200}
           height={200}

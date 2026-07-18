@@ -28,12 +28,21 @@ function getCpuUsage(): Promise<number> {
 
 function getDiskUsage() {
   try {
-    const output = execSync("df -h / | tail -1 | awk '{print $2,$3,$4,$5}'", {
+    const output = execSync("df -Pk / | tail -1 | awk '{print $2,$4,$5}'", {
       encoding: 'utf-8',
       timeout: 5000,
     })
-    const [total, used, available, percent] = output.trim().split(/\s+/)
-    return { total, used, available, percent }
+    const [totalKB, availableKB, percentStr] = output.trim().split(/\s+/)
+    const totalBytes = parseInt(totalKB) * 1024
+    const availableBytes = parseInt(availableKB) * 1024
+    const usedBytes = totalBytes - availableBytes
+    const percent = parseInt(percentStr) || Math.round((usedBytes / totalBytes) * 100)
+    return {
+      total: formatBytes(totalBytes),
+      used: formatBytes(usedBytes),
+      available: formatBytes(availableBytes),
+      percent: `${percent}%`,
+    }
   } catch {
     return null
   }

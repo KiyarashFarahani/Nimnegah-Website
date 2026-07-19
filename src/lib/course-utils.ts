@@ -6,6 +6,7 @@ export type Course = {
   slug: string
   description?: SerializedEditorState
   price: number
+  originalPrice?: number | null
   duration?: number
   level?: string
   status?: 'draft' | 'published' | 'coming_soon'
@@ -35,6 +36,15 @@ export const LEVEL_MAP: Record<string, string> = {
 
 export function formatPrice(price: number): string {
   return price.toLocaleString('fa-IR')
+}
+
+export function hasDiscount(price: number, originalPrice?: number | null): boolean {
+  return !!originalPrice && originalPrice > price
+}
+
+export function discountPercent(price: number, originalPrice?: number | null): number {
+  if (!originalPrice || originalPrice <= price) return 0
+  return Math.round(((originalPrice - price) / originalPrice) * 100)
 }
 
 export function formatDuration(minutes: number): string {

@@ -199,6 +199,10 @@ export interface Course {
     [k: string]: unknown;
   } | null;
   price: number;
+  /**
+   * If set and higher than price, the original price will be shown with a strikethrough discount display
+   */
+  originalPrice?: number | null;
   thumbnail?: (number | null) | Media;
   category?: (number | null) | Category;
   status?: ('draft' | 'published' | 'coming_soon') | null;
@@ -430,6 +434,7 @@ export interface CoursesSelect<T extends boolean = true> {
   slug?: T;
   description?: T;
   price?: T;
+  originalPrice?: T;
   thumbnail?: T;
   category?: T;
   status?: T;

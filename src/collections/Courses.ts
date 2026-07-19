@@ -39,6 +39,14 @@ export const Courses: CollectionConfig = {
       min: 0,
     },
     {
+      name: 'originalPrice',
+      type: 'number',
+      min: 0,
+      admin: {
+        description: 'If set and higher than price, the original price will be shown with a strikethrough discount display',
+      },
+    },
+    {
       name: 'thumbnail',
       type: 'upload',
       relationTo: 'media',

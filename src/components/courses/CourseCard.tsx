@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
-import { Course, GRADIENTS, ACCENTS, LEVEL_MAP, formatPrice, formatDuration, getPlainText } from '@/lib/course-utils';
+import { Course, GRADIENTS, ACCENTS, LEVEL_MAP, formatPrice, formatDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
 
 export type { Course } from '@/lib/course-utils';
 
@@ -96,11 +96,30 @@ export default function CourseCard({ course, index }: { course: Course; index: n
                 به زودی
               </span>
             ) : (
-              <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-white font-vazir">
-                  {formatPrice(course.price)}
-                </span>
-                <span className="text-xs text-gray-500 font-vazir">تومان</span>
+              <div className="flex items-center gap-2 flex-wrap">
+                {hasDiscount(course.price, course.originalPrice) ? (
+                  <>
+                    <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
+                      {discountPercent(course.price, course.originalPrice)}%-
+                    </span>
+                    <span className="text-sm text-gray-500 line-through font-vazir">
+                      {formatPrice(course.originalPrice!)}
+                    </span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-bold text-white font-vazir">
+                        {formatPrice(course.price)}
+                      </span>
+                      <span className="text-xs text-gray-500 font-vazir">تومان</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-lg font-bold text-white font-vazir">
+                      {formatPrice(course.price)}
+                    </span>
+                    <span className="text-xs text-gray-500 font-vazir">تومان</span>
+                  </div>
+                )}
               </div>
             )}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

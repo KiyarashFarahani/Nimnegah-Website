@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
-import { Course, GRADIENTS, ACCENTS, LEVEL_MAP, formatPrice, formatDuration, getPlainText } from '@/lib/course-utils';
+import { Course, GRADIENTS, ACCENTS, LEVEL_MAP, formatPrice, formatDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
 
 const containerVariants = {
   hidden: {},
@@ -145,11 +145,30 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
 
           {/* Price + CTA */}
           <div className="flex items-center justify-between pt-4 border-t border-white/5">
-            <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-white font-vazir">
-                {formatPrice(course.price)}
-              </span>
-              <span className="text-xs text-gray-500 font-vazir">تومان</span>
+            <div className="flex items-center gap-2 flex-wrap">
+              {hasDiscount(course.price, course.originalPrice) ? (
+                <>
+                  <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
+                    {discountPercent(course.price, course.originalPrice)}%-
+                  </span>
+                  <span className="text-sm text-gray-500 line-through font-vazir">
+                    {formatPrice(course.originalPrice!)}
+                  </span>
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-lg font-bold text-white font-vazir">
+                      {formatPrice(course.price)}
+                    </span>
+                    <span className="text-xs text-gray-500 font-vazir">تومان</span>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-white font-vazir">
+                    {formatPrice(course.price)}
+                  </span>
+                  <span className="text-xs text-gray-500 font-vazir">تومان</span>
+                </div>
+              )}
             </div>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
@@ -242,11 +261,30 @@ function HeroCourseCard({ course }: { course: Course }) {
 
             {/* Price + CTA */}
             <div className="flex items-center justify-between pt-6 border-t border-white/5">
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-white font-vazir">
-                  {formatPrice(course.price)}
-                </span>
-                <span className="text-sm text-gray-500 font-vazir">تومان</span>
+              <div className="flex items-center gap-3 flex-wrap">
+                {hasDiscount(course.price, course.originalPrice) ? (
+                  <>
+                    <span className="px-2.5 py-1 bg-red-500/20 text-red-300 text-sm font-vazir rounded-full font-medium">
+                      {discountPercent(course.price, course.originalPrice)}%-
+                    </span>
+                    <span className="text-lg text-gray-500 line-through font-vazir">
+                      {formatPrice(course.originalPrice!)}
+                    </span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-white font-vazir">
+                        {formatPrice(course.price)}
+                      </span>
+                      <span className="text-sm text-gray-500 font-vazir">تومان</span>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-white font-vazir">
+                      {formatPrice(course.price)}
+                    </span>
+                    <span className="text-sm text-gray-500 font-vazir">تومان</span>
+                  </div>
+                )}
               </div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link

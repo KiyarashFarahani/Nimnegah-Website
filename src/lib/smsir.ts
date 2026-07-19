@@ -1,6 +1,3 @@
-const SMSIR_API_KEY = process.env.SMSIR_API_KEY!
-const SMSIR_TEMPLATE_ID = process.env.SMSIR_TEMPLATE_ID!
-
 import { randomInt } from 'crypto'
 
 export function generateOTP(): string {
@@ -8,15 +5,18 @@ export function generateOTP(): string {
 }
 
 export async function sendOTP(phone: string, code: string): Promise<void> {
+  const apiKey = process.env.SMSIR_API_KEY!
+  const templateId = process.env.SMSIR_TEMPLATE_ID!
+
   const response = await fetch('https://api.sms.ir/v1/send/verify', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': SMSIR_API_KEY,
+      'x-api-key': apiKey,
     },
     body: JSON.stringify({
       mobile: phone,
-      templateId: Number(SMSIR_TEMPLATE_ID),
+      templateId: Number(templateId),
       parameters: [{ name: 'CODE', value: code }],
     }),
   })

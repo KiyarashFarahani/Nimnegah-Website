@@ -1,4 +1,3 @@
-const SPOTPLAYER_API_KEY = process.env.SPOTPLAYER_API_KEY!
 const SPOTPLAYER_API_URL = 'https://panel.spotplayer.ir/license/edit/'
 
 type CreateLicenseResult =
@@ -10,11 +9,13 @@ export async function createSpotPlayerLicense(
   courseIds: string[],
   watermarkText: string,
 ): Promise<CreateLicenseResult> {
+  const apiKey = process.env.SPOTPLAYER_API_KEY!
+
   const response = await fetch(SPOTPLAYER_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      $API: SPOTPLAYER_API_KEY,
+      $API: apiKey,
       $LEVEL: '-1',
     },
     body: JSON.stringify({

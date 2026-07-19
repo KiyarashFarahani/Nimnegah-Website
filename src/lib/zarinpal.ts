@@ -1,10 +1,9 @@
-const ZARINPAL_MERCHANT_ID = process.env.ZARINPAL_MERCHANT_ID!
-const ZARINPAL_SANDBOX = process.env.ZARINPAL_SANDBOX === 'true'
-
 const SANDBOX_BASE = 'https://sandbox.zarinpal.com/pg/v4'
 const LIVE_BASE = 'https://payment.zarinpal.com/pg/v4'
 
-const baseUrl = ZARINPAL_SANDBOX ? SANDBOX_BASE : LIVE_BASE
+function getBaseUrl() {
+  return process.env.ZARINPAL_SANDBOX === 'true' ? SANDBOX_BASE : LIVE_BASE
+}
 
 type InitializePaymentResult =
   | { success: true; redirectUrl: string; authority: string }
@@ -19,13 +18,16 @@ export async function initializePayment(
   description: string,
   metadata?: { mobile?: string; email?: string; orderId?: string },
 ): Promise<InitializePaymentResult> {
+  const merchantId = process.env.ZARINPAL_MERCHANT_ID!
+  const isSandbox = process.env.ZARINPAL_SANDBOX === 'true'
+  const baseUrl = getBaseUrl()
   const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/verify`
 
   const response = await fetch(`${baseUrl}/payment/request.json`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      merchant_id: ZARINPAL_MERCHANT_ID,
+      merchant_id: merchantId,
       amount: amount,
       callback_url: callbackUrl,
       description: description,
@@ -42,7 +44,7 @@ export async function initializePayment(
 
   if (data.data?.code === 100 || data.data?.code === 101) {
     const authority = data.data.authority
-    const redirectUrl = ZARINPAL_SANDBOX
+    const redirectUrl = isSandbox
       ? `https://sandbox.zarinpal.com/pg/StartPay/${authority}`
       : `https://www.zarinpal.com/pg/StartPay/${authority}`
     return { success: true, redirectUrl, authority }
@@ -56,11 +58,14 @@ export async function verifyPayment(
   authority: string,
   amount: number,
 ): Promise<VerifyPaymentResult> {
+  const merchantId = process.env.ZARINPAL_MERCHANT_ID!
+  const baseUrl = getBaseUrl()
+
   const response = await fetch(`${baseUrl}/payment/verify.json`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      merchant_id: ZARINPAL_MERCHANT_ID,
+      merchant_id: merchantId,
       amount: amount,
       authority: authority,
     }),

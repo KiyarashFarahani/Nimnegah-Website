@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "payload": "payload --disable-transpile",
     "payload:generate": "payload generate:types --disable-transpile && payload generate:importmap --disable-transpile",
     "payload:migrate": "payload migrate --disable-transpile"
@@ -36,6 +38,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   }
 }

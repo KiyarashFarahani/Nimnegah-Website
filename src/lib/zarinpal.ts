@@ -61,7 +61,7 @@ export async function verifyPayment(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       merchant_id: ZARINPAL_MERCHANT_ID,
-      amount: amount * 10,
+      amount: amount,
       authority: authority,
     }),
   })

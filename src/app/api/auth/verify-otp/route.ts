@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
 import { getOTP, deleteOTP, checkRateLimit, resetVerifyFailures } from '@/lib/redis'
 import { getPayload, jwtSign, getFieldsToSign } from 'payload'
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
 
     const storedCode = await getOTP(phone)
 
-    if (!storedCode || storedCode !== code) {
+    if (!storedCode || storedCode.length !== code.length || !timingSafeEqual(Buffer.from(storedCode), Buffer.from(code))) {
       return NextResponse.json({ error: 'کد تأیید نادرست یا منقضی شده است' }, { status: 401 })
     }
 

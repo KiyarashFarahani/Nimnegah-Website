@@ -1,6 +1,6 @@
+import fs from 'fs'
 import { NextResponse } from 'next/server'
 import os from 'os'
-import { execSync } from 'child_process'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { jwtVerify } from 'jose'
@@ -28,15 +28,11 @@ function getCpuUsage(): Promise<number> {
 
 function getDiskUsage() {
   try {
-    const output = execSync("df -Pk / | tail -1 | awk '{print $2,$4,$5}'", {
-      encoding: 'utf-8',
-      timeout: 5000,
-    })
-    const [totalKB, availableKB, percentStr] = output.trim().split(/\s+/)
-    const totalBytes = parseInt(totalKB) * 1024
-    const availableBytes = parseInt(availableKB) * 1024
+    const stats = fs.statfsSync('/')
+    const totalBytes = stats.blocks * stats.bsize
+    const availableBytes = stats.bavail * stats.bsize
     const usedBytes = totalBytes - availableBytes
-    const percent = parseInt(percentStr) || Math.round((usedBytes / totalBytes) * 100)
+    const percent = Math.round((usedBytes / totalBytes) * 100)
     return {
       total: formatBytes(totalBytes),
       used: formatBytes(usedBytes),

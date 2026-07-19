@@ -146,7 +146,7 @@ export async function GET(request: Request) {
     let dbStats: { totalConnections: string; activeConnections: string } | null =
       null
     try {
-      const pool = (payload.db as Record<string, unknown>).pool as Record<string, number> | undefined
+      const pool = (payload.db as unknown as Record<string, unknown>).pool as Record<string, number> | undefined
       if (pool) {
         dbStats = {
           totalConnections: pool.totalCount?.toString() ?? 'N/A',

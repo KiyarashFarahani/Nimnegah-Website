@@ -26,7 +26,7 @@ export async function initializePayment(
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       merchant_id: ZARINPAL_MERCHANT_ID,
-      amount: amount * 10,
+      amount: amount,
       callback_url: callbackUrl,
       description: description,
       currency: 'IRT',

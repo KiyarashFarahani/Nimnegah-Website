@@ -6,14 +6,9 @@ export const Lessons: CollectionConfig = {
     useAsTitle: 'title',
   },
   access: {
-    read: async ({ req: { user, payload } }) => {
+    read: ({ req: { user } }) => {
       if (user?.role === 'admin') return true
-      const publishedCourses = await payload.find({
-        collection: 'courses',
-        where: { status: { in: ['published', 'coming_soon'] } },
-        limit: 1000,
-      })
-      return { course: { in: publishedCourses.docs.map((c) => c.id) } }
+      return { 'course.status': { in: ['published', 'coming_soon'] } }
     },
     create: ({ req: { user } }) => user?.role === 'admin',
     update: ({ req: { user } }) => user?.role === 'admin',

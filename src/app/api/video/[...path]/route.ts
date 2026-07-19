@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { authenticateRequest } from '@/lib/auth'
 import fs from 'fs'
+import { access, stat } from 'fs/promises'
 import path from 'path'
 
 const UPLOADS_DIR = path.resolve(process.cwd(), 'media')
@@ -65,11 +66,13 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
     }
 
-    if (!fs.existsSync(resolved)) {
+    try {
+      await access(resolved)
+    } catch {
       return NextResponse.json({ error: 'File not found on disk' }, { status: 404 })
     }
 
-    const stat = fs.statSync(resolved)
+    const fileStat = await stat(resolved)
     const range = request.headers.get('range')
 
     const contentType = media.mimeType || 'video/mp4'
@@ -77,7 +80,7 @@ export async function GET(
     if (range) {
       const parts = range.replace(/bytes=/, '').split('-')
       const start = parseInt(parts[0], 10)
-      const end = parts[1] ? parseInt(parts[1], 10) : stat.size - 1
+      const end = parts[1] ? parseInt(parts[1], 10) : fileStat.size - 1
       const chunkSize = end - start + 1
 
       const stream = fs.createReadStream(resolved, { start, end })
@@ -95,7 +98,7 @@ export async function GET(
       return new Response(readable, {
         status: 206,
         headers: {
-          'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+          'Content-Range': `bytes ${start}-${end}/${fileStat.size}`,
           'Accept-Ranges': 'bytes',
           'Content-Length': String(chunkSize),
           'Content-Type': contentType,
@@ -119,7 +122,7 @@ export async function GET(
     return new Response(readable, {
       status: 200,
       headers: {
-        'Content-Length': String(stat.size),
+        'Content-Length': String(fileStat.size),
         'Content-Type': contentType,
         'Accept-Ranges': 'bytes',
         'Cache-Control': 'private, max-age=3600',

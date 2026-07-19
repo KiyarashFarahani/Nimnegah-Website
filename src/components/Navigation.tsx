@@ -63,6 +63,7 @@ const Navigation = () => {
     { name: 'صفحه اصلی', href: '/' },
     { name: 'دوره‌ها', href: '/courses' },
     { name: 'درباره ما', href: isHome ? '#about' : '/#about', isHash: true },
+    { name: 'تماس با ما', href: isHome ? '#contact' : '/#contact', isHash: true },
   ];
 
   const isTransparent = !scrolled && !isOpen;

@@ -3,9 +3,9 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Instagram, Send } from 'lucide-react';
+import { Instagram } from 'lucide-react';
 
-const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
+const TelegramIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
   <svg
     width={size}
     height={size}
@@ -17,10 +17,22 @@ const TelegramIcon = ({ size = 20, className = "" }: { size?: number; className?
   </svg>
 );
 
+const BaleIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16c-.169 1.858-.896 6.376-1.267 8.458-.157.887-.466 1.188-.765 1.218-.652.065-1.146-.431-1.778-.846-.99-.649-1.548-1.052-2.508-1.684-1.11-.732-.39-1.134.242-1.79.166-.172 3.04-2.788 3.096-3.027.007-.03.013-.141-.053-.2-.066-.059-.163-.039-.234-.023-.1.023-1.68 1.069-4.743 3.136-.45.31-.856.46-1.22.45-.401-.008-1.173-.226-1.747-.412-.706-.23-1.264-.35-1.215-.74.025-.203.304-.41.837-.622 3.277-1.428 5.462-2.37 6.554-2.823 3.122-1.3 3.77-1.524 4.192-1.532z"/>
+  </svg>
+);
+
 const SOCIAL_LINKS = [
   { icon: TelegramIcon, href: 'https://t.me/nimnegah', label: 'تلگرام' },
   { icon: Instagram, href: 'https://instagram.com/nimnegah', label: 'اینستاگرام' },
-  { icon: Send, href: 'https://rubika.ir/nimnegah', label: 'روبیکا' },
+  { icon: BaleIcon, href: 'https://ble.ir/nimnegah', label: 'بله' },
 ];
 
 const COPYRIGHT_YEAR = new Date().getFullYear();
@@ -33,6 +45,7 @@ const Footer = () => {
     { label: 'خانه', href: isHome ? '#home' : '/#home' },
     { label: 'دوره‌ها', href: '/courses' },
     { label: 'درباره ما', href: isHome ? '#about' : '/#about' },
+    { label: 'تماس با ما', href: isHome ? '#contact' : '/#contact' },
     { label: 'ورود', href: '/login' },
   ];
 

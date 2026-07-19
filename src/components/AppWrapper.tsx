@@ -8,6 +8,7 @@ import { useSplash } from '@/contexts/SplashContext';
 import Hero from './Hero';
 import FeaturedCourses from './FeaturedCourses';
 import AboutAcademy from './AboutAcademy';
+import ContactUs from './ContactUs';
 import CTA from './CTA';
 
 export default function AppWrapper() {
@@ -42,6 +43,7 @@ export default function AppWrapper() {
         <Hero />
         <FeaturedCourses />
         <AboutAcademy />
+        <ContactUs />
         <CTA />
       </main>
     </>

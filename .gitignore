@@ -47,3 +47,9 @@ next-env.d.ts
 # deployment (contains secrets)
 DEPLOYMENT.md
 nimnegah-amd64.tar
+
+# agents
+agents/
+plans/
+.mimocode/
+.opencode/

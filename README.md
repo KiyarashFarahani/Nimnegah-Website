@@ -1,5 +1,6 @@
 # Nimnegah Academy
 A Next.js 15 course-selling platform with Payload CMS 3.x, OTP auth (sms.ir), Zarinpal payments, SpotPlayer video hosting, and self-hostable Docker setup.
+
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=for-the-badge&logo=typescript)
 ![Payload CMS](https://img.shields.io/badge/Payload_CMS-3-ff0055?style=for-the-badge)

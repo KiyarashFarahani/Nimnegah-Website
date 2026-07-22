@@ -15,6 +15,7 @@ export default function CourseCard({ course, index }: { course: Course; index: n
   const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : '';
   const thumbnailUrl = course.thumbnail?.url;
   const categoryName = course.category?.name;
+  const isFree = typeof course.price === 'number' && course.price <= 0;
 
   return (
     <motion.div
@@ -95,6 +96,10 @@ export default function CourseCard({ course, index }: { course: Course; index: n
               <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-vazir text-amber-300">
                 به زودی
               </span>
+            ) : isFree ? (
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
+              </div>
             ) : (
               <div className="flex items-center gap-2 flex-wrap">
                 {hasDiscount(course.price, course.originalPrice) ? (

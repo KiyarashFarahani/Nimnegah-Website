@@ -31,9 +31,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Course is not available' }, { status: 400 })
     }
 
-    if (typeof course.price !== 'number' || course.price <= 0) {
-      return NextResponse.json({ error: 'Invalid course price' }, { status: 400 })
-    }
+    const isFree = typeof course.price === 'number' && course.price <= 0
 
     const existingEnrollment = await payload.find({
       collection: 'enrollments',
@@ -51,6 +49,42 @@ export async function POST(request: Request) {
         { error: 'You are already enrolled in this course' },
         { status: 409 },
       )
+    }
+
+    // Free course: enroll directly without payment
+    if (isFree) {
+      await payload.create({
+        collection: 'orders',
+        draft: false,
+        overrideAccess: true,
+        data: {
+          user: auth.user.id,
+          course: course.id,
+          amount: 0,
+          status: 'completed',
+        },
+      })
+
+      await payload.create({
+        collection: 'enrollments',
+        draft: false,
+        overrideAccess: true,
+        data: {
+          user: auth.user.id,
+          course: course.id,
+          progress: 0,
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        enrolled: true,
+        redirectUrl: `/dashboard/learn/${course.slug}`,
+      })
+    }
+
+    if (typeof course.price !== 'number' || course.price <= 0) {
+      return NextResponse.json({ error: 'Invalid course price' }, { status: 400 })
     }
 
     const order = await payload.create({

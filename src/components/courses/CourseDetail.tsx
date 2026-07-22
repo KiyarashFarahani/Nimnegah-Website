@@ -210,6 +210,13 @@ export default function CourseDetail({ slug }: { slug: string }) {
         return;
       }
 
+      // Free course: redirect to dashboard directly
+      if (data.enrolled) {
+        setIsEnrolled(true);
+        window.location.href = data.redirectUrl;
+        return;
+      }
+
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
       }
@@ -229,6 +236,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
   const categoryName = course.category?.name;
   const freeLessons = lessons.filter((l) => l.isFree);
   const totalDuration = course.duration || Math.round(totalLessonsDuration(lessons) / 60);
+  const isFree = typeof course.price === 'number' && course.price <= 0;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -399,6 +407,12 @@ export default function CourseDetail({ slug }: { slug: string }) {
                           این دوره هنوز منتشر نشده است
                         </p>
                       </div>
+                    ) : isFree ? (
+                      <div className="mb-4">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-bold text-green-400 font-vazir">رایگان</span>
+                        </div>
+                      </div>
                     ) : (
                       <div className="mb-4">
                         {hasDiscount(course.price, course.originalPrice) ? (
@@ -440,12 +454,12 @@ export default function CourseDetail({ slug }: { slug: string }) {
                         </>
                       ) : !isLoggedIn ? (
                         <>
-                          ورود برای خرید
+                          {isFree ? 'ورود برای شروع رایگان' : 'ورود برای خرید'}
                           <ArrowRight size={16} />
                         </>
                       ) : (
                         <>
-                          خرید دوره
+                          {isFree ? 'شروع رایگان' : 'خرید دوره'}
                           <ArrowRight size={16} />
                         </>
                       )}

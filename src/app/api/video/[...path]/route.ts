@@ -40,17 +40,20 @@ export async function GET(
     const courseId =
       typeof lesson.course === 'object' ? lesson.course.id : lesson.course
 
-    const enrollments = await payload.find({
-      collection: 'enrollments',
-      where: {
-        user: { equals: auth.user.id },
-        course: { equals: courseId },
-      },
-      limit: 1,
-    })
+    // Allow free lessons without enrollment
+    if (!lesson.isFree) {
+      const enrollments = await payload.find({
+        collection: 'enrollments',
+        where: {
+          user: { equals: auth.user.id },
+          course: { equals: courseId },
+        },
+        limit: 1,
+      })
 
-    if (enrollments.docs.length === 0) {
-      return NextResponse.json({ error: 'Not enrolled' }, { status: 403 })
+      if (enrollments.docs.length === 0) {
+        return NextResponse.json({ error: 'Not enrolled' }, { status: 403 })
+      }
     }
 
     const media =

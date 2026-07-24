@@ -11,8 +11,8 @@ export const Enrollments: CollectionConfig = {
       if (user.role === 'admin') return true
       return { user: { equals: user.id } }
     },
-    create: () => false,
-    update: () => false,
+    create: ({ req: { user } }) => user?.role === 'admin',
+    update: ({ req: { user } }) => user?.role === 'admin',
     delete: ({ req: { user } }) => user?.role === 'admin',
   },
   fields: [

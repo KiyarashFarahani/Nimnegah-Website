@@ -1,0 +1,63 @@
+name: Deploy to VPS
+
+on:
+  workflow_dispatch:
+
+env:
+  IMAGE_NAME: nimnegah
+  IMAGE_TAG: latest
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save Docker image as tar
+        run: docker save ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -o ${{ env.IMAGE_NAME }}.tar
+
+      - name: Copy image to VPS via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          source: ${{ env.IMAGE_NAME }}.tar
+          target: /tmp/
+
+      # - name: Deploy on VPS
+      #   uses: appleboy/ssh-action@v1.0.3
+      #   with:
+      #     host: ${{ secrets.VPS_HOST }}
+      #     username: ${{ secrets.VPS_USER }}
+      #     key: ${{ secrets.VPS_SSH_KEY }}
+      #     port: ${{ secrets.VPS_PORT || 22 }}
+      #     script: |
+      #       cd /opt/nimnegah
+      #
+      #       # Load the new image
+      #       docker load -i /tmp/${{ env.IMAGE_NAME }}.tar
+      #       rm /tmp/${{ env.IMAGE_NAME }}.tar
+      #
+      #       # Restart services with new image
+      #       docker compose pull
+      #       docker compose up -d --force-recreate app
+      #
+      #       # Cleanup old images
+      #       docker image prune -f

@@ -1,7 +1,8 @@
 import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
+import { SignJWT } from 'jose'
 import { getOTP, deleteOTP, checkRateLimit, resetVerifyFailures } from '@/lib/redis'
-import { getPayload, jwtSign, getFieldsToSign } from 'payload'
+import { getPayload } from 'payload'
 import config from '@payload-config'
 import { COOKIE_NAME } from '@/lib/cookie'
 import { isValidIranianPhone } from '@/lib/validations'
@@ -62,20 +63,12 @@ export async function POST(request: Request) {
       })
     }
 
-    const collectionConfig = payload.collections.users.config
-
-    const fieldsToSign = getFieldsToSign({
-      collectionConfig,
-      email: user.email,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      user: user as any,
-    })
-
-    const { token } = await jwtSign({
-      fieldsToSign,
-      secret: process.env.PAYLOAD_SECRET!,
-      tokenExpiration: 60 * 60 * 24 * 7,
-    })
+    const secret = new TextEncoder().encode(process.env.PAYLOAD_SECRET!)
+    const token = await new SignJWT({ id: user.id, collection: 'users' })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('7d')
+      .sign(secret)
 
     const response = NextResponse.json({
       success: true,

@@ -29,7 +29,9 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Save Docker image as tar
-        run: docker save ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -o ${{ env.IMAGE_NAME }}.tar
+        run: |
+          docker save ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} -o ${{ env.IMAGE_NAME }}.tar
+          sudo chmod 644 ${{ env.IMAGE_NAME }}.tar
 
       - name: Copy image to VPS via SCP
         uses: appleboy/scp-action@v0.1.7

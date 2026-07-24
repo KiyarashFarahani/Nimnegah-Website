@@ -34,7 +34,6 @@ export const Lessons: CollectionConfig = {
       name: 'video',
       type: 'relationship',
       relationTo: 'media',
-      required: true,
     },
     {
       name: 'duration',

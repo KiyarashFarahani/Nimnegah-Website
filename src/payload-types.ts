@@ -249,7 +249,7 @@ export interface Lesson {
   title: string;
   course: number | Course;
   description?: string | null;
-  video: number | Media;
+  video?: (number | null) | Media;
   /**
    * Duration in seconds
    */

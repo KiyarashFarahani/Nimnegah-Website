@@ -43,7 +43,7 @@ const Hero = () => {
         </div>
 
         {/* Text content - below images on mobile, left side on desktop (RTL) */}
-        <div className="relative w-full lg:w-[45%] flex flex-col items-center lg:items-end justify-center px-6 sm:px-8 lg:px-12 xl:px-20 py-12 sm:py-16 lg:py-0">
+        <div className="relative w-full lg:w-[45%] flex flex-col items-center lg:items-end justify-center px-6 sm:px-8 lg:px-12 xl:px-20 pt-2 pb-12 sm:pt-4 sm:pb-16 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -55,10 +55,10 @@ const Hero = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-siavash font-bold text-white mb-6">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-siavash font-bold text-white mb-3">
                 آکادمی نیم‌نگاه
               </h2>
-              <div className="w-24 h-1 bg-gradient-to-r from-slate-400 to-slate-500 mx-auto lg:mr-0 mb-8"></div>
+              <div className="w-24 h-1 bg-gradient-to-r from-slate-400 to-slate-500 mx-auto lg:mr-0 mb-4"></div>
             </motion.div>
 
             <motion.p
@@ -67,10 +67,10 @@ const Hero = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mr-0 leading-relaxed font-vazir"
             >
-              یه سری متن
+                راهنمای تبدیل شدن به یک طراح حرفه ای
               <br />
               <span className="text-lg text-gray-400">
-                یه سری متن دیگه و این چیزا
+                  تضمین می‌کنم که به خودت افتخار خواهی کرد
               </span>
             </motion.p>
 
@@ -78,7 +78,7 @@ const Hero = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.0 }}
-              className="flex flex-row gap-4 justify-center lg:justify-end items-center lg:items-end w-full"
+              className="flex flex-row gap-4 justify-center lg:justify-end items-center lg:items-end w-full mt-8 lg:mt-0"
             >
               <motion.a
                 href="#about"

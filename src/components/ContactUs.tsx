@@ -1,49 +1,55 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Phone, Mail, Clock, Send, Instagram } from 'lucide-react';
+import { Phone, Mail, Clock } from 'lucide-react';
 
-const TelegramIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
-  <svg
+const InstagramIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+  <img
+    src="/instagram.webp"
+    alt="Instagram"
     width={size}
     height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-  </svg>
+    className={`object-contain ${className}`}
+  />
+);
+
+const TelegramIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+  <img
+    src="/telegram.webp"
+    alt="Telegram"
+    width={size}
+    height={size}
+    className={`object-contain ${className}`}
+  />
 );
 
 const BaleIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
-  <svg
+  <img
+    src="/bale.webp"
+    alt="Bale"
     width={size}
     height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    className={className}
-  >
-    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.568 8.16c-.169 1.858-.896 6.376-1.267 8.458-.157.887-.466 1.188-.765 1.218-.652.065-1.146-.431-1.778-.846-.99-.649-1.548-1.052-2.508-1.684-1.11-.732-.39-1.134.242-1.79.166-.172 3.04-2.788 3.096-3.027.007-.03.013-.141-.053-.2-.066-.059-.163-.039-.234-.023-.1.023-1.68 1.069-4.743 3.136-.45.31-.856.46-1.22.45-.401-.008-1.173-.226-1.747-.412-.706-.23-1.264-.35-1.215-.74.025-.203.304-.41.837-.622 3.277-1.428 5.462-2.37 6.554-2.823 3.122-1.3 3.77-1.524 4.192-1.532z" />
-  </svg>
+    className={`object-contain ${className}`}
+  />
 );
 
 const CONTACT_ITEMS = [
   {
     icon: Phone,
     title: 'تلفن تماس',
-    value: '۰۲۱-۱۲۳۴۵۶۷۸',
-    href: 'tel:+982112345678',
+    value: '۰۹۳۹۶۱۱۲۱۵۵',
+    href: 'tel:+989396112155',
   },
   {
     icon: Mail,
-    title: 'ایمیل',
-    value: 'info@nimnegah.com',
-    href: 'mailto:info@nimnegah.com',
+    title: 'ثبت سفارشات طراحی',
+    value: 'در پیامرسان بله پیام دهید',
+    href: 'https://ble.ir/nimnegah_graph_128',
   },
   {
     icon: Clock,
     title: 'ساعات پاسخگویی',
-    value: 'شنبه تا پنج‌شنبه، ۹ الی ۱۸',
+    value: 'شنبه تا پنج‌شنبه، ۱۰ الی ۱۸',
     href: null,
   },
 ];
@@ -52,20 +58,20 @@ const SOCIAL_CHANNELS = [
   {
     icon: TelegramIcon,
     label: 'تلگرام',
-    handle: '@nimnegah',
-    href: 'https://t.me/nimnegah',
+    handle: '@nimnegah_graph_128',
+    href: 'https://t.me/nimnegah_graph_128',
   },
   {
-    icon: Instagram,
+    icon: InstagramIcon,
     label: 'اینستاگرام',
-    handle: '@nimnegah',
-    href: 'https://instagram.com/nimnegah',
+    handle: '@nimnegah_graph_128',
+    href: 'https://instagram.com/nimnegah_graph_128',
   },
   {
     icon: BaleIcon,
     label: 'بله',
-    handle: '@nimnegah',
-    href: 'https://ble.ir/nimnegah',
+    handle: '@nimnegah_graph_128',
+    href: 'https://ble.ir/nimnegah_graph_128',
   },
 ];
 

@@ -178,21 +178,16 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
 
         {/* Instructions */}
         <div className="bg-white/[0.04] border border-white/5 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 text-right">
-          <h3 className="text-sm font-vazir font-medium text-white mb-3 sm:mb-4">راهنمای استفاده:</h3>
-          <ol className="space-y-2.5 sm:space-y-3 text-xs sm:text-sm font-vazir text-gray-400">
-            <li className="flex items-start gap-2.5 sm:gap-3">
-              <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۱</span>
-              <span>نرم‌افزار اسپات‌پلیر را دانلود و نصب کنید</span>
-            </li>
-            <li className="flex items-center gap-2.5 sm:gap-3">
-              <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۲</span>
-              <span>لایسنس بالا را کپی کنید</span>
-            </li>
-            <li className="flex items-center gap-2.5 sm:gap-3">
-              <span className="shrink-0 w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-xs text-blue-400">۳</span>
-              <span>در نرم‌افزار لایسنس را وارد کنید و ویدیوها را تماشا کنید</span>
-            </li>
-          </ol>
+          <div className="space-y-3 text-xs sm:text-sm font-vazir text-gray-300 leading-relaxed">
+            <p>سلام هنرجو عزیز😍👋🏻</p>
+            <p>خوشحالم که بهم اعتماد کردی تا بهت کمک کنم طراحیات چند پله حرفه ای تر کنی😎</p>
+            <p>🚀برای استفاده کافیه نرم افزار اسپات پلیر نصب کنید و لایسنس بالا را داخل برنامه وارد کنید</p>
+            <p>⚠️دقت کنید:</p>
+            <p>تمامی لایسنس ها تک کاربره هستند و فقط رو یک دستگاه میتونید دوره مشاهده کنید.</p>
+            <p>⚠️ دوره را یا میتونید روی موبایل مشاهده کنید یا روی سیستم همزمان نمیشه رو دو دستگاه مشاهده کرد</p>
+            <p>⚠️اگر فکر میکنید به خاطر موقعیت شغلی قراره در رفت امد باشید حتما دوره روی موبایل وارد کنید تا هرجا خواستید بتونید از دوره استفاده کنید</p>
+            <p>برات ارزوی موفقیت میکنم💎</p>
+          </div>
         </div>
 
         {/* Download link */}

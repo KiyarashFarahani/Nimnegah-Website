@@ -16,16 +16,16 @@ const FEATURES = [
   },
   {
     icon: Trophy,
-    title: 'گواهی پایان دوره',
-    description: 'مدرک معتبر پس از اتمام دوره',
+    title: 'یادگیری سریع',
+    description: 'کسب مهارت در کمترین زمان',
   },
 ];
 
 const STATS = [
-  { icon: Users, value: '۳,۵۰۰+', label: 'دانشجو' },
-  { icon: BookOpen, value: '۱۲', label: 'دوره آموزشی' },
-  { icon: Clock, value: '۲۰۰+', label: 'ساعت محتوا' },
-  { icon: Trophy, value: '۹۵٪', label: 'رضایت دانشجویان' },
+  { icon: Users, value: '+۱,۵۰۰', label: 'سفارشات' },
+  { icon: BookOpen, value: '۲', label: 'دوره آموزشی' },
+  { icon: Clock, value: '+۳۰', label: 'ساعت محتوا' },
+  { icon: Trophy, value: '۹۵٪', label: 'رضایت مشتریان' },
 ];
 
 const containerVariants = {
@@ -82,13 +82,8 @@ const AboutAcademy = () => {
             </h2>
             <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-cyan-400 mb-8 rounded-full" />
             <div className="space-y-5 text-gray-400 font-vazir leading-relaxed text-lg">
-              <p>
-                ما باور داریم هر کسی می‌تونه هنرمند بشه. آکادمی نیم‌نگاه با هدف ارائه آموزش‌های
-                تخصصی و کاربردی هنر دیجیتال تأسیس شده تا مسیر یادگیری رو برای همه هموار کنه.
-              </p>
-              <p>
-                از نقاشی دیجیتال تا طراحی شخصیت، از کامپوزیشن تا رنگ‌بندی — ما اینجاییم
-                که کمکت کنیم مهارت‌هات رو بسازی و به سطح بعدی برسی.
+              <p>ما باور داریم هر کسی می تونه هنرمند بشه. آکادمی نیم نگاه با هدف ارائه به روزترین آموزش های گرافیکی و کاربردی تاسیس شده تا مسیر یادگیری رو برای همه هموار کنه.
+                              ما اینجاییم که کمکت کنیم مهارت هات رو بسازی و به سطح بعدی ارتقا پیدا کنی.
               </p>
             </div>
           </motion.div>

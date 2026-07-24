@@ -177,7 +177,7 @@ export default function DashboardPage() {
         <p className="text-gray-400 font-vazir text-sm">
           {enrollments.length > 0
             ? `${enrollments.length} دوره در حال یادگیری`
-            : 'دوره‌های خریداری شده اینجا نمایش داده می‌شوند'}
+            : 'دوره هایی که خریداری کردم'}
         </p>
       </motion.div>
 

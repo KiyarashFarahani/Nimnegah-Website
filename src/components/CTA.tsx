@@ -38,7 +38,7 @@ const CTA = () => {
         >
           آماده‌ای مسیرت رو
           <br />
-          <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
+          <span className="text-cyan-400">
             شروع کنی؟
           </span>
         </motion.h2>
@@ -65,7 +65,7 @@ const CTA = () => {
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link
               href="/courses"
-              className="group inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-400 hover:to-cyan-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 shadow-[0_0_25px_rgba(59,130,246,0.55)] hover:shadow-[0_0_35px_rgba(59,130,246,0.8)]"
+              className="group inline-flex items-center gap-2 px-8 py-4 bg-blue-500 hover:bg-blue-400 text-white font-vazir font-semibold rounded-full shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all duration-300 shadow-[0_0_25px_rgba(59,130,246,0.55)] hover:shadow-[0_0_35px_rgba(59,130,246,0.8)]"
             >
               شروع یادگیری
               <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -91,7 +91,7 @@ const CTA = () => {
         >
           <span className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
-            ضمانت بازگشت وجه
+            پروژه محور و کاربردی
           </span>
           <span className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
@@ -99,7 +99,7 @@ const CTA = () => {
           </span>
           <span className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
-            پشتیبانی ۲۴/۷
+        پشتیبانی سه ماهه
           </span>
         </motion.div>
       </div>

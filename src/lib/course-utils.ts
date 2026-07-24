@@ -69,10 +69,19 @@ export function getPlainText(richText?: SerializedEditorState): string {
     return nodes
       .map((node) => {
         if (node.type === 'text') return node.text || ''
+        if (node.type === 'linebreak') return '\n'
         if (node.children) return extractText(node.children)
         return ''
       })
       .join(' ')
   }
-  return extractText(richText.root.children as LexicalNode[]).trim()
+  return (richText.root.children as LexicalNode[])
+    .map((node) => {
+      if (node.type === 'text') return node.text || ''
+      if (node.type === 'linebreak') return '\n'
+      if (node.children) return extractText(node.children)
+      return ''
+    })
+    .join('\n')
+    .trim()
 }

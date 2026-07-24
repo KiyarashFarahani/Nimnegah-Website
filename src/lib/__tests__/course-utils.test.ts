@@ -144,7 +144,7 @@ describe('getPlainText', () => {
         ],
       },
     } as never
-    expect(getPlainText(richText)).toBe('Hello World')
+    expect(getPlainText(richText)).toBe('Hello\nWorld')
   })
 
   it('extracts text from nested children', () => {
@@ -163,7 +163,23 @@ describe('getPlainText', () => {
     expect(getPlainText(richText)).toBe('Nested Text')
   })
 
-  it('handles nodes without text or children', () => {
+  it('preserves paragraph breaks between top-level nodes', () => {
+    const richText = {
+      root: {
+        children: [
+          {
+            children: [{ type: 'text', text: 'First paragraph' }],
+          },
+          {
+            children: [{ type: 'text', text: 'Second paragraph' }],
+          },
+        ],
+      },
+    } as never
+    expect(getPlainText(richText)).toBe('First paragraph\nSecond paragraph')
+  })
+
+  it('handles linebreak nodes', () => {
     const richText = {
       root: {
         children: [{ type: 'linebreak' }],

@@ -68,12 +68,10 @@ const Navigation = () => {
 
   const isTransparent = !scrolled && !isOpen;
 
-  if (!splashDone) return null;
-
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      animate={{ y: splashDone ? 0 : -100, opacity: splashDone ? 1 : 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-[10001] transition-all duration-300 ${
         scrolled || isOpen

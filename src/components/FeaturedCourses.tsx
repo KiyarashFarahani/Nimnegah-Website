@@ -78,6 +78,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
   const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : '';
   const thumbnailUrl = course.thumbnail?.url;
   const categoryName = course.category?.name;
+  const isFree = typeof course.price === 'number' && course.price <= 0;
 
   return (
     <motion.div
@@ -146,7 +147,9 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
           {/* Price + CTA */}
           <div className="flex items-center justify-between pt-4 border-t border-white/5">
             <div className="flex items-center gap-2 flex-wrap">
-              {hasDiscount(course.price, course.originalPrice) ? (
+              {isFree ? (
+                <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
+              ) : hasDiscount(course.price, course.originalPrice) ? (
                 <>
                   <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
                     {discountPercent(course.price, course.originalPrice)}%-
@@ -193,6 +196,7 @@ function HeroCourseCard({ course }: { course: Course }) {
   const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : '';
   const thumbnailUrl = course.thumbnail?.url;
   const categoryName = course.category?.name;
+  const isFree = typeof course.price === 'number' && course.price <= 0;
 
   return (
     <motion.div
@@ -262,7 +266,9 @@ function HeroCourseCard({ course }: { course: Course }) {
             {/* Price + CTA */}
             <div className="flex items-center justify-between pt-6 border-t border-white/5">
               <div className="flex items-center gap-3 flex-wrap">
-                {hasDiscount(course.price, course.originalPrice) ? (
+                {isFree ? (
+                  <span className="text-2xl font-bold text-green-400 font-vazir">رایگان</span>
+                ) : hasDiscount(course.price, course.originalPrice) ? (
                   <>
                     <span className="px-2.5 py-1 bg-red-500/20 text-red-300 text-sm font-vazir rounded-full font-medium">
                       {discountPercent(course.price, course.originalPrice)}%-

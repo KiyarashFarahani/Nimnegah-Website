@@ -51,13 +51,13 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="text-center lg:text-right flex flex-col items-center lg:items-end w-full max-w-xl"
           >
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
             >
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-siavash font-bold text-white mb-3">
                 آکادمی نیم‌نگاه
@@ -68,7 +68,7 @@ const Hero = () => {
             <motion.p
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
               className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mr-0 leading-relaxed font-vazir"
             >
                 راهنمای تبدیل شدن به یک طراح حرفه ای
@@ -81,7 +81,7 @@ const Hero = () => {
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
               className="flex flex-row gap-4 justify-center lg:justify-end items-center lg:items-end w-full mt-8 lg:mt-0"
             >
               <motion.a

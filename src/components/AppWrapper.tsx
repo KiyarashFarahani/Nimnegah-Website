@@ -5,11 +5,14 @@ import { useSplashScreen } from '@/hooks/useSplashScreen';
 import SplashScreen from './SplashScreen';
 import { AnimatePresence } from 'framer-motion';
 import { useSplash } from '@/contexts/SplashContext';
+import dynamic from 'next/dynamic';
 import Hero from './Hero';
-import FeaturedCourses from './FeaturedCourses';
-import AboutAcademy from './AboutAcademy';
-import ContactUs from './ContactUs';
-import CTA from './CTA';
+
+// Below-fold sections: dynamic-imported so their JS only loads on demand.
+const FeaturedCourses = dynamic(() => import('./FeaturedCourses'));
+const AboutAcademy = dynamic(() => import('./AboutAcademy'));
+const ContactUs = dynamic(() => import('./ContactUs'));
+const CTA = dynamic(() => import('./CTA'));
 
 export default function AppWrapper() {
   const { isLoading, completeLoading } = useSplashScreen();

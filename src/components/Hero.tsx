@@ -10,6 +10,10 @@ const floatClasses = [
   'hero-float-4', 'hero-float-5', 'hero-float-6', 'hero-float-7',
 ];
 
+// Image to prioritize as LCP (gets fetchpriority=high, loading=eager).
+// Independent of array order so visual stacking is untouched.
+const LCP_IMAGE_NUM = 3;
+
 const Hero = () => {
   return (
     <section id="home" dir="ltr" className="relative w-full overflow-hidden" style={{ minHeight: '100vh' }}>
@@ -36,7 +40,7 @@ const Hero = () => {
                 height={1500}
                 className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto"
                 sizes="(max-width: 1024px) 90vw, 55vw"
-                priority={i < 2}
+                priority={num === LCP_IMAGE_NUM}
               />
             </div>
           ))}

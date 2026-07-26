@@ -22,9 +22,9 @@ const FEATURES = [
 ];
 
 const STATS = [
-  { icon: Users, value: '+۱,۵۰۰', label: 'سفارشات' },
+  { icon: Users, value: '۱,۵۰۰+', label: 'سفارشات' },
   { icon: BookOpen, value: '۲', label: 'دوره آموزشی' },
-  { icon: Clock, value: '+۳۰', label: 'ساعت محتوا' },
+  { icon: Clock, value: '۳۰+', label: 'ساعت محتوا' },
   { icon: Trophy, value: '۹۵٪', label: 'رضایت مشتریان' },
 ];
 

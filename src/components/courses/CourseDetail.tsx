@@ -407,6 +407,27 @@ export default function CourseDetail({ slug }: { slug: string }) {
                           این دوره هنوز منتشر نشده است
                         </p>
                       </div>
+                    ) : hasDiscount(course.price, course.originalPrice) ? (
+                      <div className="mb-4">
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <span className="px-2.5 py-1 bg-red-500/20 text-red-300 text-sm font-vazir rounded-full font-medium">
+                            {discountPercent(course.price, course.originalPrice)}%-
+                          </span>
+                          <span className="text-lg text-gray-500 line-through font-vazir">
+                            {formatPrice(course.originalPrice!)}
+                          </span>
+                        </div>
+                        {isFree ? (
+                          <span className="text-3xl font-bold text-green-400 font-vazir">رایگان</span>
+                        ) : (
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-3xl font-bold text-white font-vazir">
+                              {formatPrice(course.price)}
+                            </span>
+                            <span className="text-sm text-gray-500 font-vazir">تومان</span>
+                          </div>
+                        )}
+                      </div>
                     ) : isFree ? (
                       <div className="mb-4">
                         <div className="flex items-baseline gap-2">

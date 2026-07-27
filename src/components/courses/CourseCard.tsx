@@ -96,35 +96,33 @@ export default function CourseCard({ course, index }: { course: Course; index: n
               <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-vazir text-amber-300">
                 به زودی
               </span>
-            ) : isFree ? (
-              <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
-              </div>
-            ) : (
+            ) : hasDiscount(course.price, course.originalPrice) ? (
               <div className="flex items-center gap-2 flex-wrap">
-                {hasDiscount(course.price, course.originalPrice) ? (
-                  <>
-                    <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
-                      {discountPercent(course.price, course.originalPrice)}%-
-                    </span>
-                    <span className="text-sm text-gray-500 line-through font-vazir">
-                      {formatPrice(course.originalPrice!)}
-                    </span>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-lg font-bold text-white font-vazir">
-                        {formatPrice(course.price)}
-                      </span>
-                      <span className="text-xs text-gray-500 font-vazir">تومان</span>
-                    </div>
-                  </>
+                <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
+                  {discountPercent(course.price, course.originalPrice)}%-
+                </span>
+                <span className="text-sm text-gray-500 line-through font-vazir">
+                  {formatPrice(course.originalPrice!)}
+                </span>
+                {isFree ? (
+                  <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
                 ) : (
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex items-baseline gap-1">
                     <span className="text-lg font-bold text-white font-vazir">
                       {formatPrice(course.price)}
                     </span>
                     <span className="text-xs text-gray-500 font-vazir">تومان</span>
                   </div>
                 )}
+              </div>
+            ) : isFree ? (
+              <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
+            ) : (
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-bold text-white font-vazir">
+                  {formatPrice(course.price)}
+                </span>
+                <span className="text-xs text-gray-500 font-vazir">تومان</span>
               </div>
             )}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

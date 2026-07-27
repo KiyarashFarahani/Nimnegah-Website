@@ -71,6 +71,7 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
       if (process.env.NODE_ENV !== 'production') {
         console.debug(`splash visible for ${Math.round(performance.now() - start)}ms`);
       }
+      sessionStorage.setItem(SPLASH_KEY, '1');
       setIsLoading(false);
     };
 

@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 const profileImages = [2, 10, 4, 3, 5, 7, 8, 9];
@@ -36,10 +35,10 @@ const Hero = () => {
               <Image
                 src={`/images/profile/${num}.webp`}
                 alt={`Profile ${num}`}
-                width={1200}
-                height={1500}
+                width={800}
+                height={800}
+                sizes="(max-width: 1024px) 50vw, 55vw"
                 className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto"
-                unoptimized
                 priority={num === LCP_IMAGE_NUM}
               />
             </div>
@@ -48,60 +47,37 @@ const Hero = () => {
 
         {/* Text content - below images on mobile, left side on desktop (RTL) */}
         <div className="relative w-full lg:w-[45%] flex flex-col items-center lg:items-end justify-center px-6 sm:px-8 lg:px-12 xl:px-20 pt-2 pb-12 sm:pt-4 sm:pb-16 lg:py-0">
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-center lg:text-right flex flex-col items-center lg:items-end w-full max-w-xl"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
+          <div className="hero-fade-in-right text-center lg:text-right flex flex-col items-center lg:items-end w-full max-w-xl" style={{ animationDelay: '0.2s' }}>
+            <div className="hero-fade-in-up" style={{ animationDelay: '0.3s' }}>
               <h2 className="text-4xl sm:text-5xl lg:text-6xl font-siavash font-bold text-white mb-3">
                 آکادمی نیم‌نگاه
               </h2>
               <div className="w-24 h-1 bg-gradient-to-r from-slate-400 to-slate-500 mx-auto lg:mr-0 mb-4"></div>
-            </motion.div>
+            </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mr-0 leading-relaxed font-vazir"
-            >
+            <p className="hero-fade-in-up text-xl sm:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto lg:mr-0 leading-relaxed font-vazir" style={{ animationDelay: '0.4s' }}>
                 راهنمای تبدیل شدن به یک طراح حرفه ای
               <br />
               <span className="text-lg text-gray-400">
                   تضمین می‌کنم که به خودت افتخار خواهی کرد
               </span>
-            </motion.p>
+            </p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="flex flex-row gap-4 justify-center lg:justify-end items-center lg:items-end w-full mt-8 lg:mt-0"
-            >
-              <motion.a
+            <div className="hero-fade-in-up flex flex-row gap-4 justify-center lg:justify-end items-center lg:items-end w-full mt-8 lg:mt-0" style={{ animationDelay: '0.5s' }}>
+              <a
                 href="#about"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 h-14 border-2 border-slate-400/50 text-slate-200 font-semibold rounded-full hover:border-slate-300/70 hover:bg-slate-500/20 transition-all duration-300 font-vazir flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:shadow-[0_0_30px_rgba(59,130,246,0.75)]"
+                className="px-8 py-4 h-14 border-2 border-slate-400/50 text-slate-200 font-semibold rounded-full hover:border-slate-300/70 hover:bg-slate-500/20 hover:scale-105 active:scale-95 transition-all duration-300 font-vazir flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:shadow-[0_0_30px_rgba(59,130,246,0.75)]"
               >
                 درباره نیم‌نگاه
-              </motion.a>
-              <motion.a
+              </a>
+              <a
                 href="#courses"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 h-14 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold rounded-full hover:shadow-lg hover:from-slate-500 hover:to-slate-600 transition-all duration-300 font-vazir flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:shadow-[0_0_30px_rgba(59,130,246,0.75)]"
+                className="px-8 py-4 h-14 bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold rounded-full hover:shadow-lg hover:from-slate-500 hover:to-slate-600 hover:scale-105 active:scale-95 transition-all duration-300 font-vazir flex items-center justify-center shadow-[0_0_20px_rgba(59,130,246,0.5)] hover:shadow-[0_0_30px_rgba(59,130,246,0.75)]"
               >
                 مشاهده دوره‌ها
-              </motion.a>
-            </motion.div>
-          </motion.div>
+              </a>
+            </div>
+          </div>
         </div>
 
       </div>

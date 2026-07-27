@@ -51,7 +51,7 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
     let maxDelayTimer: ReturnType<typeof setTimeout> | null = null;
 
     const minDelay = new Promise<void>((resolve) => {
-      minDelayTimer = setTimeout(resolve, 1000);
+      minDelayTimer = setTimeout(resolve, 500);
     });
     const maxDelay = new Promise<void>((resolve) => {
       maxDelayTimer = setTimeout(resolve, 2000);

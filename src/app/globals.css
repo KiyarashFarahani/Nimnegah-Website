@@ -114,10 +114,34 @@ main {
 .hero-float-6 { animation: hero-float-6 9s ease-in-out 1s infinite; }
 .hero-float-7 { animation: hero-float-7 8.25s ease-in-out 0.3s infinite; }
 
+/* Hero entrance animations - CSS replaces framer-motion, runs once on mount */
+@keyframes hero-fade-in-right {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes hero-fade-in-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-fade-in-right {
+  animation: hero-fade-in-right 0.6s ease-out both;
+}
+
+.hero-fade-in-up {
+  animation: hero-fade-in-up 0.6s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-float-1, .hero-float-2, .hero-float-3, .hero-float-4,
-  .hero-float-5, .hero-float-6, .hero-float-7 {
+  .hero-float-5, .hero-float-6, .hero-float-7,
+  .hero-fade-in-right, .hero-fade-in-up {
     animation: none;
+  }
+  .hero-fade-in-right, .hero-fade-in-up {
+    opacity: 1;
+    transform: none;
   }
 }
 

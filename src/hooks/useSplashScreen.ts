@@ -19,25 +19,21 @@ export const useSplashScreen = (): UseSplashScreenReturn => {
     }
 
     const preloadImages = async () => {
-        const criticalImages = [
-            '/images/logo/logo.webp',
-            '/images/profile/3.webp'
-        ];
+      const criticalImages = [
+        '/images/logo/logo.webp',
+        ...['2', '10', '4', '3', '5', '7', '8', '9'].map((n) => `/images/profile/${n}.webp`),
+      ];
 
-        const imagePromises = criticalImages.map((url) => {
-        return new Promise((resolve) => {
-          const img = new Image();
-          img.onload = resolve;
-          img.onerror = () => resolve(undefined);
-          img.src = url;
-        });
-      });
-
-      try {
-        await Promise.all(imagePromises);
-      } catch (error) {
-        console.warn('Some images failed to preload:', error);
-      }
+      await Promise.all(
+        criticalImages.map((url) => {
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = resolve;
+            img.onerror = () => resolve(undefined);
+            img.src = url;
+          });
+        })
+      );
     };
 
     const preloadFonts = async () => {

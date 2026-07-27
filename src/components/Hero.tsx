@@ -39,7 +39,7 @@ const Hero = () => {
                 width={1200}
                 height={1500}
                 className="object-contain h-[50vh] sm:h-[60vh] lg:h-[90vh] w-auto"
-                sizes="(max-width: 1024px) 90vw, 55vw"
+                unoptimized
                 priority={num === LCP_IMAGE_NUM}
               />
             </div>

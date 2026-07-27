@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Instagram, Send } from 'lucide-react';
 
@@ -41,7 +42,7 @@ const Footer = () => {
   return (
     <footer className="relative bg-[#040a18] border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -111,6 +112,32 @@ const Footer = () => {
               ))}
             </div>
           </motion.div>
+
+          {/* Enamad */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-start"
+          >
+            <a
+              referrerPolicy="origin"
+              target="_blank"
+              href="https://trustseal.enamad.ir/?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
+              rel="noopener noreferrer"
+            >
+              <Image
+                referrerPolicy="origin"
+                src="https://trustseal.enamad.ir/logo.aspx?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
+                alt="نماد اعتماد الکترونیک enamad"
+                width={150}
+                height={60}
+                unoptimized
+                className="w-36 h-auto"
+              />
+            </a>
+          </motion.div>
         </div>
 
         {/* Bottom bar */}
@@ -137,9 +164,9 @@ const Footer = () => {
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
-            className="text-xs text-gray-600 font-vazir"
+            className="text-xs text-gray-600 font-vazir flex items-center gap-4"
           >
-            &copy; {COPYRIGHT_YEAR} آکادمی نیم‌نگاه. تمامی حقوق محفوظ است.
+&copy; {COPYRIGHT_YEAR} آکادمی نیم‌نگاه. تمامی حقوق محفوظ است.
           </motion.p>
         </div>
       </div>

@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Instagram, Send } from 'lucide-react';
 
@@ -124,17 +123,15 @@ const Footer = () => {
             <a
               referrerPolicy="origin"
               target="_blank"
-              href="https://trustseal.enamad.ir/?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-              rel="noopener noreferrer"
+              href="https://trustseal.enamad.ir/?id=764309&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 referrerPolicy="origin"
-                src="https://trustseal.enamad.ir/logo.aspx?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-                alt="نماد اعتماد الکترونیک enamad"
-                width={150}
-                height={60}
-                unoptimized
-                className="w-36 h-auto"
+                src="https://trustseal.enamad.ir/logo.aspx?id=764309&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
+                alt=""
+                style={{ cursor: "pointer" }}
+                code="I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
               />
             </a>
           </motion.div>

@@ -74,6 +74,7 @@ export interface Config {
     orders: Order;
     enrollments: Enrollment;
     media: Media;
+    coupons: Coupon;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +89,7 @@ export interface Config {
     orders: OrdersSelect<false> | OrdersSelect<true>;
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    coupons: CouponsSelect<false> | CouponsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -270,10 +272,70 @@ export interface Order {
   id: number;
   user: number | User;
   course: number | Course;
+  /**
+   * Final charged amount in Tomans (after any discount)
+   */
   amount: number;
+  /**
+   * Course price before discount (for audit)
+   */
+  originalAmount?: number | null;
+  /**
+   * Amount deducted by the discount code
+   */
+  discountAmount?: number | null;
+  coupon?: (number | null) | Coupon;
   status?: ('pending' | 'completed' | 'failed') | null;
   zarinpalRefId?: string | null;
   authority?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coupons".
+ */
+export interface Coupon {
+  id: number;
+  /**
+   * Code shown to students (case-insensitive, auto-uppercased)
+   */
+  code: string;
+  type: 'percent' | 'fixed';
+  /**
+   * Percent (e.g. 20) or fixed amount in Tomans (e.g. 200000)
+   */
+  value: number;
+  status?: ('active' | 'inactive') | null;
+  scope?: ('all' | 'courses') | null;
+  /**
+   * Courses this code applies to (when scope is "Specific courses")
+   */
+  courses?: (number | Course)[] | null;
+  /**
+   * Coupon cannot be used before this date (blank = no start restriction)
+   */
+  startsAt?: string | null;
+  /**
+   * Coupon cannot be used after this date (blank = no expiry)
+   */
+  expiresAt?: string | null;
+  /**
+   * Maximum total number of redeems (blank = unlimited)
+   */
+  maxUses?: number | null;
+  /**
+   * How many times a single user can redeem this code
+   */
+  perUserLimit?: number | null;
+  /**
+   * Auto-maintained count of completed orders that used this code
+   */
+  timesUsed?: number | null;
+  /**
+   * Internal notes only
+   */
+  description?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -356,6 +418,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'coupons';
+        value: number | Coupon;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -485,6 +551,9 @@ export interface OrdersSelect<T extends boolean = true> {
   user?: T;
   course?: T;
   amount?: T;
+  originalAmount?: T;
+  discountAmount?: T;
+  coupon?: T;
   status?: T;
   zarinpalRefId?: T;
   authority?: T;
@@ -529,6 +598,26 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coupons_select".
+ */
+export interface CouponsSelect<T extends boolean = true> {
+  code?: T;
+  type?: T;
+  value?: T;
+  status?: T;
+  scope?: T;
+  courses?: T;
+  startsAt?: T;
+  expiresAt?: T;
+  maxUses?: T;
+  perUserLimit?: T;
+  timesUsed?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

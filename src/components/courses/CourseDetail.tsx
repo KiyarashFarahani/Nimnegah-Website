@@ -154,6 +154,14 @@ export default function CourseDetail({ slug }: { slug: string }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+  const [codeInput, setCodeInput] = useState('');
+  const [discount, setDiscount] = useState<{
+    code: string;
+    discountAmount: number;
+    finalAmount: number;
+  } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -196,7 +204,10 @@ export default function CourseDetail({ slug }: { slug: string }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ courseId: course?.id }),
+        body: JSON.stringify({
+          courseId: course?.id,
+          ...(discount ? { discountCode: discount.code } : {}),
+        }),
       });
 
       const data = await res.json();
@@ -227,6 +238,48 @@ export default function CourseDetail({ slug }: { slug: string }) {
     }
   }
 
+  async function applyCoupon() {
+    if (couponLoading || !codeInput.trim()) return;
+    setCouponLoading(true);
+    setCouponError(null);
+    try {
+      const res = await fetch('/api/discount/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ code: codeInput, courseId: course?.id }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setDiscount(null);
+        setCouponError(data.error || 'خطا در بررسی کد تخفیف');
+        return;
+      }
+
+      if (data.valid) {
+        setDiscount({
+          code: data.code,
+          discountAmount: data.discountAmount,
+          finalAmount: data.finalAmount,
+        });
+        setCodeInput('');
+      } else {
+        setDiscount(null);
+        setCouponError(data.message || 'کد تخفیف معتبر نیست');
+      }
+    } catch {
+      setCouponError('خطا در ارتباط با سرور');
+    } finally {
+      setCouponLoading(false);
+    }
+  }
+
+  function clearCoupon() {
+    setDiscount(null);
+    setCouponError(null);
+  }
+
   if (loading) return <LoadingSkeleton />;
   if (notFound || !course) return <NotFoundState />;
 
@@ -237,6 +290,8 @@ export default function CourseDetail({ slug }: { slug: string }) {
   const freeLessons = lessons.filter((l) => l.isFree);
   const totalDuration = course.duration || Math.round(totalLessonsDuration(lessons) / 60);
   const isFree = typeof course.price === 'number' && course.price <= 0;
+  const showDiscountInput =
+    isLoggedIn && !isEnrolled && !isFree && course.status !== 'coming_soon';
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -452,6 +507,72 @@ export default function CourseDetail({ slug }: { slug: string }) {
                           </span>
                           <span className="text-sm text-gray-500 font-vazir">تومان</span>
                         </div>
+                      </div>
+                    )}
+
+                    {showDiscountInput && (
+                      <div className="mb-4 space-y-3">
+                        {discount ? (
+                          <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-3 space-y-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <span className="text-xs font-vazir text-green-300">
+                                کد تخفیف «{discount.code}» اعمال شد
+                              </span>
+                              <button
+                                onClick={clearCoupon}
+                                className="text-xs font-vazir text-gray-400 hover:text-white transition-colors"
+                              >
+                                حذف
+                              </button>
+                            </div>
+                            {discount.discountAmount > 0 && (
+                              <div className="flex items-center justify-between text-xs font-vazir text-red-400">
+                                <span>سود شما با این کد</span>
+                                <span>{formatPrice(discount.discountAmount)} تومان</span>
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between text-sm font-vazir">
+                              <span className="text-gray-400">قیمت نهایی</span>
+                              <span className="font-bold text-white">
+                                {formatPrice(discount.finalAmount)}
+                                <span className="text-xs text-gray-500"> تومان</span>
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={codeInput}
+                                onChange={(e) => setCodeInput(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') applyCoupon();
+                                }}
+                                placeholder="کد تخفیف"
+                                dir="ltr"
+                                className="flex-1 min-w-0 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm font-vazir text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/40 transition-all"
+                              />
+                              <motion.button
+                                whileHover={{ scale: couponLoading ? 1 : 1.02 }}
+                                whileTap={{ scale: couponLoading ? 1 : 0.98 }}
+                                onClick={applyCoupon}
+                                disabled={couponLoading}
+                                className="shrink-0 rounded-lg px-4 py-2.5 text-sm font-vazir font-medium text-white bg-white/10 hover:bg-white/15 border border-white/10 disabled:opacity-60 flex items-center gap-1.5 transition-all duration-300"
+                              >
+                                {couponLoading ? (
+                                  <Loader2 size={14} className="animate-spin" />
+                                ) : (
+                                  <Tag size={14} />
+                                )}
+                                {couponLoading ? 'بررسی...' : 'اعمال'}
+                              </motion.button>
+                            </div>
+                            {couponError && (
+                              <p className="mt-2 text-xs font-vazir text-red-400">{couponError}</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     )}
                     <motion.button

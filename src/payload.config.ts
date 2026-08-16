@@ -10,6 +10,7 @@ import { Categories } from './collections/Categories.ts'
 import { Orders } from './collections/Orders.ts'
 import { Enrollments } from './collections/Enrollments.ts'
 import { Media } from './collections/Media.ts'
+import { Coupons } from './collections/Coupons.ts'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -33,6 +34,7 @@ export default buildConfig({
     Orders,
     Enrollments,
     Media,
+    Coupons,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET!,

@@ -42,7 +42,7 @@ vi.mock('ioredis', () => {
   }
 })
 
-import { setOTP, getOTP, deleteOTP, checkRateLimit, checkResendCooldown, setResendCooldown, blacklistToken, isTokenBlacklisted, resetVerifyFailures } from '../redis'
+import { setOTP, getOTP, deleteOTP, checkRateLimit, checkResendCooldown, setResendCooldown, blacklistToken, isTokenBlacklisted, resetVerifyFailures, checkDiscountRateLimit } from '../redis'
 
 describe('OTP operations', () => {
   it('stores and retrieves an OTP', async () => {
@@ -120,5 +120,30 @@ describe('token blacklist', () => {
 describe('resetVerifyFailures', () => {
   it('runs without error', async () => {
     await expect(resetVerifyFailures('09123456789')).resolves.toBeUndefined()
+  })
+})
+
+describe('checkDiscountRateLimit', () => {
+  it('allows requests under the limit', async () => {
+    for (let i = 0; i < 20; i++) {
+      const result = await checkDiscountRateLimit('127.0.0.1')
+      expect(result.allowed).toBe(true)
+    }
+  })
+
+  it('blocks once the limit is exceeded', async () => {
+    const identifier = '10.0.0.1'
+    for (let i = 0; i < 20; i++) {
+      await checkDiscountRateLimit(identifier)
+    }
+    const result = await checkDiscountRateLimit(identifier)
+    expect(result.allowed).toBe(false)
+    expect(result.retryAfter).toBeGreaterThan(0)
+  })
+
+  it('tracks identifiers separately', async () => {
+    await checkDiscountRateLimit('a')
+    const result = await checkDiscountRateLimit('b')
+    expect(result.allowed).toBe(true)
   })
 })

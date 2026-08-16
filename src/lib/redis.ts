@@ -137,6 +137,34 @@ export async function resetVerifyFailures(phone: string) {
   }
 }
 
+// --- Discount code validation rate limiting ---
+
+const DISCOUNT_CHECK_LIMIT = 20
+const DISCOUNT_CHECK_WINDOW = 300 // 5 minutes
+
+export async function checkDiscountRateLimit(
+  identifier: string,
+): Promise<{ allowed: boolean; retryAfter?: number }> {
+  const key = `ratelimit:discount:${identifier}`
+
+  try {
+    const current = await redis.incr(key)
+    if (current === 1) {
+      await redis.expire(key, DISCOUNT_CHECK_WINDOW)
+    }
+
+    if (current > DISCOUNT_CHECK_LIMIT) {
+      const ttl = await redis.ttl(key)
+      return { allowed: false, retryAfter: ttl > 0 ? ttl : DISCOUNT_CHECK_WINDOW }
+    }
+
+    return { allowed: true }
+  } catch (err) {
+    console.error('[Redis] Discount rate limit check failed:', err)
+    return { allowed: true }
+  }
+}
+
 // --- Session blacklist ---
 
 export async function blacklistToken(jti: string, ttlSeconds: number) {

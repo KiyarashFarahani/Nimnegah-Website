@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { initializePayment } from '@/lib/zarinpal'
 import { authenticateRequest } from '@/lib/auth'
+import { resolveDiscountCoupon } from '@/lib/discount'
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +13,7 @@ export async function POST(request: Request) {
     }
 
     const payload = await getPayload({ config })
-    const { courseId } = await request.json()
+    const { courseId, discountCode } = await request.json()
 
     if (!courseId || typeof courseId !== 'number') {
       return NextResponse.json({ error: 'Invalid courseId' }, { status: 400 })
@@ -87,6 +88,66 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid course price' }, { status: 400 })
     }
 
+    let effectiveAmount = course.price
+    let discountApplied = false
+    let couponId: number | null = null
+    let originalAmount: number | null = null
+    let discountAmount: number | null = null
+
+    if (discountCode && typeof discountCode === 'string' && discountCode.trim()) {
+      const discount = await resolveDiscountCoupon(payload, {
+        code: discountCode,
+        courseId: course.id,
+        coursePrice: course.price,
+        userId: auth.user.id,
+      })
+
+      if (discount.valid) {
+        effectiveAmount = discount.finalAmount
+        discountApplied = true
+        couponId = discount.coupon.id
+        originalAmount = discount.originalAmount
+        discountAmount = discount.discountAmount
+
+        // Fully discounted: enroll directly without a bank payment
+        if (effectiveAmount <= 0) {
+          await payload.create({
+            collection: 'orders',
+            draft: false,
+            overrideAccess: true,
+            data: {
+              user: auth.user.id,
+              course: course.id,
+              amount: 0,
+              originalAmount,
+              discountAmount,
+              coupon: couponId,
+              status: 'completed',
+            },
+          })
+
+          await payload.create({
+            collection: 'enrollments',
+            draft: false,
+            overrideAccess: true,
+            data: {
+              user: auth.user.id,
+              course: course.id,
+              progress: 0,
+            },
+          })
+
+          return NextResponse.json({
+            success: true,
+            enrolled: true,
+            redirectUrl: `/dashboard/learn/${course.slug}`,
+          })
+        }
+      } else {
+        return NextResponse.json({ error: discount.message }, { status: 400 })
+      }
+    }
+
     const order = await payload.create({
       collection: 'orders',
       draft: false,
@@ -94,13 +155,16 @@ export async function POST(request: Request) {
       data: {
         user: auth.user.id,
         course: course.id,
-        amount: course.price,
+        amount: effectiveAmount,
         status: 'pending',
+        ...(discountApplied
+          ? { originalAmount, discountAmount, coupon: couponId }
+          : {}),
       },
     })
 
     const payment = await initializePayment(
-      course.price,
+      effectiveAmount,
       `خرید دوره: ${course.title}`,
       {
         mobile: auth.user.phone,

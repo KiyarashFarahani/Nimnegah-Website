@@ -26,6 +26,8 @@ const SOCIAL_LINKS = [
 
 const COPYRIGHT_YEAR = new Date().getFullYear();
 
+const enamadCode = `<img src="/images/logo/enamad.png" width="100" height="110" onclick="window.open('https://trustseal.enamad.ir/?id=764309&code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA', 'Popup','toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30')" alt="enamad">`;
+
 const Footer = () => {
   const pathname = usePathname();
   const isHome = pathname === '/';
@@ -120,20 +122,11 @@ const Footer = () => {
             viewport={{ once: true }}
             className="flex flex-col items-start"
           >
-            <a
-              referrerPolicy="origin"
-              target="_blank"
-              href="https://trustseal.enamad.ir/?id=764309&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                referrerPolicy="origin"
-                src="https://trustseal.enamad.ir/logo.aspx?id=764309&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-                alt=""
-                style={{ cursor: "pointer" }}
-                code="I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-              />
-            </a>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: enamadCode,
+              }}
+            />
           </motion.div>
         </div>
 

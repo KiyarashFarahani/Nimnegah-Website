@@ -1,7 +1,6 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Instagram, Send } from 'lucide-react';
@@ -26,6 +25,8 @@ const SOCIAL_LINKS = [
 ];
 
 const COPYRIGHT_YEAR = new Date().getFullYear();
+
+const enamadCode = `<img src="/images/logo/enamad.png" width="100" height="110" onclick="window.open('https://trustseal.enamad.ir/?id=764309&code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA', 'Popup','toolbar=no, scrollbars=no, location=no, statusbar=no, menubar=no, resizable=0, width=450, height=630, top=30')" alt="enamad">`;
 
 const Footer = () => {
   const pathname = usePathname();
@@ -121,20 +122,11 @@ const Footer = () => {
             viewport={{ once: true }}
             className="flex flex-col items-start"
           >
-            <Link
-              href="https://trustseal.enamad.ir/?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-              target="_blank"
-              referrerPolicy="origin"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <Image
-                src="https://trustseal.enamad.ir/logo.aspx?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-                alt="e-namad"
-                width={100}
-                height={110}
-                loading="lazy"
-              />
-            </Link>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: enamadCode,
+              }}
+            />
           </motion.div>
         </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Instagram, Send } from 'lucide-react';
@@ -120,20 +121,20 @@ const Footer = () => {
             viewport={{ once: true }}
             className="flex flex-col items-start"
           >
-            <a
-              referrerPolicy="origin"
+            <Link
+              href="https://trustseal.enamad.ir/?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
               target="_blank"
-              href="https://trustseal.enamad.ir/?id=764309&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
+              referrerPolicy="origin"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                referrerPolicy="origin"
-                src="https://trustseal.enamad.ir/logo.aspx?id=764309&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
-                alt=""
-                style={{ cursor: "pointer" }}
-                code="I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
+              <Image
+                src="https://trustseal.enamad.ir/logo.aspx?id=7042673&Code=I54f13n5n6s578xmuw3kZTyX2hAzT6NA"
+                alt="e-namad"
+                width={100}
+                height={110}
+                loading="lazy"
               />
-            </a>
+            </Link>
           </motion.div>
         </div>
 

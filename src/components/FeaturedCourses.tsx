@@ -50,7 +50,7 @@ function LoadingSkeleton() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto">
           {[1, 2].map((i) => (
             <div key={i} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
-              <div className="h-56 sm:h-64 bg-white/5 animate-pulse" />
+              <div className="aspect-video bg-white/5 animate-pulse" />
               <div className="p-6 space-y-4">
                 <div className="h-6 w-3/4 bg-white/10 rounded animate-pulse" />
                 <div className="h-4 w-full bg-white/10 rounded animate-pulse" />
@@ -88,7 +88,7 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
     >
       <div className="relative bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)] h-full flex flex-col">
         {/* Thumbnail area - clickable */}
-        <Link href={`/courses/${course.slug}`} className={`block relative h-48 sm:h-52 overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+        <Link href={`/courses/${course.slug}`} className={`block relative aspect-video overflow-hidden ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
           {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}
@@ -213,7 +213,7 @@ function HeroCourseCard({ course }: { course: Course }) {
       <div className="relative bg-white/[0.08] border border-white/10 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_22px_rgba(59,130,246,0.35)]">
         <div className="flex flex-col lg:flex-row">
           {/* Thumbnail area - clickable, larger for hero */}
-          <Link href={`/courses/${course.slug}`} className={`block relative w-full lg:w-1/2 h-64 sm:h-72 lg:h-[420px] overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
+          <Link href={`/courses/${course.slug}`} className={`block relative w-full lg:w-1/2 aspect-video overflow-hidden flex-shrink-0 ${thumbnailUrl ? 'bg-black/20' : `bg-gradient-to-br ${gradient}`}`}>
             {thumbnailUrl ? (
             <Image
               src={thumbnailUrl}

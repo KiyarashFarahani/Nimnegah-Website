@@ -14,15 +14,8 @@ type Category = {
 
 type FilterState = {
   category: string;
-  level: string;
   search: string;
 };
-
-const LEVELS = [
-  { value: 'beginner', label: 'مبتدی' },
-  { value: 'intermediate', label: 'متوسط' },
-  { value: 'advanced', label: 'پیشرفته' },
-];
 
 const containerVariants = {
   hidden: {},
@@ -112,7 +105,6 @@ export default function CourseCatalog() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<FilterState>({
     category: '',
-    level: '',
     search: '',
   });
   const [showFilters, setShowFilters] = useState(false);
@@ -136,7 +128,6 @@ export default function CourseCatalog() {
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
       if (filters.category && course.category?.name !== filters.category) return false;
-      if (filters.level && course.level !== filters.level) return false;
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         const titleMatch = course.title.toLowerCase().includes(searchLower);
@@ -150,10 +141,10 @@ export default function CourseCatalog() {
     });
   }, [courses, filters]);
 
-  const activeFiltersCount = [filters.category, filters.level].filter(Boolean).length;
+  const activeFiltersCount = [filters.category].filter(Boolean).length;
 
   const clearFilters = () => {
-    setFilters({ category: '', level: '', search: '' });
+    setFilters({ category: '', search: '' });
   };
 
   if (loading) return <LoadingSkeleton />;
@@ -259,28 +250,6 @@ export default function CourseCatalog() {
                     }`}
                   >
                     {cat.name}
-                  </button>
-                ))}
-              </div>
-
-              {/* Level Filter */}
-              <div className="flex flex-wrap justify-center gap-2">
-                {LEVELS.map((level) => (
-                  <button
-                    key={level.value}
-                    onClick={() =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        level: prev.level === level.value ? '' : level.value,
-                      }))
-                    }
-                    className={`px-4 py-2 rounded-full text-sm font-vazir transition-all duration-300 ${
-                      filters.level === level.value
-                        ? 'bg-blue-500/20 border border-blue-500/30 text-blue-300'
-                        : 'bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {level.label}
                   </button>
                 ))}
               </div>

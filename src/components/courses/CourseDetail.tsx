@@ -7,7 +7,6 @@ import Image from 'next/image';
 import {
   Clock,
   BookOpen,
-  BarChart3,
   ChevronDown,
   Play,
   Lock,
@@ -17,7 +16,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import type { SerializedEditorState } from 'lexical';
-import { LEVEL_MAP, formatPrice, formatDuration, formatLessonDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
+import { formatPrice, formatDuration, formatLessonDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
 
 type Lesson = {
   id: string | number;
@@ -284,7 +283,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
   if (notFound || !course) return <NotFoundState />;
 
   const description = getPlainText(course.description) || 'توضیحاتی ثبت نشده است';
-  const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : '';
   const thumbnailUrl = course.thumbnail?.url;
   const categoryName = course.category?.name;
   const freeLessons = lessons.filter((l) => l.isFree);
@@ -310,9 +308,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
       availability: 'https://schema.org/InStock',
     },
     ...(thumbnailUrl && { image: thumbnailUrl }),
-    ...(course.level && {
-      educationalLevel: course.level === 'beginner' ? 'مبتدی' : course.level === 'intermediate' ? 'متوسط' : 'پیشرفته',
-    }),
     timeRequired: `PT${totalDuration}M`,
     numberOfLessons: lessons.length,
   }
@@ -359,9 +354,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-siavash font-bold text-white mb-2">
                 {course.title}
               </h1>
-              {levelLabel && (
-                <span className="text-sm font-vazir text-gray-300">{levelLabel}</span>
-              )}
             </motion.div>
           </div>
         </div>
@@ -629,18 +621,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
                         <p className="text-sm text-white font-vazir">{lessons.length} درس</p>
                       </div>
                     </div>
-
-                    {levelLabel && (
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-blue-500/10 flex items-center justify-center flex-shrink-0">
-                          <BarChart3 size={16} className="text-blue-400" />
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-500 font-vazir">سطح</p>
-                          <p className="text-sm text-white font-vazir">{levelLabel}</p>
-                        </div>
-                      </div>
-                    )}
 
                     {categoryName && (
                       <div className="flex items-center gap-3">

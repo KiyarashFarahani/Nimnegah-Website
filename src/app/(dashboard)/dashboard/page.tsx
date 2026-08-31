@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { BookOpen, Clock, ArrowLeft, Key } from 'lucide-react'
-import { Course, LEVEL_MAP, formatDuration, getPlainText } from '@/lib/course-utils'
+import { Course, formatDuration, getPlainText } from '@/lib/course-utils'
 
 type Enrollment = {
   id: string | number
@@ -22,7 +22,6 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
   const description = getPlainText(course.description) || 'توضیحاتی ثبت نشده'
   const thumbnailUrl = course.thumbnail?.url
   const categoryName = course.category?.name
-  const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : ''
   const isSpotPlayer = course.courseType === 'spotplayer'
 
   return (
@@ -58,11 +57,7 @@ function EnrolledCourseCard({ enrollment, index }: { enrollment: Enrollment; ind
               </div>
             )}
 
-            {levelLabel && (
-              <div className="absolute top-3 right-3 px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full">
-                <span className="text-xs font-vazir text-white/90">{levelLabel}</span>
-              </div>
-            )}
+
           </div>
 
           {/* Content */}

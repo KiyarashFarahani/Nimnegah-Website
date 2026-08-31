@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
-import { Course, GRADIENTS, ACCENTS, LEVEL_MAP, formatPrice, formatDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
+import { Course, GRADIENTS, ACCENTS, formatPrice, formatDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
 
 const containerVariants = {
   hidden: {},
@@ -75,7 +75,6 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
   const gradient = GRADIENTS[index % GRADIENTS.length];
   const accent = ACCENTS[index % ACCENTS.length];
   const description = getPlainText(course.description) || 'توضیحات دوره موجود نیست';
-  const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : '';
   const thumbnailUrl = course.thumbnail?.url;
   const categoryName = course.category?.name;
   const isFree = typeof course.price === 'number' && course.price <= 0;
@@ -106,13 +105,6 @@ function CourseCard({ course, index }: { course: Course; index: number }) {
                 <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${accent} opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all duration-500`} />
               </div>
             </>
-          )}
-
-          {/* Level badge */}
-          {levelLabel && (
-            <div className="absolute top-4 right-4 px-3 py-1 bg-black/40 rounded-full text-xs font-vazir text-white/90 border border-white/10">
-              {levelLabel}
-            </div>
           )}
         </Link>
 
@@ -199,7 +191,6 @@ function HeroCourseCard({ course }: { course: Course }) {
   const gradient = GRADIENTS[0];
   const accent = ACCENTS[0];
   const description = getPlainText(course.description) || 'توضیحات دوره موجود نیست';
-  const levelLabel = course.level ? LEVEL_MAP[course.level] || course.level : '';
   const thumbnailUrl = course.thumbnail?.url;
   const categoryName = course.category?.name;
   const isFree = typeof course.price === 'number' && course.price <= 0;
@@ -231,13 +222,6 @@ function HeroCourseCard({ course }: { course: Course }) {
                   <div className={`w-28 h-28 rounded-3xl bg-gradient-to-br ${accent} opacity-30 group-hover:opacity-50 group-hover:scale-110 transition-all duration-500`} />
                 </div>
               </>
-            )}
-
-            {/* Level badge */}
-            {levelLabel && (
-              <div className="absolute top-5 right-5 px-4 py-1.5 bg-black/40 rounded-full text-sm font-vazir text-white/90 border border-white/10">
-                {levelLabel}
-              </div>
             )}
           </Link>
 

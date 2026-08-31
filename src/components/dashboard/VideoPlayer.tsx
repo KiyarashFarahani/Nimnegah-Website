@@ -82,6 +82,9 @@ export default function VideoPlayer({
             global: true,
           },
           invertTime: false,
+          // Self-host sprite: prevents 403 on VPS where CSP blocks cdn.plyr.io
+          // and removes external dependency (public/plyr.svg copied from plyr/dist)
+          iconUrl: '/plyr.svg',
         }}
         />
       </div>

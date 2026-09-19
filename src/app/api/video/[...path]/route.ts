@@ -2,137 +2,121 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { authenticateRequest } from '@/lib/auth'
+import { createVideoToken, verifyVideoToken } from '@/lib/video-token'
 import fs from 'fs'
-import { access, stat } from 'fs/promises'
+import { stat } from 'fs/promises'
 import path from 'path'
 
-const UPLOADS_DIR = path.resolve(process.cwd(), 'media')
+const MEDIA_DIR = path.resolve(process.cwd(), 'media')
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ path: string[] }> },
 ) {
   try {
+    const url = new URL(request.url)
+    const filename = url.searchParams.get('file')
+    const expires = Number(url.searchParams.get('expires'))
+    const signature = url.searchParams.get('signature') ?? ''
+    const secret = process.env.PAYLOAD_SECRET!
+
+    if (filename && verifyVideoToken(filename, expires, signature, secret)) {
+      if (process.env.NODE_ENV === 'production') {
+        return new Response(null, {
+          headers: {
+            'X-Accel-Redirect': `/_protected_media/${encodeURIComponent(filename)}`,
+            'Cache-Control': 'private, max-age=7200',
+          },
+        })
+      }
+      return streamDevelopmentVideo(request, filename)
+    }
+
     const auth = await authenticateRequest(request)
     if (!auth.success) {
       return NextResponse.json({ error: auth.error }, { status: auth.status })
     }
 
     const { path: pathParts } = await params
-    const lessonId = pathParts[0]
-
-    if (!lessonId) {
-      return NextResponse.json({ error: 'Lesson ID required' }, { status: 400 })
+    const lessonId = Number(pathParts[0])
+    if (!Number.isInteger(lessonId)) {
+      return NextResponse.json({ error: 'Valid lesson ID required' }, { status: 400 })
     }
 
     const payload = await getPayload({ config })
-
     const lesson = await payload.findByID({
       collection: 'lessons',
       id: lessonId,
       depth: 1,
     })
+    const courseId = typeof lesson.course === 'object' ? lesson.course.id : lesson.course
 
-    if (!lesson) {
-      return NextResponse.json({ error: 'Lesson not found' }, { status: 404 })
-    }
-
-    const courseId =
-      typeof lesson.course === 'object' ? lesson.course.id : lesson.course
-
-    // Allow free lessons without enrollment
     if (!lesson.isFree) {
-      const enrollments = await payload.find({
+      const enrollment = await payload.find({
         collection: 'enrollments',
         where: {
-          user: { equals: auth.user.id },
-          course: { equals: courseId },
+          and: [
+            { user: { equals: auth.user.id } },
+            { course: { equals: courseId } },
+          ],
         },
+        depth: 0,
         limit: 1,
       })
-
-      if (enrollments.docs.length === 0) {
+      if (enrollment.docs.length === 0) {
         return NextResponse.json({ error: 'Not enrolled' }, { status: 403 })
       }
     }
 
-    const media =
-      typeof lesson.video === 'object' ? lesson.video : null
-
-    if (!media || !media.filename) {
+    const media = typeof lesson.video === 'object' ? lesson.video : null
+    if (!media?.filename || path.basename(media.filename) !== media.filename) {
       return NextResponse.json({ error: 'Video not found' }, { status: 404 })
     }
 
-    const filePath = path.join(UPLOADS_DIR, media.filename)
-    const resolved = path.resolve(filePath)
-    if (!resolved.startsWith(UPLOADS_DIR)) {
-      return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
-    }
-
-    try {
-      await access(resolved)
-    } catch {
-      return NextResponse.json({ error: 'File not found on disk' }, { status: 404 })
-    }
-
-    const fileStat = await stat(resolved)
-    const range = request.headers.get('range')
-
-    const contentType = media.mimeType || 'video/mp4'
-
-    if (range) {
-      const parts = range.replace(/bytes=/, '').split('-')
-      const start = parseInt(parts[0], 10)
-      const end = parts[1] ? parseInt(parts[1], 10) : fileStat.size - 1
-      const chunkSize = end - start + 1
-
-      const stream = fs.createReadStream(resolved, { start, end })
-      const readable = new ReadableStream({
-        start(controller) {
-          stream.on('data', (chunk: string | Buffer) => {
-            const buf = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
-            controller.enqueue(new Uint8Array(buf))
-          })
-          stream.on('end', () => controller.close())
-          stream.on('error', (err) => controller.error(err))
-        },
-      })
-
-      return new Response(readable, {
-        status: 206,
-        headers: {
-          'Content-Range': `bytes ${start}-${end}/${fileStat.size}`,
-          'Accept-Ranges': 'bytes',
-          'Content-Length': String(chunkSize),
-          'Content-Type': contentType,
-          'Cache-Control': 'private, max-age=3600',
-        },
-      })
-    }
-
-    const stream = fs.createReadStream(resolved)
-    const readable = new ReadableStream({
-      start(controller) {
-        stream.on('data', (chunk: string | Buffer) => {
-          const buf = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
-          controller.enqueue(new Uint8Array(buf))
-        })
-        stream.on('end', () => controller.close())
-        stream.on('error', (err) => controller.error(err))
-      },
-    })
-
-    return new Response(readable, {
-      status: 200,
-      headers: {
-        'Content-Length': String(fileStat.size),
-        'Content-Type': contentType,
-        'Accept-Ranges': 'bytes',
-        'Cache-Control': 'private, max-age=3600',
-      },
-    })
+    const token = createVideoToken(media.filename, secret)
+    const redirect = new URL(request.url)
+    redirect.search = new URLSearchParams({
+      file: token.filename,
+      expires: String(token.expires),
+      signature: token.signature,
+    }).toString()
+    return NextResponse.redirect(redirect, 307)
   } catch (error) {
-    console.error('Video streaming error:', error)
+    console.error('Video delivery error:', error)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
+}
+
+async function streamDevelopmentVideo(request: Request, filename: string) {
+  const filePath = path.join(MEDIA_DIR, filename)
+  const fileStat = await stat(filePath)
+  const range = request.headers.get('range')
+  const start = range ? Number(range.replace(/bytes=/, '').split('-')[0]) : 0
+  const requestedEnd = range?.split('-')[1]
+  const end = requestedEnd ? Number(requestedEnd) : fileStat.size - 1
+  const stream = fs.createReadStream(filePath, { start, end })
+  const body = new ReadableStream({
+    start(controller) {
+      stream.on('data', (chunk: string | Buffer) => {
+        const buffer = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
+        controller.enqueue(new Uint8Array(buffer))
+      })
+      stream.on('end', () => controller.close())
+      stream.on('error', (error) => controller.error(error))
+    },
+    cancel() {
+      stream.destroy()
+    },
+  })
+
+  return new Response(body, {
+    status: range ? 206 : 200,
+    headers: {
+      ...(range ? { 'Content-Range': `bytes ${start}-${end}/${fileStat.size}` } : {}),
+      'Accept-Ranges': 'bytes',
+      'Content-Length': String(end - start + 1),
+      'Content-Type': 'video/mp4',
+      'Cache-Control': 'private, max-age=7200',
+    },
+  })
 }

@@ -5,9 +5,11 @@ vi.mock('ioredis', () => {
   const ttls = new Map<string, number>()
   return {
     default: class MockRedis {
-      async set(key: string, value: string, _flag?: string, ttl?: number) {
+      async set(key: string, value: string, ...args: Array<number | string>) {
+        if (args.includes('NX') && store.has(key)) return null
         store.set(key, value)
-        if (ttl) ttls.set(key, ttl)
+        const exIndex = args.indexOf('EX')
+        if (exIndex !== -1) ttls.set(key, Number(args[exIndex + 1]))
         return 'OK'
       }
       async get(key: string) {
@@ -34,6 +36,20 @@ vi.mock('ioredis', () => {
       async expire(_key: string, _ttl: number) {
         return 1
       }
+      async eval(script: string, _numberOfKeys: number, key: string, value: string | number) {
+        if (script.includes("'INCR'")) {
+          const current = parseInt(store.get(key) ?? '0', 10) + 1
+          store.set(key, String(current))
+          if (current === 1) ttls.set(key, Number(value))
+          return [current, ttls.get(key) ?? -1]
+        }
+        if (store.get(key) === String(value)) {
+          store.delete(key)
+          ttls.delete(key)
+          return 1
+        }
+        return 0
+      }
       async ping() {
         return 'PONG'
       }
@@ -42,39 +58,31 @@ vi.mock('ioredis', () => {
   }
 })
 
-import { setOTP, getOTP, deleteOTP, checkRateLimit, checkResendCooldown, setResendCooldown, blacklistToken, isTokenBlacklisted, resetVerifyFailures, checkDiscountRateLimit } from '../redis'
+import { setOTP, consumeOTP, checkRateLimit, claimResendCooldown, releaseResendCooldown, blacklistToken, isTokenBlacklisted, resetVerifyFailures, checkDiscountRateLimit } from '../redis'
 
 describe('OTP operations', () => {
-  it('stores and retrieves an OTP', async () => {
+  it('consumes a matching OTP only once', async () => {
     await setOTP('09123456789', '123456')
-    const code = await getOTP('09123456789')
-    expect(code).toBe('123456')
+    expect(await consumeOTP('09123456789', '123456')).toBe(true)
+    expect(await consumeOTP('09123456789', '123456')).toBe(false)
   })
 
-  it('returns null for non-existent OTP', async () => {
-    const code = await getOTP('09999999999')
-    expect(code).toBeNull()
-  })
-
-  it('deletes an OTP', async () => {
+  it('does not consume a mismatched OTP', async () => {
     await setOTP('09111111111', '654321')
-    await deleteOTP('09111111111')
-    const code = await getOTP('09111111111')
-    expect(code).toBeNull()
+    expect(await consumeOTP('09111111111', '123456')).toBe(false)
+    expect(await consumeOTP('09111111111', '654321')).toBe(true)
   })
 })
 
-describe('checkResendCooldown', () => {
-  it('allows resend when no cooldown active', async () => {
-    const result = await checkResendCooldown('09123456788')
-    expect(result.allowed).toBe(true)
-  })
-
-  it('blocks resend during cooldown', async () => {
-    await setResendCooldown('09123456787')
-    const result = await checkResendCooldown('09123456787')
-    expect(result.allowed).toBe(false)
-    expect(result.retryAfter).toBeGreaterThan(0)
+describe('resend cooldown', () => {
+  it('allows one claimant and only its token can release the cooldown', async () => {
+    const phone = '09123456787'
+    expect((await claimResendCooldown(phone, 'owner')).allowed).toBe(true)
+    expect((await claimResendCooldown(phone, 'other')).allowed).toBe(false)
+    await releaseResendCooldown(phone, 'other')
+    expect((await claimResendCooldown(phone, 'third')).allowed).toBe(false)
+    await releaseResendCooldown(phone, 'owner')
+    expect((await claimResendCooldown(phone, 'third')).allowed).toBe(true)
   })
 })
 

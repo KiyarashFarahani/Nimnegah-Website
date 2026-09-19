@@ -1,5 +1,11 @@
-import type { Payload } from 'payload'
+import type { Payload, PayloadRequest, Where } from 'payload'
 import type { Coupon } from '@/payload-types'
+
+export const PAYMENT_RESERVATION_TTL_MS = 30 * 60 * 1000
+
+export function paymentReservationCutoff(now = Date.now()) {
+  return new Date(now - PAYMENT_RESERVATION_TTL_MS).toISOString()
+}
 
 export type DiscountStatus =
   | {
@@ -47,6 +53,7 @@ export async function resolveDiscountCoupon(
     coursePrice: number
     userId: number
   },
+  req?: PayloadRequest,
 ): Promise<DiscountStatus> {
   const normalized = normalizeCouponCode(opts.code)
   if (!normalized) {
@@ -59,6 +66,7 @@ export async function resolveDiscountCoupon(
     depth: 0,
     limit: 1,
     overrideAccess: true,
+    req,
   })
 
   const coupon = docs[0]
@@ -67,6 +75,17 @@ export async function resolveDiscountCoupon(
   }
 
   const now = Date.now()
+  const activeOrderStatus: Where = {
+    or: [
+      { status: { equals: 'completed' } },
+      {
+        and: [
+          { status: { equals: 'pending' } },
+          { createdAt: { greater_than: paymentReservationCutoff(now) } },
+        ],
+      },
+    ],
+  }
   if (coupon.startsAt && new Date(coupon.startsAt).getTime() > now) {
     return { valid: false, message: 'کد تخفیف هنوز فعال نشده است' }
   }
@@ -89,10 +108,11 @@ export async function resolveDiscountCoupon(
       where: {
         and: [
           { coupon: { equals: coupon.id } },
-          { status: { equals: 'completed' } },
+          activeOrderStatus,
         ],
       },
       overrideAccess: true,
+      req,
     })
     if (used.totalDocs >= coupon.maxUses) {
       return {
@@ -109,10 +129,11 @@ export async function resolveDiscountCoupon(
       and: [
         { coupon: { equals: coupon.id } },
         { user: { equals: opts.userId } },
-        { status: { equals: 'completed' } },
+        activeOrderStatus,
       ],
     },
     overrideAccess: true,
+    req,
   })
   if (userUsed.totalDocs >= perUserLimit) {
     return { valid: false, message: 'شما قبلاً از این کد تخفیف استفاده کرده‌اید' }

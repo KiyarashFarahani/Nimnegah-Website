@@ -30,21 +30,21 @@ export async function setOTP(phone: string, code: string, ttlSeconds = 300) {
   }
 }
 
-export async function getOTP(phone: string): Promise<string | null> {
+export async function consumeOTP(phone: string, code: string): Promise<boolean> {
   try {
-    return await redis.get(`otp:${phone}`)
+    const result = await redis.eval(
+      `if redis.call('GET', KEYS[1]) == ARGV[1] then
+        return redis.call('DEL', KEYS[1])
+      end
+      return 0`,
+      1,
+      `otp:${phone}`,
+      code,
+    )
+    return result === 1
   } catch (err) {
-    console.error('[Redis] getOTP failed:', err)
-    throw new Error('Failed to retrieve OTP')
-  }
-}
-
-export async function deleteOTP(phone: string) {
-  try {
-    await redis.del(`otp:${phone}`)
-  } catch (err) {
-    console.error('[Redis] deleteOTP failed:', err)
-    throw new Error('Failed to delete OTP')
+    console.error('[Redis] consumeOTP failed:', err)
+    throw new Error('Failed to consume OTP')
   }
 }
 
@@ -52,26 +52,35 @@ export async function deleteOTP(phone: string) {
 
 const OTP_RESEND_COOLDOWN = 60 // seconds
 
-export async function checkResendCooldown(
+export async function claimResendCooldown(
   phone: string,
+  token: string,
 ): Promise<{ allowed: boolean; retryAfter?: number }> {
   try {
-    const ttl = await redis.ttl(`cooldown:otp:${phone}`)
-    if (ttl > 0) {
-      return { allowed: false, retryAfter: ttl }
-    }
-    return { allowed: true }
+    const key = `cooldown:otp:${phone}`
+    const claimed = await redis.set(key, token, 'EX', OTP_RESEND_COOLDOWN, 'NX')
+    if (claimed === 'OK') return { allowed: true }
+    const ttl = await redis.ttl(key)
+    return { allowed: false, retryAfter: ttl > 0 ? ttl : OTP_RESEND_COOLDOWN }
   } catch (err) {
-    console.error('[Redis] checkResendCooldown failed:', err)
-    return { allowed: true }
+    console.error('[Redis] claimResendCooldown failed:', err)
+    return { allowed: false, retryAfter: OTP_RESEND_COOLDOWN }
   }
 }
 
-export async function setResendCooldown(phone: string) {
+export async function releaseResendCooldown(phone: string, token: string) {
   try {
-    await redis.setex(`cooldown:otp:${phone}`, OTP_RESEND_COOLDOWN, '1')
+    await redis.eval(
+      `if redis.call('GET', KEYS[1]) == ARGV[1] then
+        return redis.call('DEL', KEYS[1])
+      end
+      return 0`,
+      1,
+      `cooldown:otp:${phone}`,
+      token,
+    )
   } catch (err) {
-    console.error('[Redis] setResendCooldown failed:', err)
+    console.error('[Redis] releaseResendCooldown failed:', err)
   }
 }
 
@@ -82,6 +91,17 @@ const OTP_SEND_WINDOW = 300 // 5 minutes
 const OTP_VERIFY_LIMIT = 5
 const OTP_VERIFY_WINDOW = 300 // 5 minutes
 const OTP_LOCKOUT_DURATION = 900 // 15 minutes
+
+async function incrementWithExpiry(key: string, ttlSeconds: number) {
+  return await redis.eval(
+    `local current = redis.call('INCR', KEYS[1])
+    if current == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end
+    return {current, redis.call('TTL', KEYS[1])}`,
+    1,
+    key,
+    ttlSeconds,
+  ) as [number, number]
+}
 
 export async function checkRateLimit(
   phone: string,
@@ -99,27 +119,20 @@ export async function checkRateLimit(
       return { allowed: false, retryAfter: ttl > 0 ? ttl : OTP_LOCKOUT_DURATION }
     }
 
-    const current = await redis.incr(key)
-    if (current === 1) {
-      await redis.expire(key, window)
-    }
+    const [current, counterTTL] = await incrementWithExpiry(key, window)
 
     if (current > limit) {
       // Check if this is the third failed verify attempt
       if (type === 'verify') {
         const verifyFailsKey = `verify_fails:${phone}`
-        const fails = await redis.incr(verifyFailsKey)
-        if (fails === 1) {
-          await redis.expire(verifyFailsKey, OTP_LOCKOUT_DURATION)
-        }
+        const [fails] = await incrementWithExpiry(verifyFailsKey, OTP_LOCKOUT_DURATION)
         if (fails >= OTP_VERIFY_LIMIT) {
           await redis.setex(lockKey, OTP_LOCKOUT_DURATION, '1')
           const ttl = await redis.ttl(lockKey)
           return { allowed: false, retryAfter: ttl }
         }
       }
-      const ttl = await redis.ttl(key)
-      return { allowed: false, retryAfter: ttl > 0 ? ttl : window }
+      return { allowed: false, retryAfter: counterTTL > 0 ? counterTTL : window }
     }
 
     return { allowed: true }
@@ -148,14 +161,13 @@ export async function checkDiscountRateLimit(
   const key = `ratelimit:discount:${identifier}`
 
   try {
-    const current = await redis.incr(key)
-    if (current === 1) {
-      await redis.expire(key, DISCOUNT_CHECK_WINDOW)
-    }
+    const [current, counterTTL] = await incrementWithExpiry(key, DISCOUNT_CHECK_WINDOW)
 
     if (current > DISCOUNT_CHECK_LIMIT) {
-      const ttl = await redis.ttl(key)
-      return { allowed: false, retryAfter: ttl > 0 ? ttl : DISCOUNT_CHECK_WINDOW }
+      return {
+        allowed: false,
+        retryAfter: counterTTL > 0 ? counterTTL : DISCOUNT_CHECK_WINDOW,
+      }
     }
 
     return { allowed: true }

@@ -1,19 +1,20 @@
-import { timingSafeEqual } from 'crypto'
 import { NextResponse } from 'next/server'
 import { SignJWT } from 'jose'
-import { getOTP, deleteOTP, checkRateLimit, resetVerifyFailures } from '@/lib/redis'
+import { consumeOTP, checkRateLimit, resetVerifyFailures } from '@/lib/redis'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { COOKIE_NAME } from '@/lib/cookie'
-import { isValidIranianPhone } from '@/lib/validations'
+import { isValidIranianPhone, toEnglishDigits } from '@/lib/validations'
 
 export async function POST(request: Request) {
   try {
-    const { phone, code } = await request.json()
+    const { phone: rawPhone, code } = await request.json()
 
-    if (!phone || !isValidIranianPhone(phone)) {
+    if (!rawPhone || !isValidIranianPhone(rawPhone)) {
       return NextResponse.json({ error: 'شماره موبایل معتبر نیست' }, { status: 400 })
     }
+
+    const phone = toEnglishDigits(rawPhone)
 
     if (!code || typeof code !== 'string' || code.length !== 6) {
       return NextResponse.json({ error: 'کد تأیید باید ۶ رقم باشد' }, { status: 400 })
@@ -30,13 +31,10 @@ export async function POST(request: Request) {
       )
     }
 
-    const storedCode = await getOTP(phone)
-
-    if (!storedCode || storedCode.length !== code.length || !timingSafeEqual(Buffer.from(storedCode), Buffer.from(code))) {
+    if (!await consumeOTP(phone, code)) {
       return NextResponse.json({ error: 'کد تأیید نادرست یا منقضی شده است' }, { status: 401 })
     }
 
-    await deleteOTP(phone)
     await resetVerifyFailures(phone)
 
     const payload = await getPayload({ config })

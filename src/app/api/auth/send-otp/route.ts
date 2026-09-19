@@ -1,20 +1,29 @@
+import { randomUUID } from 'crypto'
 import { NextResponse } from 'next/server'
 import { generateOTP, sendOTP } from '@/lib/smsir'
-import { setOTP, checkRateLimit, checkResendCooldown, setResendCooldown } from '@/lib/redis'
-import { isValidIranianPhone } from '@/lib/validations'
+import {
+  claimResendCooldown,
+  consumeOTP,
+  releaseResendCooldown,
+  setOTP,
+  checkRateLimit,
+} from '@/lib/redis'
+import { isValidIranianPhone, toEnglishDigits } from '@/lib/validations'
 
 export async function POST(request: Request) {
   try {
-    const { phone } = await request.json()
+    const { phone: rawPhone } = await request.json()
 
-    if (!phone || !isValidIranianPhone(phone)) {
+    if (!rawPhone || !isValidIranianPhone(rawPhone)) {
       return NextResponse.json(
         { error: 'شماره موبایل معتبر نیست (مثال: 09123456789)' },
         { status: 400 },
       )
     }
 
-    const cooldown = await checkResendCooldown(phone)
+    const phone = toEnglishDigits(rawPhone)
+    const cooldownToken = randomUUID()
+    const cooldown = await claimResendCooldown(phone, cooldownToken)
     if (!cooldown.allowed) {
       return NextResponse.json(
         {
@@ -27,6 +36,7 @@ export async function POST(request: Request) {
 
     const rateCheck = await checkRateLimit(phone, 'send')
     if (!rateCheck.allowed) {
+      await releaseResendCooldown(phone, cooldownToken)
       return NextResponse.json(
         {
           error: 'تعداد درخواست‌ها بیش از حد مجاز است. لطفاً بعداً تلاش کنید.',
@@ -37,17 +47,20 @@ export async function POST(request: Request) {
     }
 
     const code = generateOTP()
-    await setOTP(phone, code)
-    await setResendCooldown(phone)
-
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`[OTP] ${phone}: ${code}`)
-    }
-
-    if (process.env.SMSIR_API_KEY === 'your-smsir-api-key' || !process.env.SMSIR_API_KEY) {
-      console.log(`[DEV] Skipping SMS send (no API key)`)
-    } else {
-      await sendOTP(phone, code)
+    try {
+      await setOTP(phone, code)
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[OTP] ${phone}: ${code}`)
+      }
+      if (process.env.SMSIR_API_KEY === 'your-smsir-api-key' || !process.env.SMSIR_API_KEY) {
+        console.log(`[DEV] Skipping SMS send (no API key)`)
+      } else {
+        await sendOTP(phone, code)
+      }
+    } catch (error) {
+      await consumeOTP(phone, code)
+      await releaseResendCooldown(phone, cooldownToken)
+      throw error
     }
 
     return NextResponse.json({ success: true, message: 'کد تأیید ارسال شد' })

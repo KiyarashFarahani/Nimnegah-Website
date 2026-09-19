@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Orders: CollectionConfig = {
   slug: 'orders',
+  indexes: [
+    { fields: ['coupon', 'status'] },
+    { fields: ['coupon', 'user', 'status'] },
+  ],
   admin: {
     useAsTitle: 'id',
   },
@@ -91,41 +95,4 @@ export const Orders: CollectionConfig = {
       },
     },
   ],
-  hooks: {
-    afterChange: [
-      ({ doc, previousDoc, req }) => {
-        if (doc.status !== 'completed') return
-        if (previousDoc?.status === 'completed') return
-        if (!doc.coupon) return
-
-        const couponId =
-          typeof doc.coupon === 'object' && doc.coupon !== null
-            ? doc.coupon.id
-            : doc.coupon
-
-        if (!couponId) return
-
-        req.payload
-          .findByID({
-            collection: 'coupons',
-            id: couponId,
-            depth: 0,
-            overrideAccess: true,
-          })
-          .then((coupon) => {
-            const current =
-              typeof coupon?.timesUsed === 'number' ? coupon.timesUsed : 0
-            return req.payload.update({
-              collection: 'coupons',
-              id: couponId,
-              data: { timesUsed: current + 1 },
-              overrideAccess: true,
-            })
-          })
-          .catch((err) => {
-            console.error('[Coupon] Failed to increment timesUsed:', err)
-          })
-      },
-    ],
-  },
 }

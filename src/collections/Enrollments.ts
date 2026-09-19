@@ -2,7 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Enrollments: CollectionConfig = {
   slug: 'enrollments',
-  indexes: [{ fields: ['user', 'course'], unique: true }],
+  indexes: [
+    { fields: ['user', 'course'], unique: true },
+    { fields: ['user', 'lastAccessedAt'] },
+  ],
   admin: {
     useAsTitle: 'id',
   },

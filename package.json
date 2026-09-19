@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:watch": "vitest",
     "payload": "payload --disable-transpile",
     "payload:generate": "payload generate:types --disable-transpile && payload generate:importmap --disable-transpile",

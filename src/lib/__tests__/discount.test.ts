@@ -1,8 +1,11 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+import type { Payload, PayloadRequest } from 'payload'
 import {
   normalizeCouponCode,
   calculateDiscountPrice,
   calculateDiscountAmount,
+  paymentReservationCutoff,
+  resolveDiscountCoupon,
 } from '../discount'
 
 describe('normalizeCouponCode', () => {
@@ -88,5 +91,50 @@ describe('calculateDiscountAmount', () => {
       price -
         calculateDiscountAmount(type, value, price),
     ).toBe(calculateDiscountPrice(type, value, price))
+  })
+})
+
+describe('resolveDiscountCoupon', () => {
+  it('counts pending orders as reserved uses inside the transaction', async () => {
+    const req = {} as PayloadRequest
+    const count = vi.fn().mockResolvedValue({ totalDocs: 0 })
+    const payload = {
+      find: vi.fn().mockResolvedValue({
+        docs: [{
+          id: 1,
+          code: 'SAVE10',
+          type: 'percent',
+          value: 10,
+          status: 'active',
+          scope: 'all',
+          maxUses: 5,
+          perUserLimit: 1,
+        }],
+      }),
+      count,
+    } as unknown as Payload
+
+    const result = await resolveDiscountCoupon(payload, {
+      code: 'SAVE10',
+      courseId: 1,
+      coursePrice: 100000,
+      userId: 1,
+    }, req)
+
+    expect(result.valid).toBe(true)
+    expect(count).toHaveBeenCalledTimes(2)
+    for (const [call] of count.mock.calls) {
+      expect(call.req).toBe(req)
+      expect(call.where.and).toContainEqual(expect.objectContaining({
+        or: expect.arrayContaining([
+          { status: { equals: 'completed' } },
+          expect.objectContaining({ and: expect.any(Array) }),
+        ]),
+      }))
+    }
+  })
+
+  it('uses a bounded pending-order reservation window', () => {
+    expect(paymentReservationCutoff(1_800_000)).toBe(new Date(0).toISOString())
   })
 })

@@ -191,6 +191,7 @@ export const courses = pgTable(
     index("courses_category_idx").on(columns.category),
     index("courses_updated_at_idx").on(columns.updatedAt),
     index("courses_created_at_idx").on(columns.createdAt),
+    index("status_createdAt_idx").on(columns.status, columns.createdAt),
   ],
 );
 
@@ -231,6 +232,7 @@ export const lessons = pgTable(
     index("lessons_video_idx").on(columns.video),
     index("lessons_updated_at_idx").on(columns.updatedAt),
     index("lessons_created_at_idx").on(columns.createdAt),
+    index("course_order_idx").on(columns.course, columns.order),
   ],
 );
 
@@ -314,6 +316,12 @@ export const orders = pgTable(
     uniqueIndex("orders_idempotency_key_idx").on(columns.idempotencyKey),
     index("orders_updated_at_idx").on(columns.updatedAt),
     index("orders_created_at_idx").on(columns.createdAt),
+    index("coupon_status_idx").on(columns.coupon, columns.status),
+    index("coupon_user_status_idx").on(
+      columns.coupon,
+      columns.user,
+      columns.status,
+    ),
   ],
 );
 
@@ -388,6 +396,7 @@ export const enrollments = pgTable(
     index("enrollments_updated_at_idx").on(columns.updatedAt),
     index("enrollments_created_at_idx").on(columns.createdAt),
     uniqueIndex("user_course_idx").on(columns.user, columns.course),
+    index("user_lastAccessedAt_idx").on(columns.user, columns.lastAccessedAt),
   ],
 );
 

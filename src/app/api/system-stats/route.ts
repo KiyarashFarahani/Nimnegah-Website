@@ -146,7 +146,10 @@ export async function GET(request: Request) {
       if (pool) {
         dbStats = {
           totalConnections: pool.totalCount?.toString() ?? 'N/A',
-          activeConnections: pool.activeCount?.toString() ?? 'N/A',
+          activeConnections:
+            typeof pool.totalCount === 'number' && typeof pool.idleCount === 'number'
+              ? String(pool.totalCount - pool.idleCount)
+              : 'N/A',
         }
       }
     } catch {

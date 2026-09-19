@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -161,6 +161,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
+  const purchaseKey = useRef<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -198,10 +199,14 @@ export default function CourseDetail({ slug }: { slug: string }) {
     }
 
     setPurchasing(true);
+    purchaseKey.current ??= crypto.randomUUID();
     try {
       const res = await fetch('/api/payment/create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Idempotency-Key': purchaseKey.current,
+        },
         credentials: 'include',
         body: JSON.stringify({
           courseId: course?.id,
@@ -212,10 +217,11 @@ export default function CourseDetail({ slug }: { slug: string }) {
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 409) {
+        if (data.enrolled) {
           setIsEnrolled(true);
           return;
         }
+        if (!data.preserveIdempotencyKey) purchaseKey.current = null;
         alert(data.error || 'خطا در ایجاد پرداخت');
         return;
       }

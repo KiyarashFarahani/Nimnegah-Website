@@ -80,6 +80,15 @@ export const Orders: CollectionConfig = {
     {
       name: 'authority',
       type: 'text',
+      unique: true,
+    },
+    {
+      name: 'idempotencyKey',
+      type: 'text',
+      unique: true,
+      admin: {
+        readOnly: true,
+      },
     },
   ],
   hooks: {

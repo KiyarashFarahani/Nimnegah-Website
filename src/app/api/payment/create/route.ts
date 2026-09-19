@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { initializePayment } from '@/lib/zarinpal'
+import { getPaymentRedirectUrl, initializePayment } from '@/lib/zarinpal'
 import { authenticateRequest } from '@/lib/auth'
 import { resolveDiscountCoupon } from '@/lib/discount'
 
@@ -14,9 +14,14 @@ export async function POST(request: Request) {
 
     const payload = await getPayload({ config })
     const { courseId, discountCode } = await request.json()
+    const idempotencyKey = request.headers.get('Idempotency-Key')
 
     if (!courseId || typeof courseId !== 'number') {
       return NextResponse.json({ error: 'Invalid courseId' }, { status: 400 })
+    }
+
+    if (!idempotencyKey || !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idempotencyKey)) {
+      return NextResponse.json({ error: 'Invalid Idempotency-Key' }, { status: 400 })
     }
 
     const course = await payload.findByID({
@@ -47,7 +52,48 @@ export async function POST(request: Request) {
 
     if (existingEnrollment.docs.length > 0) {
       return NextResponse.json(
-        { error: 'You are already enrolled in this course' },
+        { error: 'You are already enrolled in this course', enrolled: true },
+        { status: 409 },
+      )
+    }
+
+    const existingOrders = await payload.find({
+      collection: 'orders',
+      where: { idempotencyKey: { equals: idempotencyKey } },
+      depth: 0,
+      limit: 1,
+    })
+    const existingOrder = existingOrders.docs[0]
+
+    if (existingOrder) {
+      const orderUserId = typeof existingOrder.user === 'object' ? existingOrder.user.id : existingOrder.user
+      const orderCourseId = typeof existingOrder.course === 'object' ? existingOrder.course.id : existingOrder.course
+
+      if (orderUserId !== auth.user.id || orderCourseId !== course.id) {
+        return NextResponse.json({ error: 'Idempotency key conflict' }, { status: 409 })
+      }
+
+      if (existingOrder.status === 'completed') {
+        return NextResponse.json({
+          success: true,
+          enrolled: true,
+          redirectUrl: `/dashboard/learn/${course.slug}`,
+        })
+      }
+
+      if (existingOrder.status === 'pending' && existingOrder.authority) {
+        return NextResponse.json({
+          success: true,
+          redirectUrl: getPaymentRedirectUrl(existingOrder.authority),
+          orderId: existingOrder.id,
+        })
+      }
+
+      return NextResponse.json(
+        {
+          error: 'Payment request is already being processed',
+          preserveIdempotencyKey: existingOrder.status === 'pending',
+        },
         { status: 409 },
       )
     }
@@ -63,6 +109,7 @@ export async function POST(request: Request) {
           course: course.id,
           amount: 0,
           status: 'completed',
+          idempotencyKey,
         },
       })
 
@@ -123,6 +170,7 @@ export async function POST(request: Request) {
               discountAmount,
               coupon: couponId,
               status: 'completed',
+              idempotencyKey,
             },
           })
 
@@ -148,20 +196,54 @@ export async function POST(request: Request) {
       }
     }
 
-    const order = await payload.create({
-      collection: 'orders',
-      draft: false,
-      overrideAccess: true,
-      data: {
-        user: auth.user.id,
-        course: course.id,
-        amount: effectiveAmount,
-        status: 'pending',
-        ...(discountApplied
-          ? { originalAmount, discountAmount, coupon: couponId }
-          : {}),
-      },
-    })
+    let order
+    try {
+      order = await payload.create({
+        collection: 'orders',
+        draft: false,
+        overrideAccess: true,
+        data: {
+          user: auth.user.id,
+          course: course.id,
+          amount: effectiveAmount,
+          status: 'pending',
+          idempotencyKey,
+          ...(discountApplied
+            ? { originalAmount, discountAmount, coupon: couponId }
+            : {}),
+        },
+      })
+    } catch (error) {
+      const duplicate = await payload.find({
+        collection: 'orders',
+        where: { idempotencyKey: { equals: idempotencyKey } },
+        depth: 0,
+        limit: 1,
+      })
+      const duplicateOrder = duplicate.docs[0]
+
+      if (!duplicateOrder) throw error
+
+      const orderUserId = typeof duplicateOrder.user === 'object' ? duplicateOrder.user.id : duplicateOrder.user
+      const orderCourseId = typeof duplicateOrder.course === 'object' ? duplicateOrder.course.id : duplicateOrder.course
+      if (orderUserId !== auth.user.id || orderCourseId !== course.id) {
+        return NextResponse.json({ error: 'Idempotency key conflict' }, { status: 409 })
+      }
+      if (duplicateOrder.authority) {
+        return NextResponse.json({
+          success: true,
+          redirectUrl: getPaymentRedirectUrl(duplicateOrder.authority),
+          orderId: duplicateOrder.id,
+        })
+      }
+      return NextResponse.json(
+        {
+          error: 'Payment request is already being processed',
+          preserveIdempotencyKey: true,
+        },
+        { status: 409 },
+      )
+    }
 
     const payment = await initializePayment(
       effectiveAmount,

@@ -5,6 +5,12 @@ function getBaseUrl() {
   return process.env.ZARINPAL_SANDBOX === 'true' ? SANDBOX_BASE : LIVE_BASE
 }
 
+export function getPaymentRedirectUrl(authority: string) {
+  return process.env.ZARINPAL_SANDBOX === 'true'
+    ? `https://sandbox.zarinpal.com/pg/StartPay/${authority}`
+    : `https://www.zarinpal.com/pg/StartPay/${authority}`
+}
+
 type InitializePaymentResult =
   | { success: true; redirectUrl: string; authority: string }
   | { success: false; error: string }
@@ -19,7 +25,6 @@ export async function initializePayment(
   metadata?: { mobile?: string; email?: string; orderId?: string },
 ): Promise<InitializePaymentResult> {
   const merchantId = process.env.ZARINPAL_MERCHANT_ID!
-  const isSandbox = process.env.ZARINPAL_SANDBOX === 'true'
   const baseUrl = getBaseUrl()
   const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/payment/verify`
 
@@ -44,9 +49,7 @@ export async function initializePayment(
 
   if (data.data?.code === 100 || data.data?.code === 101) {
     const authority = data.data.authority
-    const redirectUrl = isSandbox
-      ? `https://sandbox.zarinpal.com/pg/StartPay/${authority}`
-      : `https://www.zarinpal.com/pg/StartPay/${authority}`
+    const redirectUrl = getPaymentRedirectUrl(authority)
     return { success: true, redirectUrl, authority }
   }
 

@@ -288,6 +288,7 @@ export interface Order {
   status?: ('pending' | 'completed' | 'failed') | null;
   zarinpalRefId?: string | null;
   authority?: string | null;
+  idempotencyKey?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -557,6 +558,7 @@ export interface OrdersSelect<T extends boolean = true> {
   status?: T;
   zarinpalRefId?: T;
   authority?: T;
+  idempotencyKey?: T;
   updatedAt?: T;
   createdAt?: T;
 }

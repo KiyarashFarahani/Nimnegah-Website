@@ -21,6 +21,15 @@ export async function createSpotPlayerLicense(
     body: JSON.stringify({
       name,
       course: courseIds,
+      device: {
+        p0: 1,
+        p1: 1,
+        p2: 1,
+        p3: 1,
+        p4: 1,
+        p5: 1,
+        p6: 0,
+      },
       watermark: {
         texts: [{ text: watermarkText }],
       },

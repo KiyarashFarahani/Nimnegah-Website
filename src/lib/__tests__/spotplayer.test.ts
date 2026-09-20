@@ -30,6 +30,7 @@ describe('createSpotPlayerLicense', () => {
     expect(body.name).toBe('Ali')
     expect(body.course).toEqual(['course1', 'course2'])
     expect(body.watermark.texts[0].text).toBe('09123456789')
+    expect(body.device).toEqual({ p0: 1, p1: 1, p2: 1, p3: 1, p4: 1, p5: 1, p6: 0 })
   })
 
   it('returns success with license details', async () => {

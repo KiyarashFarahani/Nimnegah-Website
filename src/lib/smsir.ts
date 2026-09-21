@@ -1,5 +1,7 @@
 import { randomInt } from 'crypto'
 
+const SMS_TIMEOUT_MS = 10_000
+
 export function generateOTP(): string {
   return randomInt(100000, 1000000).toString()
 }
@@ -19,6 +21,7 @@ export async function sendOTP(phone: string, code: string): Promise<void> {
       templateId: Number(templateId),
       parameters: [{ name: 'CODE', value: code }],
     }),
+    signal: AbortSignal.timeout(SMS_TIMEOUT_MS),
   })
 
   const body = await response.json()

@@ -1,5 +1,11 @@
 name: nimnegah
 
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   app:
     build:
@@ -19,12 +25,21 @@ services:
     volumes:
       # For production, change to: /var/data/media:/app/media (must match nginx.conf)
       - ../data/media:/app/media
+    # Allow the Node process enough file descriptors for many concurrent
+    # sockets + video streams. Prevents "too many open files" under load.
+    ulimits:
+      nofile:
+        soft: 65535
+        hard: 65535
+    # Give in-flight requests a moment to finish on redeploy/restart.
+    stop_grace_period: 30s
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "-qO-", "http://localhost:3000/api/health"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 10s
+      start_period: 30s
+    logging: *default-logging
 
   db:
     image: postgres:16-alpine
@@ -37,12 +52,34 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - ../data/postgres:/var/lib/postgresql/data
+    # Shared memory for parallel query workers (Docker defaults to only 64MB).
+    shm_size: 256mb
+    # Explicit, conservative tuning for a small VPS + slow-query logging so
+    # the next incident is diagnosable (logs any statement over 500ms).
+    command:
+      - postgres
+      - -c
+      - max_connections=100
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - effective_cache_size=512MB
+      - -c
+      - log_min_duration_statement=500
+      - -c
+      - log_lock_waits=on
+      - -c
+      - log_connections=on
+      - -c
+      - log_disconnections=on
+    stop_grace_period: 1m
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U nimnegah -d nimnegah"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+    logging: *default-logging
 
   redis:
     image: redis:7-alpine
@@ -51,10 +88,13 @@ services:
       - "127.0.0.1:6379:6379"
     volumes:
       - ../data/redis:/data
-    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    # volatile-lru only evicts keys with a TTL (OTP / cooldowns / blacklist),
+    # so cache pressure can never corrupt persisted state.
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-} --maxmemory 256mb --maxmemory-policy volatile-lru
     healthcheck:
       test: ["CMD", "sh", "-c", "redis-cli -a \"$REDIS_PASSWORD\" ping | grep -q PONG"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 5s
+    logging: *default-logging

@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 export const Courses: CollectionConfig = {
   slug: 'courses',
+  indexes: [{ fields: ['status'] }],
   admin: {
     useAsTitle: 'title',
   },

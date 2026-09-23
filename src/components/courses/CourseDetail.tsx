@@ -131,9 +131,9 @@ function LessonItem({
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-vazir text-white/90 truncate">{lesson.title}</p>
+        <p className="text-sm font-vazir text-white/90 whitespace-normal break-words">{lesson.title}</p>
         {lesson.description && (
-          <p className="text-xs font-vazir text-gray-500 truncate mt-0.5">{lesson.description}</p>
+          <p className="text-xs font-vazir text-gray-500 whitespace-normal break-words mt-0.5">{lesson.description}</p>
         )}
       </div>
       <span className="text-xs font-vazir text-gray-500 flex-shrink-0" dir="ltr">
@@ -425,7 +425,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
                           </p>
                         </div>
                       ) : (
-                        lessons.map((lesson, i) => (
+                        lessons.slice().reverse().map((lesson, i) => (
                           <LessonItem
                             key={lesson.id}
                             lesson={lesson}

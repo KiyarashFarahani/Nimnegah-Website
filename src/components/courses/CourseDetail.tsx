@@ -442,6 +442,14 @@ export default function CourseDetail({ slug }: { slug: string }) {
 
             {/* Right: Sidebar */}
             <div className="order-1 lg:order-2 lg:col-span-1">
+              {/* Invisible spacer matching the "درباره دوره" heading height so the
+                  buying card top aligns with the about box top on desktop */}
+              <h2
+                aria-hidden="true"
+                className="hidden lg:block text-xl font-siavash font-bold text-transparent mb-4 select-none"
+              >
+                درباره دوره
+              </h2>
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}

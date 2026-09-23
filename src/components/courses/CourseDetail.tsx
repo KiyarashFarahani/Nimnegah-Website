@@ -379,7 +379,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
               >
                 <h2 className="text-xl font-siavash font-bold text-white mb-4">درباره دوره</h2>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                  <p className="text-sm font-vazir text-gray-300 leading-relaxed whitespace-pre-line">
+                  <p className="text-sm font-vazir text-gray-300 leading-relaxed whitespace-pre-line text-justify">
                     {description}
                   </p>
                 </div>

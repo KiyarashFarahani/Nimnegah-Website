@@ -180,26 +180,28 @@ function SpotPlayerView({ course, enrollment }: { course: Course; enrollment: En
         <div className="bg-white/[0.04] border border-white/5 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6 text-right">
           <div className="space-y-3 text-xs sm:text-sm font-vazir text-gray-300 leading-relaxed">
             <p>سلام هنرجو عزیز😍👋🏻</p>
-            <p>خوشحالم که بهم اعتماد کردی تا بهت کمک کنم طراحیات چند پله حرفه ای تر کنی😎</p>
+            <p>خوشحالم که بهم اعتماد کردی تا بهت کمک کنم طراحیاتُ چند پله حرفه ای تر کنی😎</p>
             <p>🚀برای استفاده کافیه نرم افزار اسپات پلیر نصب کنید و لایسنس بالا را داخل برنامه وارد کنید</p>
             <p>⚠️دقت کنید:</p>
             <p>تمامی لایسنس ها تک کاربره هستند و فقط رو یک دستگاه میتونید دوره مشاهده کنید.</p>
+            <p>⚠️بعد از کپی پیست کردن لایسنس در برنامه دیگر امکان تعویض لایسنس نیست.</p>
             <p>⚠️ دوره را یا میتونید روی موبایل مشاهده کنید یا روی سیستم همزمان نمیشه رو دو دستگاه مشاهده کرد</p>
             <p>⚠️اگر فکر میکنید به خاطر موقعیت شغلی قراره در رفت امد باشید حتما دوره روی موبایل وارد کنید تا هرجا خواستید بتونید از دوره استفاده کنید</p>
-            <p>برات ارزوی موفقیت میکنم💎</p>
+            <p></p>
+            <p>💎برات ارزوی موفقیت میکنم</p>
           </div>
         </div>
 
         {/* Download link */}
-        <a
-          href="https://app.spotplayer.ir"
+        <Link
+          href="https://app.spotplayer.ir/player/#download"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-6 py-3 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-full text-blue-300 font-vazir font-medium text-sm transition-all duration-300"
         >
           دانلود اسپات‌پلیر
           <ExternalLink size={14} />
-        </a>
+        </Link>
       </motion.div>
     </div>
   )

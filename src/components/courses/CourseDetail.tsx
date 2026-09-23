@@ -652,16 +652,6 @@ export default function CourseDetail({ slug }: { slug: string }) {
                       </div>
                     )}
                   </div>
-
-                  {/* Guarantee */}
-                  <div className="px-6 pb-6">
-                    <div className="flex items-center gap-2 p-3 bg-white/5 rounded-xl">
-                      <CheckCircle2 size={16} className="text-green-400 flex-shrink-0" />
-                      <p className="text-xs font-vazir text-gray-400">
-                        ضمانت بازگشت وجه تا ۷ روز
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </motion.div>
             </div>

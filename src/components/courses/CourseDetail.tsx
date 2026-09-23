@@ -370,7 +370,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {/* Left: Description + Lessons */}
-            <div className="lg:col-span-2">
+            <div className="order-2 lg:order-1 lg:col-span-2">
               {/* Description */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
@@ -441,7 +441,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
             </div>
 
             {/* Right: Sidebar */}
-            <div className="lg:col-span-1">
+            <div className="order-1 lg:order-2 lg:col-span-1">
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}

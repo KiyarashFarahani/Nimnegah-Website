@@ -418,7 +418,7 @@ export default function LessonViewer() {
           {/* Lesson list */}
           <div className="max-h-[50vh] sm:max-h-[60vh] xl:max-h-[calc(100vh-20rem)] overflow-y-auto scrollbar-none">
             <AnimatePresence>
-              {lessons.map((lesson, index) => {
+              {lessons.slice().reverse().map((lesson, index) => {
                 const isActive = activeLesson?.id === lesson.id
                 const completed = isLessonCompleted(lesson.id)
 
@@ -451,13 +451,13 @@ export default function LessonViewer() {
 
                     {/* Lesson info */}
                     <div className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm font-vazir truncate ${
+<p
+                        className={`text-sm font-vazir whitespace-normal break-words ${
                           isActive
                             ? 'text-blue-300 font-medium'
                             : completed
-                              ? 'text-gray-300'
-                              : 'text-gray-400'
+                            ? 'text-gray-300'
+                            : 'text-gray-400'
                         }`}
                       >
                         {lesson.title}

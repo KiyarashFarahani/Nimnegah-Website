@@ -122,7 +122,7 @@ describe('formatLessonDuration', () => {
   })
 
   it('handles large values', () => {
-    expect(formatLessonDuration(3661)).toBe('61:01')
+    expect(formatLessonDuration(3661)).toBe('01:01:01')
   })
 })
 

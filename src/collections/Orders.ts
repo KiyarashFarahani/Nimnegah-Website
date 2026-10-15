@@ -26,7 +26,17 @@ export const Orders: CollectionConfig = {
       name: 'course',
       type: 'relationship',
       relationTo: 'courses',
-      required: true,
+      admin: {
+        description: 'Set for course orders (exactly one of course/product must be set)',
+      },
+    },
+    {
+      name: 'product',
+      type: 'relationship',
+      relationTo: 'products',
+      admin: {
+        description: 'Set for digital product orders (exactly one of course/product must be set)',
+      },
     },
     {
       name: 'amount',
@@ -92,6 +102,18 @@ export const Orders: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeChange: [
+      ({ data, operation }) => {
+        if (operation === 'create') {
+          const hasCourse = data?.course != null
+          const hasProduct = data?.product != null
+          if (hasCourse === hasProduct) {
+            throw new Error('Order must reference exactly one of course or product')
+          }
+        }
+        return data
+      },
+    ],
     afterChange: [
       ({ doc, previousDoc, req }) => {
         if (doc.status !== 'completed') return

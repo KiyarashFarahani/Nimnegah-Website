@@ -13,7 +13,7 @@ type Userinfo = {
 }
 
 const NAV_ITEMS = [
-  { label: 'دوره‌های من', href: '/dashboard', icon: BookOpen },
+  { label: 'دوره‌ها و محصولات من', href: '/dashboard', icon: BookOpen },
   { label: 'پروفایل', href: '/dashboard/profile', icon: User },
 ]
 

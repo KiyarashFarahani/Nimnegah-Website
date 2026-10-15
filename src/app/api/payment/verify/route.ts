@@ -40,45 +40,41 @@ export async function GET(request: Request) {
 
     const order = orders.docs[0]
 
-    if (order.status === 'completed') {
-      const course = await payload.findByID({
-        collection: 'courses',
-        id: typeof order.course === 'object' ? order.course.id : order.course,
-      })
+    const courseId = order.course
+      ? typeof order.course === 'object' ? order.course.id : order.course
+      : null
+    const productId = order.product
+      ? typeof order.product === 'object' ? order.product.id : order.product
+      : null
+    const userId = typeof order.user === 'object' ? order.user.id : order.user
+
+    if (!courseId && !productId) {
       return NextResponse.redirect(
-        new URL(`/payment/success?course=${course.slug}`, appUrl),
+        new URL('/payment/failed?reason=server_error', appUrl),
       )
+    }
+
+    if (order.status === 'completed') {
+      const successUrl = await buildSuccessUrl(payload, courseId, productId, null)
+      return NextResponse.redirect(new URL(successUrl, appUrl))
     }
 
     const auth = await authenticateRequest(request)
     if (auth.success) {
-      const orderUserId = typeof order.user === 'object' ? order.user.id : order.user
-      if (orderUserId !== auth.user.id) {
+      if (userId !== auth.user.id) {
         return NextResponse.redirect(
           new URL('/payment/failed?reason=unauthorized', appUrl),
         )
       }
     }
 
-    const courseId = typeof order.course === 'object' ? order.course.id : order.course
-    const userId = typeof order.user === 'object' ? order.user.id : order.user
-
     const result = await verifyPayment(authority, order.amount)
 
     if (result.success) {
-      await completePayment(payload, userId, courseId, order.id, result.refId)
+      await completePayment(payload, userId, courseId, productId, order.id, result.refId)
 
-      const course = await payload.findByID({
-        collection: 'courses',
-        id: courseId,
-      })
-
-      return NextResponse.redirect(
-        new URL(
-          `/payment/success?course=${course.slug}&refId=${result.refId}`,
-          appUrl,
-        ),
-      )
+      const successUrl = await buildSuccessUrl(payload, courseId, productId, result.refId)
+      return NextResponse.redirect(new URL(successUrl, appUrl))
     } else {
       await payload.update({
         collection: 'orders',
@@ -101,10 +97,34 @@ export async function GET(request: Request) {
   }
 }
 
+async function buildSuccessUrl(
+  payload: Payload,
+  courseId: number | null,
+  productId: number | null,
+  refId: number | null,
+): Promise<string> {
+  const refParam = refId != null ? `&refId=${refId}` : ''
+
+  if (productId) {
+    const product = await payload.findByID({
+      collection: 'products',
+      id: productId,
+    })
+    return `/payment/success?product=${product.slug}${refParam}`
+  }
+
+  const course = await payload.findByID({
+    collection: 'courses',
+    id: courseId!,
+  })
+  return `/payment/success?course=${course.slug}${refParam}`
+}
+
 async function completePayment(
   payload: Payload,
   userId: number,
-  courseId: number,
+  courseId: number | null,
+  productId: number | null,
   orderId: number,
   refId: number,
 ) {
@@ -129,31 +149,60 @@ async function completePayment(
       },
     })
 
-    const existingEnrollment = await payload.find({
-      collection: 'enrollments',
-      where: {
-        and: [
-          { user: { equals: userId } },
-          { course: { equals: courseId } },
-        ],
-      },
-      limit: 1,
-      req,
-    })
-
-    if (existingEnrollment.docs.length === 0) {
-      await payload.create({
+    if (courseId) {
+      const existingEnrollment = await payload.find({
         collection: 'enrollments',
-        draft: false,
-        overrideAccess: true,
-        req,
-        data: {
-          user: userId,
-          course: courseId,
-          progress: 0,
-          enrolledAt: new Date().toISOString(),
+        where: {
+          and: [
+            { user: { equals: userId } },
+            { course: { equals: courseId } },
+          ],
         },
+        limit: 1,
+        req,
       })
+
+      if (existingEnrollment.docs.length === 0) {
+        await payload.create({
+          collection: 'enrollments',
+          draft: false,
+          overrideAccess: true,
+          req,
+          data: {
+            user: userId,
+            course: courseId,
+            progress: 0,
+            enrolledAt: new Date().toISOString(),
+          },
+        })
+      }
+    } else if (productId) {
+      const existingPurchase = await payload.find({
+        collection: 'product-purchases',
+        where: {
+          and: [
+            { user: { equals: userId } },
+            { product: { equals: productId } },
+          ],
+        },
+        limit: 1,
+        req,
+      })
+
+      if (existingPurchase.docs.length === 0) {
+        await payload.create({
+          collection: 'product-purchases',
+          draft: false,
+          overrideAccess: true,
+          req,
+          data: {
+            user: userId,
+            product: productId,
+            order: orderId,
+            purchasedAt: new Date().toISOString(),
+          },
+        })
+      }
     }
 
     await commitTransaction(req)

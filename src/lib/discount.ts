@@ -43,9 +43,10 @@ export async function resolveDiscountCoupon(
   payload: Payload,
   opts: {
     code: string
-    courseId: number
-    coursePrice: number
+    price: number
     userId: number
+    course?: number
+    product?: number
   },
 ): Promise<DiscountStatus> {
   const normalized = normalizeCouponCode(opts.code)
@@ -78,8 +79,17 @@ export async function resolveDiscountCoupon(
     const ids = (coupon.courses ?? []).map((c) =>
       typeof c === 'object' ? c.id : c,
     )
-    if (!ids.includes(opts.courseId)) {
+    if (!opts.course || !ids.includes(opts.course)) {
       return { valid: false, message: 'این کد تخفیف برای این دوره قابل استفاده نیست' }
+    }
+  }
+
+  if (coupon.scope === 'products') {
+    const ids = (coupon.products ?? []).map((p) =>
+      typeof p === 'object' ? p.id : p,
+    )
+    if (!opts.product || !ids.includes(opts.product)) {
+      return { valid: false, message: 'این کد تخفیف برای این محصول قابل استفاده نیست' }
     }
   }
 
@@ -118,7 +128,7 @@ export async function resolveDiscountCoupon(
     return { valid: false, message: 'شما قبلاً از این کد تخفیف استفاده کرده‌اید' }
   }
 
-  const originalAmount = opts.coursePrice
+  const originalAmount = opts.price
   const finalAmount = calculateDiscountPrice(coupon.type, coupon.value, originalAmount)
   const discountAmount = calculateDiscountAmount(coupon.type, coupon.value, originalAmount)
 

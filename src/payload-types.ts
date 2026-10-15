@@ -75,6 +75,9 @@ export interface Config {
     enrollments: Enrollment;
     media: Media;
     coupons: Coupon;
+    products: Product;
+    'product-files': ProductFile;
+    'product-purchases': ProductPurchase;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -90,6 +93,9 @@ export interface Config {
     enrollments: EnrollmentsSelect<false> | EnrollmentsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     coupons: CouponsSelect<false> | CouponsSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    'product-files': ProductFilesSelect<false> | ProductFilesSelect<true>;
+    'product-purchases': ProductPurchasesSelect<false> | ProductPurchasesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -271,7 +277,14 @@ export interface Lesson {
 export interface Order {
   id: number;
   user: number | User;
-  course: number | Course;
+  /**
+   * Set for course orders (exactly one of course/product must be set)
+   */
+  course?: (number | null) | Course;
+  /**
+   * Set for digital product orders (exactly one of course/product must be set)
+   */
+  product?: (number | null) | Product;
   /**
    * Final charged amount in Tomans (after any discount)
    */
@@ -294,6 +307,68 @@ export interface Order {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  title: string;
+  slug?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  price: number;
+  /**
+   * If set and higher than price, the original price will be shown with a strikethrough discount display
+   */
+  originalPrice?: number | null;
+  thumbnail?: (number | null) | Media;
+  category?: (number | null) | Category;
+  /**
+   * Draft products are hidden from the public catalog.
+   */
+  status?: ('draft' | 'published' | 'coming_soon') | null;
+  /**
+   * Files the buyer can download after purchase
+   */
+  files?: (number | ProductFile)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Downloadable files belonging to digital products (never publicly accessible)
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-files".
+ */
+export interface ProductFile {
+  id: number;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "coupons".
  */
 export interface Coupon {
@@ -308,11 +383,15 @@ export interface Coupon {
    */
   value: number;
   status?: ('active' | 'inactive') | null;
-  scope?: ('all' | 'courses') | null;
+  scope?: ('all' | 'courses' | 'products') | null;
   /**
    * Courses this code applies to (when scope is "Specific courses")
    */
   courses?: (number | Course)[] | null;
+  /**
+   * Products this code applies to (when scope is "Specific products")
+   */
+  products?: (number | Product)[] | null;
   /**
    * Coupon cannot be used before this date (blank = no start restriction)
    */
@@ -365,6 +444,19 @@ export interface Enrollment {
    * SpotPlayer license key (generated automatically for SpotPlayer courses)
    */
   spotplayerLicenseKey?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-purchases".
+ */
+export interface ProductPurchase {
+  id: number;
+  user: number | User;
+  product: number | Product;
+  order?: (number | null) | Order;
+  purchasedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -423,6 +515,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'coupons';
         value: number | Coupon;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'product-files';
+        value: number | ProductFile;
+      } | null)
+    | ({
+        relationTo: 'product-purchases';
+        value: number | ProductPurchase;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -551,6 +655,7 @@ export interface CategoriesSelect<T extends boolean = true> {
 export interface OrdersSelect<T extends boolean = true> {
   user?: T;
   course?: T;
+  product?: T;
   amount?: T;
   originalAmount?: T;
   discountAmount?: T;
@@ -612,12 +717,60 @@ export interface CouponsSelect<T extends boolean = true> {
   status?: T;
   scope?: T;
   courses?: T;
+  products?: T;
   startsAt?: T;
   expiresAt?: T;
   maxUses?: T;
   perUserLimit?: T;
   timesUsed?: T;
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  description?: T;
+  price?: T;
+  originalPrice?: T;
+  thumbnail?: T;
+  category?: T;
+  status?: T;
+  files?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-files_select".
+ */
+export interface ProductFilesSelect<T extends boolean = true> {
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-purchases_select".
+ */
+export interface ProductPurchasesSelect<T extends boolean = true> {
+  user?: T;
+  product?: T;
+  order?: T;
+  purchasedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

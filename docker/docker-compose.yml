@@ -25,6 +25,8 @@ services:
     volumes:
       # For production, change to: /var/data/media:/app/media (must match nginx.conf)
       - ../data/media:/app/media
+      # Protected digital-product files (served only via signed URLs, never by nginx)
+      - ../data/protected:/app/protected
     # Allow the Node process enough file descriptors for many concurrent
     # sockets + video streams. Prevents "too many open files" under load.
     ulimits:

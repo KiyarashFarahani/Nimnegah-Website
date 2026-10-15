@@ -11,6 +11,9 @@ import { Orders } from './collections/Orders.ts'
 import { Enrollments } from './collections/Enrollments.ts'
 import { Media } from './collections/Media.ts'
 import { Coupons } from './collections/Coupons.ts'
+import { Products } from './collections/Products.ts'
+import { ProductFiles } from './collections/ProductFiles.ts'
+import { ProductPurchases } from './collections/ProductPurchases.ts'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -35,8 +38,18 @@ export default buildConfig({
     Enrollments,
     Media,
     Coupons,
+    Products,
+    ProductFiles,
+    ProductPurchases,
   ],
   editor: lexicalEditor(),
+  upload: {
+    abortOnLimit: true,
+    limits: { fileSize: 2 * 1024 * 1024 * 1024 },
+    tempFileDir: '/tmp/payload-uploads',
+    uploadTimeout: 300_000,
+    useTempFiles: true,
+  },
   secret: process.env.PAYLOAD_SECRET!,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

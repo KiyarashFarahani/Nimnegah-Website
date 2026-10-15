@@ -54,3 +54,7 @@ agents/
 plans/
 .mimocode/
 .opencode/
+
+# protected product files (never public)
+protected/
+.vscode/

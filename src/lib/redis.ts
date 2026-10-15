@@ -165,6 +165,34 @@ export async function checkDiscountRateLimit(
   }
 }
 
+// --- Download link signing rate limiting ---
+
+const DOWNLOAD_SIGN_LIMIT = 20
+const DOWNLOAD_SIGN_WINDOW = 300 // 5 minutes
+
+export async function checkDownloadSignRateLimit(
+  userId: number,
+): Promise<{ allowed: boolean; retryAfter?: number }> {
+  const key = `ratelimit:download-sign:${userId}`
+
+  try {
+    const current = await redis.incr(key)
+    if (current === 1) {
+      await redis.expire(key, DOWNLOAD_SIGN_WINDOW)
+    }
+
+    if (current > DOWNLOAD_SIGN_LIMIT) {
+      const ttl = await redis.ttl(key)
+      return { allowed: false, retryAfter: ttl > 0 ? ttl : DOWNLOAD_SIGN_WINDOW }
+    }
+
+    return { allowed: true }
+  } catch (err) {
+    console.error('[Redis] Download sign rate limit check failed:', err)
+    return { allowed: true }
+  }
+}
+
 // --- Session blacklist ---
 
 export async function blacklistToken(jti: string, ttlSeconds: number) {

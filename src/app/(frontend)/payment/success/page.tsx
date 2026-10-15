@@ -9,7 +9,9 @@ import { CheckCircle2, ArrowRight, Copy } from 'lucide-react'
 function SuccessContent() {
   const searchParams = useSearchParams()
   const courseSlug = searchParams.get('course')
+  const productSlug = searchParams.get('product')
   const refId = searchParams.get('refId')
+  const isProduct = !!productSlug
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 to-blue-950 flex items-center justify-center px-4">
@@ -52,7 +54,10 @@ function SuccessContent() {
               پرداخت موفق
             </h1>
             <p className="text-gray-400 font-vazir leading-relaxed mb-6">
-              خرید شما با موفقیت انجام شد. حالا می‌توانید دوره را در داشبورد خود مشاهده کنید.
+              خرید شما با موفقیت انجام شد.{' '}
+              {isProduct
+                ? 'حالا می‌توانید فایل‌ها را از داشبورد خود دانلود کنید.'
+                : 'حالا می‌توانید دوره را در داشبورد خود مشاهده کنید.'}
             </p>
           </motion.div>
 
@@ -85,6 +90,16 @@ function SuccessContent() {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="space-y-3"
           >
+            {productSlug && (
+              <Link
+                href={`/dashboard/products/${productSlug}`}
+                className="w-full py-3.5 bg-gradient-to-l from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 rounded-xl text-white font-vazir font-medium text-sm transition-all duration-300 shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.65)] flex items-center justify-center gap-2"
+              >
+                دریافت فایل‌ها
+                <ArrowRight size={16} />
+              </Link>
+            )}
+
             {courseSlug && (
               <Link
                 href={`/dashboard/learn/${courseSlug}`}

@@ -59,8 +59,9 @@ export const Coupons: CollectionConfig = {
       type: 'select',
       defaultValue: 'all',
       options: [
-        { label: 'All courses', value: 'all' },
+        { label: 'All courses & products', value: 'all' },
         { label: 'Specific courses', value: 'courses' },
+        { label: 'Specific products', value: 'products' },
       ],
       admin: {
         position: 'sidebar',
@@ -74,6 +75,16 @@ export const Coupons: CollectionConfig = {
       admin: {
         condition: (_, siblingData) => siblingData?.scope === 'courses',
         description: 'Courses this code applies to (when scope is "Specific courses")',
+      },
+    },
+    {
+      name: 'products',
+      type: 'relationship',
+      relationTo: 'products',
+      hasMany: true,
+      admin: {
+        condition: (_, siblingData) => siblingData?.scope === 'products',
+        description: 'Products this code applies to (when scope is "Specific products")',
       },
     },
     {

@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     }
 
     const payload = await getPayload({ config })
-    const { code, courseId } = await request.json()
+    const { code, courseId, productId } = await request.json()
 
     if (!code || typeof code !== 'string' || !code.trim()) {
       return NextResponse.json(
@@ -36,37 +36,67 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!courseId || typeof courseId !== 'number') {
-      return NextResponse.json({ error: 'Invalid courseId' }, { status: 400 })
-    }
-
-    const course = await payload.findByID({
-      collection: 'courses',
-      id: courseId,
-      depth: 0,
-    })
-
-    if (!course || course.status !== 'published') {
+    const hasCourseId = typeof courseId === 'number'
+    const hasProductId = typeof productId === 'number'
+    if (hasCourseId === hasProductId) {
       return NextResponse.json(
-        { valid: false, message: 'دوره مورد نظر برای استفاده از کد تخفیف معتبر نیست' },
-        { status: 200 },
+        { error: 'Provide exactly one of courseId or productId' },
+        { status: 400 },
       )
     }
 
-    const coursePrice = typeof course.price === 'number' ? course.price : 0
-    if (coursePrice <= 0) {
-      return NextResponse.json(
-        { valid: false, message: 'این دوره رایگان است و نیازی به کد تخفیف ندارد' },
-        { status: 200 },
-      )
+    let price = 0
+    let resolveOpts: { code: string; price: number; userId: number; course?: number; product?: number }
+
+    if (hasCourseId) {
+      const course = await payload.findByID({
+        collection: 'courses',
+        id: courseId,
+        depth: 0,
+      })
+
+      if (!course || course.status !== 'published') {
+        return NextResponse.json(
+          { valid: false, message: 'دوره مورد نظر برای استفاده از کد تخفیف معتبر نیست' },
+          { status: 200 },
+        )
+      }
+
+      price = typeof course.price === 'number' ? course.price : 0
+      if (price <= 0) {
+        return NextResponse.json(
+          { valid: false, message: 'این دوره رایگان است و نیازی به کد تخفیف ندارد' },
+          { status: 200 },
+        )
+      }
+
+      resolveOpts = { code, price, userId: auth.user.id, course: course.id }
+    } else {
+      const product = await payload.findByID({
+        collection: 'products',
+        id: productId,
+        depth: 0,
+      })
+
+      if (!product || product.status !== 'published') {
+        return NextResponse.json(
+          { valid: false, message: 'محصول مورد نظر برای استفاده از کد تخفیف معتبر نیست' },
+          { status: 200 },
+        )
+      }
+
+      price = typeof product.price === 'number' ? product.price : 0
+      if (price <= 0) {
+        return NextResponse.json(
+          { valid: false, message: 'این محصول رایگان است و نیازی به کد تخفیف ندارد' },
+          { status: 200 },
+        )
+      }
+
+      resolveOpts = { code, price, userId: auth.user.id, product: product.id }
     }
 
-    const result = await resolveDiscountCoupon(payload, {
-      code,
-      courseId: course.id,
-      coursePrice,
-      userId: auth.user.id,
-    })
+    const result = await resolveDiscountCoupon(payload, resolveOpts)
 
     if (!result.valid) {
       return NextResponse.json(

@@ -193,6 +193,79 @@ export async function checkDownloadSignRateLimit(
   }
 }
 
+// --- Download link abuse controls ---
+//
+// A download token IS the credential (the route does not check the session
+// cookie), so a leaked link is replayable until it expires. These limits make
+// a leaked link self-limiting instead of an unlimited-bandwidth giveaway.
+
+const DOWNLOAD_TOKEN_REQUEST_LIMIT = 30
+const DOWNLOAD_TOKEN_REQUEST_WINDOW = 300 // 5 minutes
+
+function getDownloadTokenRequestLimit(): number {
+  const raw = Number(process.env.DOWNLOAD_MAX_REQUESTS_PER_TOKEN)
+  return Number.isFinite(raw) && raw > 0 ? raw : DOWNLOAD_TOKEN_REQUEST_LIMIT
+}
+
+/**
+ * Caps how many times a single download link may be used within a window.
+ * Range/resume requests count against this too, so the limit has to be high
+ * enough for a browser to fetch a large file in a few chunks.
+ */
+export async function checkDownloadTokenRateLimit(
+  jti: string,
+): Promise<{ allowed: boolean; retryAfter?: number }> {
+  const key = `ratelimit:download-token:${jti}`
+  const limit = getDownloadTokenRequestLimit()
+
+  try {
+    const current = await redis.incr(key)
+    if (current === 1) {
+      await redis.expire(key, DOWNLOAD_TOKEN_REQUEST_WINDOW)
+    }
+
+    if (current > limit) {
+      const ttl = await redis.ttl(key)
+      return {
+        allowed: false,
+        retryAfter: ttl > 0 ? ttl : DOWNLOAD_TOKEN_REQUEST_WINDOW,
+      }
+    }
+
+    return { allowed: true }
+  } catch (err) {
+    console.error('[Redis] Download token rate limit check failed:', err)
+    return { allowed: true }
+  }
+}
+
+/**
+ * Revokes a download link before its natural expiry. The token id (`jti`) is
+ * stored in Redis until the moment the signed token would have expired, after
+ * which revoking it is pointless.
+ */
+export async function revokeDownloadToken(jti: string, ttlSeconds: number) {
+  try {
+    await redis.setex(
+      `download:revoked:${jti}`,
+      Math.max(1, Math.floor(ttlSeconds)),
+      '1',
+    )
+  } catch (err) {
+    console.error('[Redis] revokeDownloadToken failed:', err)
+  }
+}
+
+export async function isDownloadTokenRevoked(jti: string): Promise<boolean> {
+  try {
+    const result = await redis.get(`download:revoked:${jti}`)
+    return result === '1'
+  } catch (err) {
+    console.error('[Redis] isDownloadTokenRevoked failed:', err)
+    return false
+  }
+}
+
 // --- Session blacklist ---
 
 export async function blacklistToken(jti: string, ttlSeconds: number) {

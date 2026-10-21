@@ -21,7 +21,20 @@ describe('createDownloadToken / verifyDownloadToken', () => {
     expect(new Date(expiresAt).getTime()).toBeGreaterThan(Date.now())
 
     const claims = await verifyDownloadToken(token)
-    expect(claims).toEqual({ uid: 42, pid: 7, fid: 99 })
+    expect(claims).toMatchObject({ uid: 42, pid: 7, fid: 99 })
+    expect(typeof claims?.jti).toBe('string')
+    expect(claims?.jti.length).toBeGreaterThan(0)
+    expect(claims?.exp).toBeGreaterThan(Math.floor(Date.now() / 1000))
+  })
+
+  it('gives every link a distinct jti', async () => {
+    const a = await createDownloadToken({ uid: 1, pid: 1, fid: 1 })
+    const b = await createDownloadToken({ uid: 1, pid: 1, fid: 1 })
+
+    const claimsA = await verifyDownloadToken(a.token)
+    const claimsB = await verifyDownloadToken(b.token)
+
+    expect(claimsA?.jti).not.toBe(claimsB?.jti)
   })
 
   it('embeds the requested TTL', async () => {

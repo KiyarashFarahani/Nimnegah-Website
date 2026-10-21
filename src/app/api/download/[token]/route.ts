@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@payload-config'
 import fs from 'fs'
 import { access, stat } from 'fs/promises'
 import path from 'path'
 import { verifyDownloadToken } from '@/lib/download-token'
+import { resolveDownloadAuthorization } from '@/lib/download-access'
+import {
+  checkDownloadTokenRateLimit,
+  isDownloadTokenRevoked,
+} from '@/lib/redis'
 import {
   formatContentRange,
   nodeStreamToWeb,
@@ -29,53 +32,31 @@ export async function GET(
       return NextResponse.json({ error: 'Link is invalid or expired' }, { status: 401 })
     }
 
-    const payload = await getPayload({ config })
+    if (await isDownloadTokenRevoked(claims.jti)) {
+      return NextResponse.json({ error: 'Link has been revoked' }, { status: 403 })
+    }
 
-    const purchases = await payload.find({
-      collection: 'product-purchases',
-      where: {
-        and: [
-          { user: { equals: claims.uid } },
-          { product: { equals: claims.pid } },
-        ],
-      },
-      limit: 1,
-      overrideAccess: true,
-    })
+    const rateCheck = await checkDownloadTokenRateLimit(claims.jti)
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests for this link. Please try again shortly.' },
+        { status: 429, headers: { 'Retry-After': String(rateCheck.retryAfter ?? 300) } },
+      )
+    }
 
-    if (purchases.docs.length === 0) {
+    const file = await resolveDownloadAuthorization(claims)
+    if (!file) {
       return NextResponse.json({ error: 'Purchase not found' }, { status: 403 })
-    }
-
-    const file = await payload.findByID({
-      collection: 'product-files',
-      id: claims.fid,
-      depth: 0,
-      overrideAccess: true,
-    })
-
-    if (!file || !file.filename) {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 })
-    }
-
-    const product = await payload.findByID({
-      collection: 'products',
-      id: claims.pid,
-      depth: 0,
-      overrideAccess: true,
-    })
-
-    const fileIds = (product?.files ?? []).map((f) =>
-      typeof f === 'object' && f !== null ? f.id : f,
-    )
-    if (!fileIds.includes(claims.fid)) {
-      return NextResponse.json({ error: 'File does not belong to this product' }, { status: 404 })
     }
 
     const filePath = path.join(PROTECTED_DIR, file.filename)
     const resolved = path.resolve(filePath)
     const relativePath = path.relative(PROTECTED_DIR, resolved)
-    if (relativePath === '..' || relativePath.startsWith(`..${path.sep}`) || path.isAbsolute(relativePath)) {
+    if (
+      relativePath === '..' ||
+      relativePath.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(relativePath)
+    ) {
       return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
     }
 

@@ -1,10 +1,17 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { randomUUID } from 'crypto'
 
-export type DownloadTokenPayload = {
+export type DownloadTokenClaims = {
   uid: number
   pid: number
   fid: number
+}
+
+export type DownloadTokenPayload = DownloadTokenClaims & {
+  /** Unique id per generated link — the key used for abuse tracking. */
+  jti: string
+  /** Unix seconds at which the link expires. */
+  exp: number
 }
 
 const DEFAULT_TTL_MINUTES = 360 // 6 hours
@@ -23,7 +30,7 @@ function getSecret(): Uint8Array {
 }
 
 export async function createDownloadToken(
-  payload: DownloadTokenPayload,
+  payload: DownloadTokenClaims,
   ttlMinutes: number = getDownloadLinkTtlMinutes(),
 ): Promise<{ token: string; expiresAt: string }> {
   const expSeconds = Math.floor(Date.now() / 1000) + ttlMinutes * 60
@@ -64,7 +71,17 @@ export async function verifyDownloadToken(
       return null
     }
 
-    return { uid, pid, fid }
+    const jti = typeof payload.jti === 'string' ? payload.jti : ''
+    if (!jti) {
+      return null
+    }
+
+    const exp = Number(payload.exp)
+    if (!Number.isFinite(exp)) {
+      return null
+    }
+
+    return { uid, pid, fid, jti, exp }
   } catch {
     return null
   }

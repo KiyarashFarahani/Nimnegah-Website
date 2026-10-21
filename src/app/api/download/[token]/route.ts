@@ -5,6 +5,7 @@ import fs from 'fs'
 import { access, stat } from 'fs/promises'
 import path from 'path'
 import { verifyDownloadToken } from '@/lib/download-token'
+import { nodeStreamToWeb } from '@/lib/file-stream'
 
 const PROTECTED_DIR = path.resolve(process.cwd(), 'protected/products')
 
@@ -90,16 +91,7 @@ export async function GET(
       `filename*=UTF-8''${encodeURIComponent(filename)}`
 
     const stream = fs.createReadStream(resolved)
-    const readable = new ReadableStream({
-      start(controller) {
-        stream.on('data', (chunk: string | Buffer) => {
-          const buf = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
-          controller.enqueue(new Uint8Array(buf))
-        })
-        stream.on('end', () => controller.close())
-        stream.on('error', (err) => controller.error(err))
-      },
-    })
+    const readable = nodeStreamToWeb(stream)
 
     return new Response(readable, {
       status: 200,

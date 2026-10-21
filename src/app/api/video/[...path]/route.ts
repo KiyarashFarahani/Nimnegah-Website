@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { authenticateRequest } from '@/lib/auth'
+import { nodeStreamToWeb } from '@/lib/file-stream'
 import fs from 'fs'
 import { access, stat } from 'fs/promises'
 import path from 'path'
@@ -86,17 +87,7 @@ export async function GET(
       const end = parts[1] ? parseInt(parts[1], 10) : fileStat.size - 1
       const chunkSize = end - start + 1
 
-      const stream = fs.createReadStream(resolved, { start, end })
-      const readable = new ReadableStream({
-        start(controller) {
-          stream.on('data', (chunk: string | Buffer) => {
-            const buf = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
-            controller.enqueue(new Uint8Array(buf))
-          })
-          stream.on('end', () => controller.close())
-          stream.on('error', (err) => controller.error(err))
-        },
-      })
+      const readable = nodeStreamToWeb(fs.createReadStream(resolved, { start, end }))
 
       return new Response(readable, {
         status: 206,
@@ -110,17 +101,7 @@ export async function GET(
       })
     }
 
-    const stream = fs.createReadStream(resolved)
-    const readable = new ReadableStream({
-      start(controller) {
-        stream.on('data', (chunk: string | Buffer) => {
-          const buf = typeof chunk === 'string' ? Buffer.from(chunk) : chunk
-          controller.enqueue(new Uint8Array(buf))
-        })
-        stream.on('end', () => controller.close())
-        stream.on('error', (err) => controller.error(err))
-      },
-    })
+    const readable = nodeStreamToWeb(fs.createReadStream(resolved))
 
     return new Response(readable, {
       status: 200,

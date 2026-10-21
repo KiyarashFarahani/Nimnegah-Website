@@ -3,8 +3,8 @@ import { NextResponse } from 'next/server'
 import os from 'os'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { jwtVerify } from 'jose'
 import redis from '@/lib/redis'
+import { authenticateRequest } from '@/lib/auth'
 
 function getCpuUsage(): Promise<number> {
   return new Promise((resolve) => {
@@ -64,34 +64,15 @@ function formatBytes(bytes: number): string {
 }
 
 export async function GET(request: Request) {
+  const auth = await authenticateRequest(request)
+  if (!auth.success) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status })
+  }
+  if (auth.user.role !== 'admin') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const payload = await getPayload({ config })
-
-  const cookieHeader = request.headers.get('cookie') || ''
-  const tokenMatch = cookieHeader.match(/payload-token=([^;]+)/)
-  const token = tokenMatch?.[1]
-
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  try {
-    const secret = new TextEncoder().encode(payload.secret)
-    const { payload: decoded } = await jwtVerify<{
-      collection: string
-      id: string
-    }>(token, secret)
-
-    const user = await payload.findByID({
-      collection: decoded.collection as 'users',
-      id: decoded.id,
-    })
-
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
 
   try {
     const cpuUsage = await getCpuUsage()

@@ -36,6 +36,8 @@ yarn-error.log*
 
 # env files
 .env*
+# ...but keep the template so the variable list is in the repo
+!.env.example
 
 # vercel
 .vercel

@@ -232,7 +232,68 @@ cp .env.example .env
 | `ZARINPAL_SANDBOX` | `true` for sandbox, `false` for production |
 | `SPOTPLAYER_API_KEY` | SpotPlayer API key (from panel.spotplayer.ir) |
 | `NEXT_PUBLIC_APP_URL` | App base URL |
-## Key Features
+| `DOWNLOAD_TOKEN_SECRET` | Secret for signing download links (falls back to `PAYLOAD_SECRET`) |
+| `DOWNLOAD_LINK_TTL_MINUTES` | Download link lifetime in minutes (default `360`) |
+| `DOWNLOAD_AUTHZ_CACHE_SECONDS` | How long a purchase-authorization check is cached (default `60`, `0` disables) |
+| `DOWNLOAD_MAX_REQUESTS_PER_TOKEN` | Max requests one download link may make per 5 minutes (default `30`) |
+| `DOWNLOAD_X_ACCEL_ENABLED` | `true` to let Nginx serve product files from disk (default `false`) |
+| `DOWNLOAD_X_ACCEL_PATH` | Internal URI prefix Nginx exposes for protected files (default `/protected-files/`) |
+## Digital Product Downloads
+
+Paid files live in `protected/products/` (outside `public/`, so Next.js never
+serves them directly). A buyer gets a signed, expiring link:
+
+```
+dashboard → POST /api/download/sign → signed token
+browser  → GET  /api/download/<token> → file bytes
+```
+
+The token is the only credential — the download route does not check the
+session cookie — so links are short-lived and rate limited.
+
+### How the bytes are served
+
+With `DOWNLOAD_X_ACCEL_ENABLED=true` the app answers the request with an
+`X-Accel-Redirect` header and **Nginx** streams the file straight from disk.
+Node never touches the payload, so download traffic cannot saturate the app
+server. Nginx handles `Range` requests itself, so interrupted downloads resume.
+
+Without Nginx (local dev) the app streams the file itself. Either path honours
+`Range` requests and serves the bytes with backpressure, so a slow client
+cannot make the server buffer the whole file in memory.
+
+Nginx must have the matching internal location (see `docker/nginx.conf`):
+
+```nginx
+location /protected-files/ {
+    internal;
+    alias /var/data/protected/products/;
+    ...
+}
+```
+
+`internal` makes the URI unreachable by direct request — Nginx answers `404`.
+
+### Abuse controls
+
+| Layer | Limit | Where |
+|---|---|---|
+| Per download link | 30 requests / 5 min | Redis, `DOWNLOAD_MAX_REQUESTS_PER_TOKEN` |
+| Per download link | 3 concurrent streams | Nginx, `limit_conn per_dl_token` |
+| Server-wide | 40 concurrent streams | Nginx, `limit_conn global_dl` |
+| Per IP | 20 concurrent connections | Nginx, `limit_conn perip` |
+| Authorization lookups | cached 60 s | Redis, `DOWNLOAD_AUTHZ_CACHE_SECONDS` |
+
+A leaked link can be revoked before it expires:
+
+```bash
+curl -X POST https://yourdomain.com/api/admin/downloads/revoke \
+  -b "payload-token=<admin session cookie>" \
+  -H 'Content-Type: application/json' \
+  -d '{"token":"<the signed download token>"}'
+```
+
+### Key Features
 - **OTP Authentication** — Phone-based login via sms.ir with Redis-cached codes, rate limiting, and resend cooldown
 - **Role-Based Access** — Admin and student roles with Payload collection-level access control
 - **Payment Processing** — Zarinpal integration with order tracking and auto-enrollment

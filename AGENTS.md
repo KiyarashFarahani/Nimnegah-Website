@@ -208,6 +208,9 @@ Transform the existing artist portfolio (Next.js 15 SPA) into an online course-s
 | `/api/courses/[slug]` | GET | Get course with lessons |
 | `/api/enrollment/check` | GET | Check if user is enrolled |
 | `/api/progress` | POST | Update lesson progress |
+| `/api/download/sign` | POST | Mint a signed, expiring download link for a purchased file |
+| `/api/download/[token]` | GET | Stream a purchased file (Range-capable, X-Accel-Redirect aware) |
+| `/api/admin/downloads/revoke` | POST | Revoke a download link before it expires (admin only) |
 
 ## Auth Flow (OTP via sms.ir)
 
@@ -473,6 +476,9 @@ src/
 │   ├── zarinpal.ts                     # Zarinpal helper
 │   ├── auth.ts                         # JWT/session utils
 │   ├── db.ts                           # Drizzle connection
+│   ├── download-token.ts               # Signed download links (JWT)
+│   ├── download-access.ts              # Purchase authorization + Redis cache
+│   ├── file-stream.ts                  # Backpressure-aware file streaming
 │   └── fonts.ts                        # existing
 ├── data/                               # existing static data
 ├── hooks/

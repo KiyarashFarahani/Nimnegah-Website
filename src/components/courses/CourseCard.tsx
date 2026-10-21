@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Clock, ArrowRight } from 'lucide-react';
 import { Course, GRADIENTS, ACCENTS, formatPrice, formatDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
+import PriceBanner from '@/components/courses/PriceBanner';
 
 export type { Course } from '@/lib/course-utils';
 
@@ -83,49 +84,52 @@ export default function CourseCard({ course, index }: { course: Course; index: n
           </div>
 
           {/* Price + CTA */}
-          <div className="flex items-center justify-between pt-4 border-t border-white/5">
-            {course.status === 'coming_soon' ? (
-              <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-vazir text-amber-300">
-                به زودی
-              </span>
-            ) : hasDiscount(course.price, course.originalPrice) ? (
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
-                  {discountPercent(course.price, course.originalPrice)}%-
+          <div className="pt-4 border-t border-white/5">
+            {course.priceBanner && <PriceBanner text={course.priceBanner} className="mb-3" />}
+            <div className="flex items-center justify-between">
+              {course.status === 'coming_soon' ? (
+                <span className="px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-vazir text-amber-300">
+                  به زودی
                 </span>
-                <span className="text-sm text-gray-500 line-through font-vazir">
-                  {formatPrice(course.originalPrice!)}
-                </span>
-                {isFree ? (
-                  <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
-                ) : (
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold text-white font-vazir">
-                      {formatPrice(course.price)}
-                    </span>
-                    <span className="text-xs text-gray-500 font-vazir">تومان</span>
-                  </div>
-                )}
-              </div>
-            ) : isFree ? (
-              <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
-            ) : (
-              <div className="flex items-baseline gap-2">
-                <span className="text-lg font-bold text-white font-vazir">
-                  {formatPrice(course.price)}
-                </span>
-                <span className="text-xs text-gray-500 font-vazir">تومان</span>
-              </div>
-            )}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                href={`/courses/${course.slug}`}
-                className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
-              >
-                مشاهده
-                <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
-              </Link>
-            </motion.div>
+              ) : hasDiscount(course.price, course.originalPrice) ? (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 py-0.5 bg-red-500/20 text-red-300 text-xs font-vazir rounded-full">
+                    {discountPercent(course.price, course.originalPrice)}%-
+                  </span>
+                  <span className="text-sm text-gray-500 line-through font-vazir">
+                    {formatPrice(course.originalPrice!)}
+                  </span>
+                  {isFree ? (
+                    <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
+                  ) : (
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-lg font-bold text-white font-vazir">
+                        {formatPrice(course.price)}
+                      </span>
+                      <span className="text-xs text-gray-500 font-vazir">تومان</span>
+                    </div>
+                  )}
+                </div>
+              ) : isFree ? (
+                <span className="text-lg font-bold text-green-400 font-vazir">رایگان</span>
+              ) : (
+                <div className="flex items-baseline gap-2">
+                  <span className="text-lg font-bold text-white font-vazir">
+                    {formatPrice(course.price)}
+                  </span>
+                  <span className="text-xs text-gray-500 font-vazir">تومان</span>
+                </div>
+              )}
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  href={`/courses/${course.slug}`}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-white/10 hover:bg-white/15 border border-white/10 rounded-full text-sm font-vazir text-white transition-all duration-300 shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:shadow-[0_0_25px_rgba(59,130,246,0.65)]"
+                >
+                  مشاهده
+                  <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+                </Link>
+              </motion.div>
+            </div>
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ export type Course = {
   description?: SerializedEditorState
   price: number
   originalPrice?: number | null
+  priceBanner?: string | null
   duration?: number
   level?: string
   status?: 'draft' | 'published' | 'coming_soon'
@@ -45,6 +46,12 @@ export function hasDiscount(price: number, originalPrice?: number | null): boole
 export function discountPercent(price: number, originalPrice?: number | null): number {
   if (!originalPrice || originalPrice <= price) return 0
   return Math.round(((originalPrice - price) / originalPrice) * 100)
+}
+
+const PERSIAN_DIGITS = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹']
+
+export function toPersianDigits(input: string): string {
+  return input.replace(/[0-9]/g, (digit) => PERSIAN_DIGITS[Number(digit)])
 }
 
 export function formatDuration(minutes: number): string {

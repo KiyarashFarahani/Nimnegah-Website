@@ -211,6 +211,10 @@ export interface Course {
    * If set and higher than price, the original price will be shown with a strikethrough discount display
    */
   originalPrice?: number | null;
+  /**
+   * Optional announcement shown on a green card above the price. Latin digits are converted to Persian automatically. Leave empty to hide the card.
+   */
+  priceBanner?: string | null;
   thumbnail?: (number | null) | Media;
   category?: (number | null) | Category;
   status?: ('draft' | 'published' | 'coming_soon') | null;
@@ -606,6 +610,7 @@ export interface CoursesSelect<T extends boolean = true> {
   description?: T;
   price?: T;
   originalPrice?: T;
+  priceBanner?: T;
   thumbnail?: T;
   category?: T;
   status?: T;

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import type { SerializedEditorState } from 'lexical';
 import { formatPrice, formatDuration, formatLessonDuration, getPlainText, hasDiscount, discountPercent } from '@/lib/course-utils';
+import PriceBanner from '@/components/courses/PriceBanner';
 
 type Lesson = {
   id: string | number;
@@ -34,6 +35,7 @@ type Course = {
   description?: SerializedEditorState;
   price: number;
   originalPrice?: number | null;
+  priceBanner?: string | null;
   duration?: number;
   level?: string;
   status?: 'draft' | 'published' | 'coming_soon';
@@ -459,6 +461,7 @@ export default function CourseDetail({ slug }: { slug: string }) {
                 <div className="bg-white/[0.08] border border-white/10 rounded-2xl overflow-hidden">
                   {/* Price header */}
                   <div className="p-6 border-b border-white/5">
+                    {course.priceBanner && <PriceBanner text={course.priceBanner} className="mb-4" />}
                     {course.status === 'coming_soon' ? (
                       <div className="mb-4">
                         <span className="inline-block px-4 py-2 bg-amber-500/20 border border-amber-500/30 rounded-xl text-sm font-vazir text-amber-300 font-medium">

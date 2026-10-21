@@ -160,6 +160,7 @@ export const courses = pgTable(
     description: jsonb("description"),
     price: numeric("price", { mode: "number" }).notNull(),
     originalPrice: numeric("original_price", { mode: "number" }),
+    priceBanner: varchar("price_banner"),
     thumbnail: integer("thumbnail_id").references(() => media.id, {
       onDelete: "set null",
     }),

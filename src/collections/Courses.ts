@@ -48,6 +48,15 @@ export const Courses: CollectionConfig = {
       },
     },
     {
+      name: 'priceBanner',
+      type: 'text',
+      admin: {
+        description:
+          'Optional announcement shown on a green card above the price. Latin digits are converted to Persian automatically. Leave empty to hide the card.',
+        placeholder: 'جشنواره بعدی ۸ آبان، قیمت در جشنواره ۲.۵۸۰.۰۰۰ تومان',
+      },
+    },
+    {
       name: 'thumbnail',
       type: 'upload',
       relationTo: 'media',

@@ -6,6 +6,7 @@ import {
   formatDuration,
   formatLessonDuration,
   getPlainText,
+  toPersianDigits,
   LEVEL_MAP,
 } from '../course-utils'
 
@@ -198,8 +199,21 @@ describe('getPlainText', () => {
   })
 })
 
-describe('LEVEL_MAP', () => {
-  it('maps beginner', () => {
+describe('toPersianDigits', () => {
+  it('converts Latin digits to Persian digits', () => {
+    expect(toPersianDigits('2580000')).toBe('۲۵۸۰۰۰۰')
+  })
+
+  it('keeps Persian digits unchanged', () => {
+    expect(toPersianDigits('۲.۵۸۰.۰۰۰')).toBe('۲.۵۸۰.۰۰۰')
+  })
+
+  it('keeps non-digit characters untouched', () => {
+    expect(toPersianDigits('جشنواره 8 آبان')).toBe('جشنواره ۸ آبان')
+  })
+})
+
+describe('LEVEL_MAP', () => {  it('maps beginner', () => {
     expect(LEVEL_MAP.beginner).toBe('مبتدی')
   })
 

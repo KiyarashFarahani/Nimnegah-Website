@@ -5,12 +5,16 @@ import fs from 'fs'
 import { access, stat } from 'fs/promises'
 import path from 'path'
 import { verifyDownloadToken } from '@/lib/download-token'
-import { nodeStreamToWeb } from '@/lib/file-stream'
+import {
+  formatContentRange,
+  nodeStreamToWeb,
+  parseRangeHeader,
+} from '@/lib/file-stream'
 
 const PROTECTED_DIR = path.resolve(process.cwd(), 'protected/products')
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ token: string }> },
 ) {
   try {
@@ -90,17 +94,51 @@ export async function GET(
       `attachment; filename="${asciiFilename.replace(/"/g, '')}"; ` +
       `filename*=UTF-8''${encodeURIComponent(filename)}`
 
-    const stream = fs.createReadStream(resolved)
-    const readable = nodeStreamToWeb(stream)
+    const baseHeaders: Record<string, string> = {
+      'Content-Type': contentType,
+      'Content-Disposition': contentDisposition,
+      'Cache-Control': 'no-store',
+      'X-Robots-Tag': 'noindex',
+    }
 
-    return new Response(readable, {
+    const range = parseRangeHeader(request.headers.get('range'), fileStat.size)
+
+    if (range === 'unsatisfiable') {
+      return new Response(null, {
+        status: 416,
+        headers: {
+          ...baseHeaders,
+          'Content-Range': `bytes */${fileStat.size}`,
+          'Accept-Ranges': 'bytes',
+        },
+      })
+    }
+
+    if (range) {
+      const stream = fs.createReadStream(resolved, {
+        start: range.start,
+        end: range.end,
+      })
+
+      return new Response(nodeStreamToWeb(stream), {
+        status: 206,
+        headers: {
+          ...baseHeaders,
+          'Content-Length': String(range.end - range.start + 1),
+          'Content-Range': formatContentRange(range, fileStat.size),
+          'Accept-Ranges': 'bytes',
+        },
+      })
+    }
+
+    const stream = fs.createReadStream(resolved)
+
+    return new Response(nodeStreamToWeb(stream), {
       status: 200,
       headers: {
+        ...baseHeaders,
         'Content-Length': String(fileStat.size),
-        'Content-Type': contentType,
-        'Content-Disposition': contentDisposition,
-        'Cache-Control': 'no-store',
-        'X-Robots-Tag': 'noindex',
+        'Accept-Ranges': 'bytes',
       },
     })
   } catch (error) {

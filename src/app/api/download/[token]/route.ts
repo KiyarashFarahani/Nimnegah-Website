@@ -16,6 +16,28 @@ import {
 
 const PROTECTED_DIR = path.resolve(process.cwd(), 'protected/products')
 
+/**
+ * Whether Nginx can serve the file bytes for us.
+ *
+ * Nginx advertises support with the `X-Accel-Supported` request header on the
+ * download location. When it is present we hand the file over with
+ * `X-Accel-Redirect` and Nginx streams it straight from disk — Node never
+ * touches a single byte of the payload, so download traffic cannot saturate
+ * the app server's event loop.
+ *
+ * If Nginx is not in front (or is running an older config) we fall back to
+ * streaming through Node, which is still correct — just less efficient.
+ */
+function isXAccelEnabled(request: Request): boolean {
+  if (process.env.DOWNLOAD_X_ACCEL_ENABLED !== 'true') return false
+  return request.headers.get('x-accel-supported') === '1'
+}
+
+function getAccelPath(): string {
+  const raw = process.env.DOWNLOAD_X_ACCEL_PATH || '/protected-files/'
+  return raw.startsWith('/') ? raw : `/${raw}`
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ token: string }> },
@@ -80,6 +102,19 @@ export async function GET(
       'Content-Disposition': contentDisposition,
       'Cache-Control': 'no-store',
       'X-Robots-Tag': 'noindex',
+    }
+
+    // Nginx serves the bytes from disk. No Content-Length here on purpose:
+    // Nginx computes it (and handles Range requests) for the internal
+    // redirect, and a stale length would corrupt partial responses.
+    if (isXAccelEnabled(request)) {
+      return new Response(null, {
+        status: 200,
+        headers: {
+          ...baseHeaders,
+          'X-Accel-Redirect': `${getAccelPath()}${encodeURIComponent(filename)}`,
+        },
+      })
     }
 
     const range = parseRangeHeader(request.headers.get('range'), fileStat.size)

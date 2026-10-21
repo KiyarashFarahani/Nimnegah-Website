@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { revokeDownloadToken } from '@/lib/redis'
 import { verifyDownloadToken } from '@/lib/download-token'
-import { authenticateRequest } from '@/lib/auth'
+import { authenticateAdmin } from '@/lib/auth'
 
 /**
  * Revokes a download link before it expires on its own.
@@ -14,12 +14,9 @@ import { authenticateRequest } from '@/lib/auth'
  * Body: { "token": "<the signed download token>" }
  */
 export async function POST(request: Request) {
-  const auth = await authenticateRequest(request)
+  const auth = await authenticateAdmin(request)
   if (!auth.success) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
-  }
-  if (auth.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   let body: { token?: string }

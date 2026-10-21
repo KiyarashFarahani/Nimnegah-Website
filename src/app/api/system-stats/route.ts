@@ -4,7 +4,7 @@ import os from 'os'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import redis from '@/lib/redis'
-import { authenticateRequest } from '@/lib/auth'
+import { authenticateAdmin } from '@/lib/auth'
 
 function getCpuUsage(): Promise<number> {
   return new Promise((resolve) => {
@@ -64,12 +64,9 @@ function formatBytes(bytes: number): string {
 }
 
 export async function GET(request: Request) {
-  const auth = await authenticateRequest(request)
+  const auth = await authenticateAdmin(request)
   if (!auth.success) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
-  }
-  if (auth.user.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   const payload = await getPayload({ config })

@@ -311,6 +311,8 @@ chmod +x docker/scripts/backup-db.sh
 # Add to crontab:
 0 3 * * * /path/to/project/docker/scripts/backup-db.sh
 ```
-Backups are stored in `/var/backups/nimnegah/` with 30-day retention.
+Backups are stored in `/var/backups/nimnegah/`. The database is kept for 30 days;
+protected product files are kept for 7 days and are only re-archived when they
+actually change (they are hundreds of megabytes each).
 ## License
 MIT

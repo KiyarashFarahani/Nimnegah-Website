@@ -37,6 +37,7 @@ const Footer = () => {
     { label: 'دوره‌ها', href: '/courses' },
     { label: 'درباره ما', href: isHome ? '#about' : '/#about' },
     { label: 'تماس با ما', href: isHome ? '#contact' : '/#contact' },
+    { label: 'قوانین و مقررات', href: '/terms' },
     { label: 'ورود', href: '/login' },
   ];
 

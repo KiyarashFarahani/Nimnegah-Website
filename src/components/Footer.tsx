@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Instagram, Send } from 'lucide-react';
+import { Hash, Instagram, Mail, MapPin, Phone, Send } from 'lucide-react';
 
 const BaleIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
   <svg
@@ -23,6 +23,13 @@ const SOCIAL_LINKS = [
   { icon: Instagram, href: 'https://instagram.com/nimnegah_graph_128', label: 'اینستاگرام' },
   { icon: BaleIcon, href: 'https://ble.ir/nimnegah_graph_128', label: 'بله' },
 ];
+
+const CONTACT_DETAILS = [
+  { icon: Phone, label: 'تلفن', value: '۰۹۳۹۶۱۱۲۱۵۵', href: 'tel:+989396112155', direction: 'ltr' },
+  { icon: MapPin, label: 'آدرس', value: 'تهران خ آزادی خ جیحون خ رنجبر خ نوری ک شاهکویی پلاک ۱۴ واحد ۴', href: null, direction: 'rtl' },
+  { icon: Hash, label: 'کد پستی', value: '135677611', href: null, direction: 'ltr' },
+  { icon: Mail, label: 'ایمیل', value: 'aa.noorik@gmail.com', href: 'mailto:aa.noorik@gmail.com', direction: 'ltr' },
+] as const;
 
 const COPYRIGHT_YEAR = new Date().getFullYear();
 
@@ -44,7 +51,7 @@ const Footer = () => {
   return (
     <footer className="relative bg-[#040a18] border-t border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+        <div className="grid grid-cols-1 gap-10 mb-10 md:grid-cols-2 lg:grid-cols-6">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -115,13 +122,53 @@ const Footer = () => {
             </div>
           </motion.div>
 
+          {/* Contact details */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.25 }}
+            viewport={{ once: true }}
+            className="md:col-span-2 lg:col-span-2"
+          >
+            <h4 className="mb-4 font-vazir text-sm font-semibold uppercase tracking-wider text-gray-400">اطلاعات تماس</h4>
+            <address dir="rtl" className="not-italic space-y-3">
+              {CONTACT_DETAILS.map((detail) => {
+                const content = (
+                  <>
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-gray-400 transition-colors group-hover:border-white/20 group-hover:bg-white/10 group-hover:text-white">
+                      <detail.icon size={16} aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1 leading-6">
+                      <span className="text-gray-500">{detail.label}: </span>
+                      <span dir={detail.direction} className="text-gray-500 transition-colors group-hover:text-white">{detail.value}</span>
+                    </span>
+                  </>
+                );
+
+                return detail.href ? (
+                  <a
+                    key={detail.label}
+                    href={detail.href}
+                    className="group flex items-center gap-3 font-vazir text-sm transition-colors hover:text-white"
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  <p key={detail.label} className="group flex items-center gap-3 font-vazir text-sm">
+                    {content}
+                  </p>
+                );
+              })}
+            </address>
+          </motion.div>
+
           {/* Enamad */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="flex flex-col items-start"
+            className="flex flex-col items-start lg:col-span-1"
           >
             <div
               dangerouslySetInnerHTML={{
